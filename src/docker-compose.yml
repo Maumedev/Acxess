@@ -1,0 +1,46 @@
+services:
+  # SERVICIO 1: Base de Datos
+  acxess-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_acxess_container
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD} 
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD} -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 3s
+    ports:
+      - "1433:1433" 
+    volumes:
+      - sql_data:/var/opt/mssql 
+    networks:
+      - acxess-network
+
+  # SERVICIO 2: App Web
+  acxess-web:
+    build:
+      context: . 
+      dockerfile: Acxess.Web/DOCKERFILE
+    container_name: acxess_web
+    depends_on:
+       acxess-db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT} 
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__Default=Server=acxess-db;Database=AcxessDB;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;
+    ports:
+      - "5000:8080" 
+    networks:
+      - acxess-network
+    restart: on-failure 
+    
+volumes:
+  sql_data:
+
+networks:
+  acxess-network:
+    driver: bridge

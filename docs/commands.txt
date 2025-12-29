@@ -1,0 +1,16 @@
+ Aplicar una migración: 
+ dotnet ef migrations add InitialCreate -p Acxess.Infrastructure -s Acxess.Web -o Persistence/Migrations
+ 
+ si no funciona dotnet ef
+ export PATH="$PATH:$HOME/.dotnet/tools"
+
+
+ recompilar todo el compose: 
+ docker compose up --build
+
+ bajar compose:
+ docker compose down -v  con volumen 
+ docker compose down  sin volumen 
+
+ ver logs en tiempo real:
+  docker compose logs -f acxess-web
