@@ -1,7 +1,8 @@
-using System;
 using Acxess.Shared.Abstractions;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Acxess.Web.Extensions;
+namespace Acxess.Infrastructure.Extensions;
 
 public static class MigrationExtensions
 {

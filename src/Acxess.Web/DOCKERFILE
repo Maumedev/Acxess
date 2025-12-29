@@ -40,43 +40,39 @@
 # COPY --from=build /app/publish .
 # ENTRYPOINT ["dotnet", "Acxess.Web.dll"]
 
-# ETAPA 1: Build (SDK Completo)
+# Build (SDK)
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# 1. Copiar Archivos de Configuración Global (CRUCIAL para CPM)
-# Si no copias estos, fallará porque no sabrá las versiones de los NuGets
+# 1. Copiar Archivos de Configuración Global
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."] 
-# (Si tienes Directory.Build.props cópialo, si no, borra esa línea)
 
-# 2. Copiar los CSPROJ de TODOS los módulos
-# Estructura: Shared -> Modules -> Web
+# 2. Copiar los CSPROJ de proyectos dependientes
 COPY ["shared/Acxess.Shared/Acxess.Shared.csproj", "Acxess.Shared/"]
 COPY ["modules/Acxess.Identity/Acxess.Identity.csproj", "Acxess.Identity/"]
-# ... copia aquí cualquier otro módulo futuro ...
+COPY ["Acxess.Infrastructure/Acxess.Infrastructure.csproj", "Acxess.Infrastructure/"]
 
-# 3. Copiar el proyecto Web (Punto de entrada)
+# 3. Copiar App Web
 COPY ["Acxess.Web/Acxess.Web.csproj", "Acxess.Web/"]
 
 # 4. Restaurar dependencias
-# Al restaurar la Web, .NET buscará las referencias de los módulos copiados arriba
 RUN dotnet restore "Acxess.Web/Acxess.Web.csproj"
 
 # 5. Copiar TODO el código fuente
 COPY . .
 
-# 6. Publicar
+# 6. Publish
 WORKDIR /src/Acxess.Web
 RUN dotnet publish "Acxess.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# ETAPA 2: Runtime
+# Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-# Copiar los artefactos compilados
+# Copiar compilado
 COPY --from=build /app/publish .
 
 # Comando de inicio

@@ -1,6 +1,6 @@
 using Acxess.Identity;
+using Acxess.Infrastructure.Extensions;
 using Acxess.Infrastructure.Middlewares;
-using Acxess.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
