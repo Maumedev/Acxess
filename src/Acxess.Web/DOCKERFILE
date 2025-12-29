@@ -50,7 +50,7 @@ COPY ["Directory.Build.props", "."]
 
 # 2. Copiar los CSPROJ de proyectos dependientes
 COPY ["shared/Acxess.Shared/Acxess.Shared.csproj", "Acxess.Shared/"]
-COPY ["Acxess.Infrastructure/Acxess.Infrastructure.csproj", "Acxess.Infrastructure/"]
+COPY ["shared/Acxess.Infrastructure/Acxess.Infrastructure.csproj", "Acxess.Infrastructure/"]
 COPY ["modules/Acxess.Identity/Acxess.Identity.csproj", "Acxess.Identity/"]
 COPY ["modules/Acxess.Catalog/Acxess.Catalog.csproj", "Acxess.Catalog/"]
 

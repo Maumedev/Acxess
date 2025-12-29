@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Infrastructure", "Acxess.Infrastructure\Acxess.Infrastructure.csproj", "{47B0A203-0994-401F-AE8C-47CD22F52312}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Web", "Acxess.Web\Acxess.Web.csproj", "{4D0B6CEB-1D47-4F02-BF8E-755A797B82F9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}"
@@ -17,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Shared", "shared\Acx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Catalog", "modules\Acxess.Catalog\Acxess.Catalog.csproj", "{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Infrastructure", "shared\Acxess.Infrastructure\Acxess.Infrastructure.csproj", "{5FF96530-9EF6-4BAD-84A5-92AB3E241257}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,18 +27,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Debug|x64.Build.0 = Debug|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Debug|x86.Build.0 = Debug|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Release|x64.ActiveCfg = Release|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Release|x64.Build.0 = Release|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Release|x86.ActiveCfg = Release|Any CPU
-		{47B0A203-0994-401F-AE8C-47CD22F52312}.Release|x86.Build.0 = Release|Any CPU
 		{4D0B6CEB-1D47-4F02-BF8E-755A797B82F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D0B6CEB-1D47-4F02-BF8E-755A797B82F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D0B6CEB-1D47-4F02-BF8E-755A797B82F9}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -87,6 +75,18 @@ Global
 		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|x64.Build.0 = Release|Any CPU
 		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|x86.ActiveCfg = Release|Any CPU
 		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|x86.Build.0 = Release|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Debug|x64.Build.0 = Debug|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Debug|x86.Build.0 = Debug|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Release|x64.ActiveCfg = Release|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Release|x64.Build.0 = Release|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Release|x86.ActiveCfg = Release|Any CPU
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,5 +95,6 @@ Global
 		{85165770-66AB-499B-86FD-2AAE22280754} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 		{A15B1316-8DE7-46CD-9C09-55A2C8152ACC} = {4F52FD11-658E-A102-6CD3-7D7C16FFA15B}
 		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
+		{5FF96530-9EF6-4BAD-84A5-92AB3E241257} = {4F52FD11-658E-A102-6CD3-7D7C16FFA15B}
 	EndGlobalSection
 EndGlobal
