@@ -1,41 +1,83 @@
+# # ETAPA 1: Build (SDK Completo)
+# FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# WORKDIR /src
+
+# # Instalar Node.js (Necesario para tu Tailwind)
+# # RUN apt-get update && \
+# #     apt-get install -y nodejs npm
+
+# # Copiar csproj y restaurar dependencias
+# # 1. Copiamos el CORE primero (La base de la cebolla)
+# COPY ["Acxess.Core/Acxess.Core.csproj", "Acxess.Core/"]
+
+# # 2. Copiamos INFRASTRUCTURE (Que depende de Core)
+# COPY ["Acxess.Infrastructure/Acxess.Infrastructure.csproj", "Acxess.Infrastructure/"]
+
+# # 3. Copiamos WEB (Que depende de Infrastructure)
+# COPY ["Acxess.Web/Acxess.Web.csproj", "Acxess.Web/"]
+
+# # 4. Restauramos desde el punto de entrada (Web)
+# # .NET es inteligente: Al restaurar Web, automáticamente restaura Infra y Core
+# RUN dotnet restore "Acxess.Web/Acxess.Web.csproj"
+
+# # Copiar todo el código fuente
+# COPY . .
+
+# WORKDIR /src/Acxess.Web
+# # Instalar dependencias de Frontend y construir CSS
+# # RUN npm install
+# # RUN npx @tailwindcss/cli -i ./StylesTailwind/app.scss -o ./wwwroot/css/site.css
+
+# # Publicar la app en modo Release
+# RUN dotnet publish "Acxess.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# # ETAPA 2: Runtime (Imagen ligera solo para ejecutar)
+# FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+# WORKDIR /app
+# EXPOSE 8080
+# EXPOSE 8081
+
+# COPY --from=build /app/publish .
+# ENTRYPOINT ["dotnet", "Acxess.Web.dll"]
+
 # ETAPA 1: Build (SDK Completo)
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Instalar Node.js (Necesario para tu Tailwind)
-# RUN apt-get update && \
-#     apt-get install -y nodejs npm
+# 1. Copiar Archivos de Configuración Global (CRUCIAL para CPM)
+# Si no copias estos, fallará porque no sabrá las versiones de los NuGets
+COPY ["Directory.Packages.props", "."]
+COPY ["Directory.Build.props", "."] 
+# (Si tienes Directory.Build.props cópialo, si no, borra esa línea)
 
-# Copiar csproj y restaurar dependencias
-# 1. Copiamos el CORE primero (La base de la cebolla)
-COPY ["Acxess.Core/Acxess.Core.csproj", "Acxess.Core/"]
+# 2. Copiar los CSPROJ de TODOS los módulos
+# Estructura: Shared -> Modules -> Web
+COPY ["shared/Acxess.Shared/Acxess.Shared.csproj", "Acxess.Shared/"]
+COPY ["modules/Acxess.Identity/Acxess.Identity.csproj", "Acxess.Identity/"]
+# ... copia aquí cualquier otro módulo futuro ...
 
-# 2. Copiamos INFRASTRUCTURE (Que depende de Core)
-COPY ["Acxess.Infrastructure/Acxess.Infrastructure.csproj", "Acxess.Infrastructure/"]
-
-# 3. Copiamos WEB (Que depende de Infrastructure)
+# 3. Copiar el proyecto Web (Punto de entrada)
 COPY ["Acxess.Web/Acxess.Web.csproj", "Acxess.Web/"]
 
-# 4. Restauramos desde el punto de entrada (Web)
-# .NET es inteligente: Al restaurar Web, automáticamente restaura Infra y Core
+# 4. Restaurar dependencias
+# Al restaurar la Web, .NET buscará las referencias de los módulos copiados arriba
 RUN dotnet restore "Acxess.Web/Acxess.Web.csproj"
 
-# Copiar todo el código fuente
+# 5. Copiar TODO el código fuente
 COPY . .
 
+# 6. Publicar
 WORKDIR /src/Acxess.Web
-# Instalar dependencias de Frontend y construir CSS
-# RUN npm install
-# RUN npx @tailwindcss/cli -i ./StylesTailwind/app.scss -o ./wwwroot/css/site.css
-
-# Publicar la app en modo Release
 RUN dotnet publish "Acxess.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# ETAPA 2: Runtime (Imagen ligera solo para ejecutar)
+# ETAPA 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# Copiar los artefactos compilados
 COPY --from=build /app/publish .
+
+# Comando de inicio
 ENTRYPOINT ["dotnet", "Acxess.Web.dll"]

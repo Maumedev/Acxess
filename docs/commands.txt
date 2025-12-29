@@ -1,6 +1,8 @@
  Aplicar una migración: 
  dotnet ef migrations add InitialCreate -p Acxess.Infrastructure -s Acxess.Web -o Persistence/Migrations
  
+ dotnet ef migrations add InitIdentity -p ./modules/Acxess.Identity/ -s Acxess.Web -c IdentityModuleContext -o Infrastructure/Persistence/Migrations
+ 
  si no funciona dotnet ef
  export PATH="$PATH:$HOME/.dotnet/tools"
 
@@ -14,3 +16,5 @@
 
  ver logs en tiempo real:
   docker compose logs -f acxess-web
+  
+  

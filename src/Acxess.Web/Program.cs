@@ -1,14 +1,18 @@
-using Acxess.Infrastructure;
+using Acxess.Identity;
+using Acxess.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 
-builder.Services.AddInfrastructureLayer(builder.Configuration);
+builder.Services.AddIdentityModule(builder.Configuration);
 
 var app = builder.Build();
 
-await app.PrepareDbData();
+if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
+{
+    await app.ApplyMigrationsAndSeedsAsync();
+}
 
 if (!app.Environment.IsDevelopment())
 {
