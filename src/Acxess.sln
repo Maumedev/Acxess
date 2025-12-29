@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Identity", "modules\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Shared", "shared\Acxess.Shared\Acxess.Shared.csproj", "{A15B1316-8DE7-46CD-9C09-55A2C8152ACC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Catalog", "modules\Acxess.Catalog\Acxess.Catalog.csproj", "{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,18 @@ Global
 		{A15B1316-8DE7-46CD-9C09-55A2C8152ACC}.Release|x64.Build.0 = Release|Any CPU
 		{A15B1316-8DE7-46CD-9C09-55A2C8152ACC}.Release|x86.ActiveCfg = Release|Any CPU
 		{A15B1316-8DE7-46CD-9C09-55A2C8152ACC}.Release|x86.Build.0 = Release|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Debug|x64.Build.0 = Debug|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|x64.ActiveCfg = Release|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|x64.Build.0 = Release|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,5 +94,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{85165770-66AB-499B-86FD-2AAE22280754} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 		{A15B1316-8DE7-46CD-9C09-55A2C8152ACC} = {4F52FD11-658E-A102-6CD3-7D7C16FFA15B}
+		{DB9C6BCB-B9FD-4319-AF27-8F8DCA6673FC} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 	EndGlobalSection
 EndGlobal

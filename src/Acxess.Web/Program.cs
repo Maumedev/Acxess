@@ -1,3 +1,4 @@
+using Acxess.Catalog;
 using Acxess.Identity;
 using Acxess.Infrastructure.Extensions;
 using Acxess.Infrastructure.Middlewares;
@@ -11,6 +12,7 @@ builder.Services
 builder.Services.AddRazorPages();
 
 builder.Services.AddIdentityModule(builder.Configuration);
+builder.Services.AddCatalogModule(builder.Configuration);
 
 var app = builder.Build();
 
