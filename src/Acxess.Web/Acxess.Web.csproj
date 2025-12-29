@@ -11,11 +11,8 @@
 		</PackageReference>
 	</ItemGroup>
   
-  <!-- <ItemGroup>
-    <ProjectReference Include="..\Acxess.Infrastructure\Acxess.Infrastructure.csproj" />
-  </ItemGroup> -->
-
   <ItemGroup>
+    <ProjectReference Include="..\Acxess.Infrastructure\Acxess.Infrastructure.csproj" />
     <ProjectReference Include="..\shared\Acxess.Shared\Acxess.Shared.csproj" />
     <ProjectReference Include="..\modules\Acxess.Identity\Acxess.Identity.csproj" />
   </ItemGroup>
