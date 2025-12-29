@@ -1,8 +1,23 @@
+using Acxess.Identity;
+using Acxess.Infrastructure.Extensions;
+using Acxess.Infrastructure.Middlewares;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddExceptionHandler<GlobalExceptionHandler>()
+        .AddProblemDetails();
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddIdentityModule(builder.Configuration);
+
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
+{
+    await app.ApplyMigrationsAndSeedsAsync();
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -14,6 +29,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
