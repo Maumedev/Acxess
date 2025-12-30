@@ -1,6 +1,8 @@
+using Acxess.Shared.Abstractions;
+
 namespace Acxess.Membership.Domain.Entities;
 
-public class Subscription
+public class Subscription : IHasTenant
 {
 
     private Subscription(){}

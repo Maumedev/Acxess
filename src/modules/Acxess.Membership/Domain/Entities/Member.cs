@@ -1,6 +1,8 @@
+using Acxess.Shared.Abstractions;
+
 namespace Acxess.Membership.Domain.Entities;
 
-public class Member
+public class Member : IHasTenant
 {
     public int IdMember { get; private set; }
     public int IdTenant { get; private set; }
