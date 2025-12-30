@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Membership", "module
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Billing", "modules\Acxess.Billing\Acxess.Billing.csproj", "{EDE13137-CB12-4B33-B015-1F86468B6B5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acxess.Marketing", "modules\Acxess.Marketing\Acxess.Marketing.csproj", "{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,18 @@ Global
 		{EDE13137-CB12-4B33-B015-1F86468B6B5A}.Release|x64.Build.0 = Release|Any CPU
 		{EDE13137-CB12-4B33-B015-1F86468B6B5A}.Release|x86.ActiveCfg = Release|Any CPU
 		{EDE13137-CB12-4B33-B015-1F86468B6B5A}.Release|x86.Build.0 = Release|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Debug|x64.Build.0 = Debug|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Debug|x86.Build.0 = Debug|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Release|x64.ActiveCfg = Release|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Release|x64.Build.0 = Release|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Release|x86.ActiveCfg = Release|Any CPU
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,5 +140,6 @@ Global
 		{5FF96530-9EF6-4BAD-84A5-92AB3E241257} = {4F52FD11-658E-A102-6CD3-7D7C16FFA15B}
 		{ECA5C89C-3DB5-4CE7-AC76-BCEB05FBE442} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 		{EDE13137-CB12-4B33-B015-1F86468B6B5A} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
+		{C41360E1-7A79-4BD8-A79A-FB1D723D3F07} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 	EndGlobalSection
 EndGlobal
