@@ -3,6 +3,7 @@ using Acxess.Identity;
 using Acxess.Infrastructure.Extensions;
 using Acxess.Infrastructure.Middlewares;
 using Acxess.Membership;
+using Acxess.Billing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddMembershipModule(builder.Configuration);
+builder.Services.AddBillingModule(builder.Configuration);
 
 var app = builder.Build();
 

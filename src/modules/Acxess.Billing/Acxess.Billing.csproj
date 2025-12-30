@@ -13,9 +13,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Acxess.Shared\Acxess.Shared.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastrucutre/Persistence/Configurations/" />
-  </ItemGroup>
-
 </Project>

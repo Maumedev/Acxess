@@ -54,6 +54,7 @@ COPY ["shared/Acxess.Infrastructure/Acxess.Infrastructure.csproj", "Acxess.Infra
 COPY ["modules/Acxess.Identity/Acxess.Identity.csproj", "Acxess.Identity/"]
 COPY ["modules/Acxess.Catalog/Acxess.Catalog.csproj", "Acxess.Catalog/"]
 COPY ["modules/Acxess.Membership/Acxess.Membership.csproj", "Acxess.Membership/"]
+COPY ["modules/Acxess.Billing/Acxess.Billing.csproj", "Acxess.Billing/"]
 
 # 3. Copiar App Web
 COPY ["Acxess.Web/Acxess.Web.csproj", "Acxess.Web/"]

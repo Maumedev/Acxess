@@ -1,10 +1,10 @@
-using Acxess.Billing.Infrastrucutre.Persistence;
+using Acxess.Billing.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Acxess.Billing.Infrastrucutre;
+namespace Acxess.Billing;
 
 public static class BillingModuleExtensions
 {
