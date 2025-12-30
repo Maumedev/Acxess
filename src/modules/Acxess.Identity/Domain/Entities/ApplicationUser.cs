@@ -8,7 +8,7 @@ public class ApplicationUser : IdentityUser
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int UserNumber { get; set; }
-    public int? TenantId { get; set; }
+    public int? IdTenant { get; set; }
     public string FullName { get; set; } = string.Empty;
-    public bool Active { get; set; }
+    public bool IsActive { get; set; }
 }

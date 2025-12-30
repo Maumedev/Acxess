@@ -5,8 +5,8 @@ namespace Acxess.Catalog.Domain.Entities;
 
 public class SellingPlan
 {
-    public int SellingPlanId { get; private set; }
-    public int TenantId { get; private set; }
+    public int IdSellingPlan { get; private set; }
+    public int IdTenant { get; private set; }
     public string Name { get; private set; }
     public int TotalMembers { get; private set; }
     public int DurationInValue { get; private set; }
@@ -18,7 +18,7 @@ public class SellingPlan
 
     public SellingPlan(int tenantId, string name, int totalMembers, int durationInValue, DurationUnit durationUnit, decimal price, int createdByUser)
     {
-        TenantId = tenantId;
+        IdTenant = tenantId;
         Name = name;
         TotalMembers = totalMembers;
         DurationInValue = durationInValue;

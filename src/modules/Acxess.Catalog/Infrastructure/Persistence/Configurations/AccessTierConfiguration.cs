@@ -11,9 +11,9 @@ public class AccessTierConfiguration : IEntityTypeConfiguration<AccessTier>
     {
         builder.ToTable("AccessTiers");
 
-        builder.HasKey(t => t.AccessTierId);
+        builder.HasKey(t => t.IdAccessTier);
         
-        builder.Property(t => t.AccessTierId)
+        builder.Property(t => t.IdAccessTier)
                .UseIdentityColumn(); 
 
         builder.Property(t => t.Name)
@@ -23,13 +23,13 @@ public class AccessTierConfiguration : IEntityTypeConfiguration<AccessTier>
         builder.Property(t => t.Description)
                .HasMaxLength(150);
 
-        builder.Property(t => t.TenantId)
+        builder.Property(t => t.IdTenant)
                .IsRequired();
 
         builder.Property(t => t.IsActive)
                .IsRequired()
                .HasDefaultValue(true);
 
-        builder.HasIndex(t => t.TenantId);
+        builder.HasIndex(t => t.IdTenant);
     }
 }

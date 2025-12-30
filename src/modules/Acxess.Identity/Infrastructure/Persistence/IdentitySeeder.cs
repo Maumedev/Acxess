@@ -24,7 +24,7 @@ public class IdentitySeeder(
                 await roleManager.CreateAsync(new IdentityRole(roleName));
         }
 
-        string systemEmail = "system@gmail.com";
+        string systemEmail = "system@system.com";
         if (await userManager.FindByEmailAsync(systemEmail) == null)
         {
             var user = new ApplicationUser
@@ -32,10 +32,10 @@ public class IdentitySeeder(
                 UserName = "system",
                 Email = systemEmail,
                 FullName = "User System",
-                Active = true,
+                IsActive = true,
                 EmailConfirmed = true
             };
-            string pass = configuration["SystemUser:Password"] ?? "Acxess123!#";
+            string pass = configuration["SystemUser:Password"] ?? throw new InvalidOperationException("System user password is not configured.");
             var result = await userManager.CreateAsync(user, pass);
             if (result.Succeeded) await userManager.AddToRoleAsync(user, "Admin");
         }

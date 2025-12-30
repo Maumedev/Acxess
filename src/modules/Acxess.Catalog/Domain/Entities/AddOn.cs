@@ -6,8 +6,8 @@ public class AddOn
 {
 
 
-    public int AddOnId { get; private set; }
-    public int TenantId { get; private set; }
+    public int IdAddOn { get; private set; }
+    public int IdTenant { get; private set; }
     public string AddOnKey { get; private set; }
     public string Name { get; private set; }
     public string Price { get; private set; }
@@ -15,7 +15,7 @@ public class AddOn
 
     public AddOn(int tenantId, string addOnKey, string name, string price, bool showInCheckout = false)
     {
-        TenantId = tenantId;
+        IdTenant = tenantId;
         AddOnKey = addOnKey;
         Name = name;
         Price = price;

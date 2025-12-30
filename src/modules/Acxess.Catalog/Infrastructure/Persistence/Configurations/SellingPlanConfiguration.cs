@@ -11,12 +11,12 @@ public class SellingPlanConfiguration : IEntityTypeConfiguration<SellingPlan>
     {
         builder.ToTable("SellingPlans");
 
-        builder.HasKey(t => t.SellingPlanId);
+        builder.HasKey(t => t.IdSellingPlan);
         
-        builder.Property(t => t.SellingPlanId)
+        builder.Property(t => t.IdSellingPlan)
                .UseIdentityColumn(); 
 
-        builder.Property(t => t.TenantId)
+        builder.Property(t => t.IdTenant)
                .IsRequired();
 
 
@@ -51,8 +51,8 @@ public class SellingPlanConfiguration : IEntityTypeConfiguration<SellingPlan>
             .IsRequired();
 
 
-        builder.HasIndex(t => t.SellingPlanId);
-        builder.HasIndex(t => t.TenantId);
+        builder.HasIndex(t => t.IdSellingPlan);
+        builder.HasIndex(t => t.IdTenant);
         builder.HasIndex(t => t.CreatedByUser);
     }
 }
