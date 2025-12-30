@@ -1,4 +1,5 @@
 using Acxess.Identity.Domain.Entities;
+using Acxess.Identity.Infrastructure.Identity;
 using Acxess.Identity.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
 using Microsoft.AspNetCore.Identity;
@@ -37,7 +38,8 @@ public static class IdentityModuleExtensions
             options.User.RequireUniqueEmail = true;
         })
         .AddEntityFrameworkStores<IdentityModuleContext>()
-        .AddDefaultTokenProviders();
+        .AddDefaultTokenProviders()
+        .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>();
 
         return services;
     }
