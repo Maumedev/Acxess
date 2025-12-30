@@ -1,8 +1,8 @@
-using System;
+using Acxess.Shared.Abstractions;
 
 namespace Acxess.Catalog.Domain.Entities;
 
-public class AddOn
+public class AddOn : IHasTenant
 {
 
 

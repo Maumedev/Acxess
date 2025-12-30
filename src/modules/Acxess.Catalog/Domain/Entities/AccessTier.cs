@@ -1,6 +1,8 @@
+using Acxess.Shared.Abstractions;
+
 namespace Acxess.Catalog.Domain.Entities;
 
-public class AccessTier
+public class AccessTier : IHasTenant
 {
     public int IdAccessTier { get; private set; }
     public int IdTenant { get; private set; }
