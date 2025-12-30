@@ -3,6 +3,7 @@
  
  dotnet ef migrations add InitIdentity -p ./modules/Acxess.Identity/ -s Acxess.Web -c IdentityModuleContext -o Infrastructure/Persistence/Migrations
 dotnet ef migrations add InitBilling -p ./modules/Acxess.Billing/ -s Acxess.Web -c BillingModuleContext -o Infrastructure/Persistence/Migrations
+dotnet ef migrations add InitMarketing -p ./modules/Acxess.Marketing/ -s Acxess.Web -c MarketingModuleContext -o Infrastructure/Persistence/Migrations
  
  si no funciona dotnet ef
  export PATH="$PATH:$HOME/.dotnet/tools"

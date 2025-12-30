@@ -17,9 +17,6 @@
   <ItemGroup>
     <Folder Include="Domain/" />
     <Folder Include="Domain/Entities/" />
-    <Folder Include="Infrastructure/" />
-    <Folder Include="Infrastructure/Persistence/" />
-    <Folder Include="Infrastructure/Persistence/Configurations/" />
   </ItemGroup>
   
 </Project>
