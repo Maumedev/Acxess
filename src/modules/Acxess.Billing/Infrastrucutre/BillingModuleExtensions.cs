@@ -1,0 +1,27 @@
+using Acxess.Billing.Infrastrucutre.Persistence;
+using Acxess.Shared.Abstractions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Acxess.Billing.Infrastrucutre;
+
+public static class BillingModuleExtensions
+{
+    public static IServiceCollection AddBillingModule(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("Default");
+
+        services.AddDbContext<BillingModuleContext>(options =>
+        {
+            options.UseSqlServer(connectionString, sqlOptions =>
+                sqlOptions.MigrationsHistoryTable("__BillingMigrationsHistory", "Billing")
+            );
+        });
+
+        services.AddScoped<IDataSeeder, BillingSeeder>();
+
+        return services;
+    }
+
+}
