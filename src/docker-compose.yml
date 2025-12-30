@@ -32,6 +32,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT} 
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__Default=Server=acxess-db;Database=AcxessDB;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;
+      - SystemUser__Password=${SYSTEM_USER_PASSWORD}
       - RUN_MIGRATIONS=true
     ports:
       - "5000:8080" 

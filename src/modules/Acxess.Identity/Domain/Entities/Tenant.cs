@@ -5,10 +5,10 @@ namespace Acxess.Identity.Domain.Entities;
 
 public class Tenant
 {
-    public int TenantId { get; private set; }
+    public int IdTenant { get; private set; }
     public string Name { get; private set; }
     public string? Logo { get; private set; }
-    public bool Active { get; private set; }
+    public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     private Tenant(string name)
@@ -24,10 +24,10 @@ public class Tenant
 
     public Result<Unit> Desactive()
     {
-        if (!Active)
+        if (!IsActive)
             return Result.Failure("El tenant ya a sido desactivado.");
 
-        Active = false;
+        IsActive = false;
         return Result.Success();
     }
 }

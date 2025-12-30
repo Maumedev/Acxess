@@ -11,9 +11,9 @@ public class TenantConfiguration: IEntityTypeConfiguration<Tenant>
     {
         builder.ToTable("Tenants");
 
-        builder.HasKey(t => t.TenantId);
+        builder.HasKey(t => t.IdTenant);
 
-        builder.Property(t => t.TenantId)
+        builder.Property(t => t.IdTenant)
             .ValueGeneratedOnAdd();
 
 
@@ -24,7 +24,7 @@ public class TenantConfiguration: IEntityTypeConfiguration<Tenant>
         builder.Property(t => t.Logo)
             .HasMaxLength(600);
 
-        builder.Property(rt => rt.Active)
+        builder.Property(rt => rt.IsActive)
             .IsRequired()
             .HasDefaultValue(true);
 
@@ -32,6 +32,6 @@ public class TenantConfiguration: IEntityTypeConfiguration<Tenant>
             .IsRequired()
             .HasDefaultValueSql("GETUTCDATE()");
 
-        builder.HasIndex(rt => rt.TenantId).IsUnique();
+        builder.HasIndex(rt => rt.IdTenant).IsUnique();
     }
 }
