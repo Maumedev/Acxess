@@ -17,8 +17,4 @@
     <ProjectReference Include="..\..\shared\Acxess.Shared\Acxess.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Infrastructure/Identity/" />
-  </ItemGroup>
-
 </Project>

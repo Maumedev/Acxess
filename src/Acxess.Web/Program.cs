@@ -14,6 +14,8 @@ builder.Services
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddAcxessInfrastructure(); 
+
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddMembershipModule(builder.Configuration);
