@@ -1,7 +1,8 @@
+using Acxess.Shared.Abstractions;
 
 namespace Acxess.Billing.Domain.Entities;
 
-public class MemberTransaction
+public class MemberTransaction : IHasTenant
 {
     public int IdMemberTransaction { get; private set; }
     public int IdTenant { get; private set; }

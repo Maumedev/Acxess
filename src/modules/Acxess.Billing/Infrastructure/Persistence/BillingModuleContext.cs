@@ -1,10 +1,14 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Acxess.Billing.Domain.Entities;
+using Acxess.Infrastructure.Extensions;
+using Acxess.Shared.Abstractions;
 
 namespace Acxess.Billing.Infrastructure.Persistence;
 
-public class BillingModuleContext(DbContextOptions<BillingModuleContext> options) : DbContext(options)
+public class BillingModuleContext(
+    DbContextOptions<BillingModuleContext> options,
+    ICurrentTenant currentTenant) : DbContext(options)
 {
     public DbSet<MemberTransaction> MemberTransactions { get; set; }
     public DbSet<MemberTransactionDetail> MemberTransactionDetails { get; set; }
@@ -15,5 +19,7 @@ public class BillingModuleContext(DbContextOptions<BillingModuleContext> options
         modelBuilder.HasDefaultSchema("Billing");
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        modelBuilder.ApplyTenantFilters(currentTenant);
     }
 }
