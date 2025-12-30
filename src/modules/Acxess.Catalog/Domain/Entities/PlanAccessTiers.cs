@@ -6,11 +6,11 @@ public class PlanAccessTiers
 {
     public PlanAccessTiers(int accessTierId, int sellingPlanId)
     {
-        AccessTierId = accessTierId;
-        SellingPlanId = sellingPlanId;
+        IdAccessTier = accessTierId;
+        IdSellingPlan = sellingPlanId;
     }
 
-    public int PlanAccessTierId { get; private set; }
-    public int AccessTierId { get; private set; }
-    public int SellingPlanId { get; private set; }
+    public int IdPlanAccessTier { get; private set; }
+    public int IdAccessTier { get; private set; }
+    public int IdSellingPlan { get; private set; }
 }

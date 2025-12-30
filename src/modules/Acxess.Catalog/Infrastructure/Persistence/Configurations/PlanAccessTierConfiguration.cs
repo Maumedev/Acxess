@@ -11,15 +11,15 @@ public class PlanAccessTierConfiguration : IEntityTypeConfiguration<PlanAccessTi
     {
          builder.ToTable("PlanAccessTiers");
 
-        builder.HasKey(t => t.PlanAccessTierId);
+        builder.HasKey(t => t.IdPlanAccessTier);
         
-        builder.Property(t => t.PlanAccessTierId)
+        builder.Property(t => t.IdPlanAccessTier)
                .UseIdentityColumn(); 
 
-        builder.Property(t => t.AccessTierId)
+        builder.Property(t => t.IdAccessTier)
                .IsRequired();
 
-        builder.Property(t => t.SellingPlanId)
+        builder.Property(t => t.IdSellingPlan)
                .IsRequired();
 
 

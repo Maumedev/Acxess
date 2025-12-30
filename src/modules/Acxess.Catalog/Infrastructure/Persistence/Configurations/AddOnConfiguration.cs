@@ -11,17 +11,17 @@ public class AddOnConfiguration : IEntityTypeConfiguration<AddOn>
     {
         builder.ToTable("AddOns");
 
-        builder.HasKey(t => t.AddOnId);
+        builder.HasKey(t => t.IdAddOn);
         
-        builder.Property(t => t.AddOnId)
+        builder.Property(t => t.IdAddOn)
                .UseIdentityColumn(); 
 
-        builder.Property(t => t.TenantId)
+        builder.Property(t => t.IdTenant)
                .IsRequired();
 
-        builder.HasIndex(t => t.TenantId);
+        builder.HasIndex(t => t.IdTenant);
 
-        builder.HasIndex(t => new { t.TenantId, t.AddOnKey })
+        builder.HasIndex(t => new { t.IdTenant, t.AddOnKey })
                .IsUnique();
 
         builder.Property(t => t.AddOnKey)
