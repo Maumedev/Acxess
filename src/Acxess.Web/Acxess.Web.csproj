@@ -16,6 +16,7 @@
     <ProjectReference Include="..\modules\Acxess.Identity\Acxess.Identity.csproj" />
     <ProjectReference Include="..\modules\Acxess.Catalog\Acxess.Catalog.csproj" />
     <ProjectReference Include="..\modules\Acxess.Membership\Acxess.Membership.csproj" />
+    <ProjectReference Include="..\modules\Acxess.Billing\Acxess.Billing.csproj" />
   </ItemGroup>
 
 </Project>
