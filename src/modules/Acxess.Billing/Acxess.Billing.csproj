@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Acxess.Shared\Acxess.Shared.csproj" />
+    <ProjectReference Include="..\..\shared\Acxess.Infrastructure\Acxess.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

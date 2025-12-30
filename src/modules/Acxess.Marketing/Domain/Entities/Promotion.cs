@@ -1,6 +1,8 @@
+using Acxess.Shared.Abstractions;
+
 namespace Acxess.Marketing.Domain.Entities;
 
-public class Promotion
+public class Promotion : IHasTenant
 {
     private Promotion()
     {

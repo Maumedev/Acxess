@@ -1,9 +1,10 @@
 using System;
 using Acxess.Catalog.Domain.Enums;
+using Acxess.Shared.Abstractions;
 
 namespace Acxess.Catalog.Domain.Entities;
 
-public class SellingPlan
+public class SellingPlan : IHasTenant
 {
     public int IdSellingPlan { get; private set; }
     public int IdTenant { get; private set; }

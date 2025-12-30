@@ -1,11 +1,14 @@
-using System;
 using System.Reflection;
 using Acxess.Catalog.Domain.Entities;
+using Acxess.Infrastructure.Extensions;
+using Acxess.Shared.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Acxess.Catalog.Infrastructure.Persistence;
 
-public class CatalogModuleContext(DbContextOptions<CatalogModuleContext> options) : DbContext(options)
+public class CatalogModuleContext(
+    DbContextOptions<CatalogModuleContext> options,
+    ICurrentTenant currentTenant) : DbContext(options)
 {
 
     public DbSet<AccessTier> AccessTiers { get; set; }
@@ -19,7 +22,6 @@ public class CatalogModuleContext(DbContextOptions<CatalogModuleContext> options
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         
-        // Multi-tenancy (Global Query Filter)
-        // modelBuilder.Entity<AccessTier>().HasQueryFilter(a => a.TenantId == _currentTenantId);
+        modelBuilder.ApplyTenantFilters(currentTenant); 
     }
 }

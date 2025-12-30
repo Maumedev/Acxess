@@ -1,10 +1,14 @@
 using System.Reflection;
+using Acxess.Infrastructure.Extensions;
 using Acxess.Membership.Domain.Entities;
+using Acxess.Shared.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Acxess.Membership.Infrastructure.Persistence;
 
-public class MembershipModuleContext(DbContextOptions<MembershipModuleContext> options) : DbContext(options)
+public class MembershipModuleContext(
+    DbContextOptions<MembershipModuleContext> options,
+    ICurrentTenant current) : DbContext(options)
 {
     public DbSet<Member> Members { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
@@ -17,5 +21,7 @@ public class MembershipModuleContext(DbContextOptions<MembershipModuleContext> o
         modelBuilder.HasDefaultSchema("Membership");
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        modelBuilder.ApplyTenantFilters(current);
     }
 }

@@ -1,6 +1,8 @@
+using Acxess.Shared.Abstractions;
+
 namespace Acxess.Marketing.Domain.Entities;
 
-public class Coupon
+public class Coupon : IHasTenant
 {
     private Coupon() {}
 
