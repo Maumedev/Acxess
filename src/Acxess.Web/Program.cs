@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddExceptionHandler<GlobalExceptionHandler>()
-        .AddProblemDetails();
+    .AddProblemDetails();
 
 builder.Services.AddScoped<PageExceptionFilter>();
 
@@ -51,9 +51,13 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+else
+{
+    app.UseDeveloperExceptionPage();
+}
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
