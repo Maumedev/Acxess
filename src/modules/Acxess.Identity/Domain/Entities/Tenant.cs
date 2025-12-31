@@ -1,5 +1,4 @@
 using System;
-using ROP;
 
 namespace Acxess.Identity.Domain.Entities;
 
@@ -22,12 +21,12 @@ public class Tenant
     public void SetLogo(string logo)
         => Logo = logo;
 
-    public Result<Unit> Desactive()
+    public void Desactive()
     {
         if (!IsActive)
-            return Result.Failure("El tenant ya a sido desactivado.");
+            // return Result.Failure("El tenant ya a sido desactivado.");
+            throw new InvalidOperationException("El tenant ya a sido desactivado.");
 
         IsActive = false;
-        return Result.Success();
     }
 }
