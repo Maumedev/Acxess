@@ -19,4 +19,4 @@ dotnet ef migrations add InitMarketing -p ./modules/Acxess.Marketing/ -s Acxess.
  ver logs en tiempo real:
   docker compose logs -f acxess-web
   
-  
+ASPNETCORE_ENVIRONMENT=Localhost dotnet watch run --project ./Acxess.Web/
