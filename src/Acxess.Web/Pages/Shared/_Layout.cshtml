@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Acxess.Web.styles.css" asp-append-version="true" />
 
-    <script src="~/lib/alpine.min.js" defer asp-append-version="true"></script>
+    <script src="~/lib/alpine.min.js" defer asp-append-version="true"></script> 
+    <script src="~/lib/htmx.min.js" asp-append-version="true"></script>
+
+    <meta name="htmx-config" content='{"includeAspNetAntiforgeryToken": true}' />
+    <script>
+        document.addEventListener('htmx:configRequest', (evt) => {
+            evt.detail.headers['RequestVerificationToken'] = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        });
+    </script>
 </head>
 <body>
 

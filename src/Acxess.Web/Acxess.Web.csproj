@@ -8,6 +8,7 @@
   </Target>
 
   <Target Name="CopyFrontendLibraries" BeforeTargets="Build">
+    <Copy SourceFiles="node_modules/htmx.org/dist/htmx.min.js" DestinationFolder="wwwroot/lib" />
     <Copy SourceFiles="node_modules/alpinejs/dist/cdn.min.js" DestinationFiles="wwwroot/lib/alpine.min.js" />
   </Target>
 
