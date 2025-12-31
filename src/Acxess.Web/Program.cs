@@ -21,7 +21,17 @@ builder.Services.AddRazorPages()
         options.Filters.Add<PageExceptionFilter>();
     });;
 
-builder.Services.AddAcxessInfrastructure(); 
+
+var modulesAssemblies = new[]
+{
+    typeof(IdentityModuleExtensions).Assembly,
+    typeof(MarketingModuleExtensions).Assembly,
+    typeof(MembershipModuleExtensions).Assembly,
+    typeof(BillingModuleExtensions).Assembly,
+    typeof(CatalogModuleExtensions).Assembly,
+    typeof(Program).Assembly
+};
+builder.Services.AddAcxessInfrastructure(modulesAssemblies); 
 
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
