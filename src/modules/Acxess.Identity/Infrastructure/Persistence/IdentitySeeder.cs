@@ -17,7 +17,7 @@ public class IdentitySeeder(
     {
         await context.Database.MigrateAsync();
 
-        string[] roleNames = ["Admin", "Agent"];
+        string[] roleNames = ["SuperAdmin","Admin", "Agent"];
         foreach (var roleName in roleNames)
         {
             if (!await roleManager.RoleExistsAsync(roleName))
@@ -37,7 +37,7 @@ public class IdentitySeeder(
             };
             string pass = configuration["SystemUser:Password"] ?? throw new InvalidOperationException("System user password is not configured.");
             var result = await userManager.CreateAsync(user, pass);
-            if (result.Succeeded) await userManager.AddToRoleAsync(user, "Admin");
+            if (result.Succeeded) await userManager.AddToRoleAsync(user, "SuperAdmin");
         }
     }
 }
