@@ -5,16 +5,33 @@ using Acxess.Infrastructure.Middlewares;
 using Acxess.Membership;
 using Acxess.Billing;
 using Acxess.Marketing;
+using Acxess.Web.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddExceptionHandler<GlobalExceptionHandler>()
-        .AddProblemDetails();
+    .AddProblemDetails();
 
-builder.Services.AddRazorPages();
+builder.Services.AddScoped<PageExceptionFilter>();
 
-builder.Services.AddAcxessInfrastructure(); 
+builder.Services.AddRazorPages()
+    .AddMvcOptions(options =>
+    {
+        options.Filters.Add<PageExceptionFilter>();
+    });;
+
+
+var modulesAssemblies = new[]
+{
+    typeof(IdentityModuleExtensions).Assembly,
+    typeof(MarketingModuleExtensions).Assembly,
+    typeof(MembershipModuleExtensions).Assembly,
+    typeof(BillingModuleExtensions).Assembly,
+    typeof(CatalogModuleExtensions).Assembly,
+    typeof(Program).Assembly
+};
+builder.Services.AddAcxessInfrastructure(modulesAssemblies); 
 
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
@@ -34,9 +51,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+else
+{
+    app.UseDeveloperExceptionPage();
+}
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
 
 app.UseAuthentication();
