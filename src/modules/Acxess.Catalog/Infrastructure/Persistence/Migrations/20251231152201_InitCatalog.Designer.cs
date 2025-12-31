@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CatalogModuleContext))]
-    [Migration("20251229175048_InitCatalog")]
+    [Migration("20251231152201_InitCatalog")]
     partial class InitCatalog
     {
         /// <inheritdoc />
@@ -28,15 +28,18 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Acxess.Catalog.Domain.Entities.AccessTier", b =>
                 {
-                    b.Property<int>("AccessTierId")
+                    b.Property<int>("IdAccessTier")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccessTierId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAccessTier"));
 
                     b.Property<string>("Description")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("IdTenant")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -48,50 +51,46 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
+                    b.HasKey("IdAccessTier");
 
-                    b.HasKey("AccessTierId");
-
-                    b.HasIndex("TenantId");
+                    b.HasIndex("IdTenant");
 
                     b.ToTable("AccessTiers", "Catalog");
                 });
 
             modelBuilder.Entity("Acxess.Catalog.Domain.Entities.AddOn", b =>
                 {
-                    b.Property<int>("AddOnId")
+                    b.Property<int>("IdAddOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddOnId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAddOn"));
 
                     b.Property<string>("AddOnKey")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<int>("IdTenant")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Price")
-                        .IsRequired()
+                    b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<bool>("ShowInCheckout")
                         .HasColumnType("bit");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
+                    b.HasKey("IdAddOn");
 
-                    b.HasKey("AddOnId");
+                    b.HasIndex("IdTenant");
 
-                    b.HasIndex("TenantId");
-
-                    b.HasIndex("TenantId", "AddOnKey")
+                    b.HasIndex("IdTenant", "AddOnKey")
                         .IsUnique();
 
                     b.ToTable("AddOns", "Catalog");
@@ -99,30 +98,30 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Acxess.Catalog.Domain.Entities.PlanAccessTiers", b =>
                 {
-                    b.Property<int>("PlanAccessTierId")
+                    b.Property<int>("IdPlanAccessTier")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlanAccessTierId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPlanAccessTier"));
 
-                    b.Property<int>("AccessTierId")
+                    b.Property<int>("IdAccessTier")
                         .HasColumnType("int");
 
-                    b.Property<int>("SellingPlanId")
+                    b.Property<int>("IdSellingPlan")
                         .HasColumnType("int");
 
-                    b.HasKey("PlanAccessTierId");
+                    b.HasKey("IdPlanAccessTier");
 
                     b.ToTable("PlanAccessTiers", "Catalog");
                 });
 
             modelBuilder.Entity("Acxess.Catalog.Domain.Entities.SellingPlan", b =>
                 {
-                    b.Property<int>("SellingPlanId")
+                    b.Property<int>("IdSellingPlan")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SellingPlanId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSellingPlan"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -136,6 +135,9 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<int>("DurationUnit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdTenant")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -152,19 +154,16 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TotalMembers")
                         .HasColumnType("int");
 
-                    b.HasKey("SellingPlanId");
+                    b.HasKey("IdSellingPlan");
 
                     b.HasIndex("CreatedByUser");
 
-                    b.HasIndex("SellingPlanId");
+                    b.HasIndex("IdSellingPlan");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("IdTenant");
 
                     b.ToTable("SellingPlans", "Catalog");
                 });

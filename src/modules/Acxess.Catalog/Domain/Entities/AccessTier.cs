@@ -4,9 +4,11 @@ namespace Acxess.Catalog.Domain.Entities;
 
 public class AccessTier : IHasTenant
 {
+
+    
     public int IdAccessTier { get; private set; }
     public int IdTenant { get; private set; }
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
     public string? Description { get; private set; }
     public bool IsActive { get; private set; } = true;
 
@@ -15,6 +17,10 @@ public class AccessTier : IHasTenant
         IdTenant = tenantId;
         Name = name;
         Description = description;
+    }
+
+    private AccessTier()
+    {
     }
 
     public static AccessTier Create(int tenantId, string name, string? description = null)
