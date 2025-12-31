@@ -7,6 +7,10 @@
     <Exec Command="npx @tailwindcss/cli -i ./wwwroot/css/input.css -o ./wwwroot/css/site.css --minify" />
   </Target>
 
+  <Target Name="CopyFrontendLibraries" BeforeTargets="Build">
+    <Copy SourceFiles="node_modules/alpinejs/dist/cdn.min.js" DestinationFiles="wwwroot/lib/alpine.min.js" />
+  </Target>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 			<PrivateAssets>all</PrivateAssets>
