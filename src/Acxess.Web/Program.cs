@@ -5,6 +5,7 @@ using Acxess.Infrastructure.Middlewares;
 using Acxess.Membership;
 using Acxess.Billing;
 using Acxess.Marketing;
+using Acxess.Web.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,13 @@ builder.Services
     .AddExceptionHandler<GlobalExceptionHandler>()
         .AddProblemDetails();
 
-builder.Services.AddRazorPages();
+builder.Services.AddScoped<PageExceptionFilter>();
+
+builder.Services.AddRazorPages()
+    .AddMvcOptions(options =>
+    {
+        options.Filters.Add<PageExceptionFilter>();
+    });;
 
 builder.Services.AddAcxessInfrastructure(); 
 
