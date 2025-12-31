@@ -10,6 +10,13 @@ public static class AcxessInfrastrucureExtensions
     {
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentTenant, CurrentTenantService>();
+
+        services.AddMediatR(cfg => 
+        {
+            cfg.RegisterServicesFromAssembly(typeof(AcxessInfrastrucureExtensions).Assembly);
+            cfg.AddBehavior(typeof(BehaviorsMediatR.TransactionalBehavior<,>));
+        });
+
         return services;
     }
 }
