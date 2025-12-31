@@ -1,12 +1,11 @@
-using Acxess.Identity.Domain.Entities;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace Acxess.Identity.Application.Features.Login;
+namespace Acxess.Identity.Application.Features.ApplicationUser.Commands.Login;
 
 public class LoginHandler(
-    SignInManager<ApplicationUser> signInManager) : IRequestHandler<LoginCommand, Result>
+    SignInManager<Domain.Entities.ApplicationUser> signInManager) : IRequestHandler<LoginCommand, Result>
 {
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
