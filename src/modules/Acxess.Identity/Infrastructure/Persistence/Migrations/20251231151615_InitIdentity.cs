@@ -37,9 +37,9 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserNumber = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TenantId = table.Column<int>(type: "int", nullable: true),
+                    IdTenant = table.Column<int>(type: "int", nullable: true),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -65,16 +65,16 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
                 schema: "Identity",
                 columns: table => new
                 {
-                    TenantId = table.Column<int>(type: "int", nullable: false)
+                    IdTenant = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Logo = table.Column<string>(type: "nvarchar(600)", maxLength: 600, nullable: true),
-                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tenants", x => x.TenantId);
+                    table.PrimaryKey("PK_Tenants", x => x.IdTenant);
                 });
 
             migrationBuilder.CreateTable(
@@ -248,10 +248,10 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tenants_TenantId",
+                name: "IX_Tenants_IdTenant",
                 schema: "Identity",
                 table: "Tenants",
-                column: "TenantId",
+                column: "IdTenant",
                 unique: true);
         }
 

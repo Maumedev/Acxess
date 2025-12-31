@@ -17,7 +17,7 @@ public static class IdentityModuleExtensions
         services.AddDbContext<IdentityModuleContext>(options =>
         {
             options.UseSqlServer(connectionString, sqlOptions =>
-                sqlOptions.MigrationsHistoryTable("__IdentityMigrationsHistory", "identity")
+                sqlOptions.MigrationsHistoryTable("__IdentityMigrationsHistory", "Identity")
             );
         });
 
