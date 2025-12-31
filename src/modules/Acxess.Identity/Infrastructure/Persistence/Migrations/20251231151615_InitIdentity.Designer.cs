@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Acxess.Identity.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(IdentityModuleContext))]
-    [Migration("20251229063724_InitIdentity")]
+    [Migration("20251231151615_InitIdentity")]
     partial class InitIdentity
     {
         /// <inheritdoc />
@@ -34,9 +34,6 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -51,6 +48,12 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("IdTenant")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -77,9 +80,6 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -112,21 +112,21 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Acxess.Identity.Domain.Entities.Tenant", b =>
                 {
-                    b.Property<int>("TenantId")
+                    b.Property<int>("IdTenant")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TenantId"));
-
-                    b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdTenant"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Logo")
                         .HasMaxLength(600)
@@ -137,9 +137,9 @@ namespace Acxess.Identity.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("TenantId");
+                    b.HasKey("IdTenant");
 
-                    b.HasIndex("TenantId")
+                    b.HasIndex("IdTenant")
                         .IsUnique();
 
                     b.ToTable("Tenants", "Identity");

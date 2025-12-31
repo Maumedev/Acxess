@@ -3,8 +3,7 @@
 # WORKDIR /src
 
 # # Instalar Node.js (Necesario para tu Tailwind)
-# # RUN apt-get update && \
-# #     apt-get install -y nodejs npm
+
 
 # # Copiar csproj y restaurar dependencias
 # # 1. Copiamos el CORE primero (La base de la cebolla)
@@ -44,6 +43,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
+# Instalar Node.js 
+RUN apt-get update && \
+    apt-get install -y nodejs npm
+
 # 1. Copiar Archivos de Configuración Global
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."] 
@@ -68,6 +71,7 @@ COPY . .
 
 # 6. Publish
 WORKDIR /src/Acxess.Web
+RUN npm install
 RUN dotnet publish "Acxess.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Runtime

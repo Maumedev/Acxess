@@ -4,7 +4,10 @@ namespace Acxess.Catalog.Domain.Entities;
 
 public class PlanAccessTiers
 {
-    public PlanAccessTiers(int accessTierId, int sellingPlanId)
+    private PlanAccessTiers()
+    {
+    }
+    private PlanAccessTiers(int accessTierId, int sellingPlanId)
     {
         IdAccessTier = accessTierId;
         IdSellingPlan = sellingPlanId;

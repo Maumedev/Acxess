@@ -19,16 +19,16 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                 schema: "Catalog",
                 columns: table => new
                 {
-                    AccessTierId = table.Column<int>(type: "int", nullable: false)
+                    IdAccessTier = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TenantId = table.Column<int>(type: "int", nullable: false),
+                    IdTenant = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccessTiers", x => x.AccessTierId);
+                    table.PrimaryKey("PK_AccessTiers", x => x.IdAccessTier);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,17 +36,17 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                 schema: "Catalog",
                 columns: table => new
                 {
-                    AddOnId = table.Column<int>(type: "int", nullable: false)
+                    IdAddOn = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TenantId = table.Column<int>(type: "int", nullable: false),
+                    IdTenant = table.Column<int>(type: "int", nullable: false),
                     AddOnKey = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Price = table.Column<string>(type: "nvarchar(max)", precision: 10, scale: 2, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     ShowInCheckout = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AddOns", x => x.AddOnId);
+                    table.PrimaryKey("PK_AddOns", x => x.IdAddOn);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,14 +54,14 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                 schema: "Catalog",
                 columns: table => new
                 {
-                    PlanAccessTierId = table.Column<int>(type: "int", nullable: false)
+                    IdPlanAccessTier = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccessTierId = table.Column<int>(type: "int", nullable: false),
-                    SellingPlanId = table.Column<int>(type: "int", nullable: false)
+                    IdAccessTier = table.Column<int>(type: "int", nullable: false),
+                    IdSellingPlan = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlanAccessTiers", x => x.PlanAccessTierId);
+                    table.PrimaryKey("PK_PlanAccessTiers", x => x.IdPlanAccessTier);
                 });
 
             migrationBuilder.CreateTable(
@@ -69,9 +69,9 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                 schema: "Catalog",
                 columns: table => new
                 {
-                    SellingPlanId = table.Column<int>(type: "int", nullable: false)
+                    IdSellingPlan = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TenantId = table.Column<int>(type: "int", nullable: false),
+                    IdTenant = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TotalMembers = table.Column<int>(type: "int", nullable: false),
                     DurationInValue = table.Column<byte>(type: "tinyint", nullable: false),
@@ -83,26 +83,26 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SellingPlans", x => x.SellingPlanId);
+                    table.PrimaryKey("PK_SellingPlans", x => x.IdSellingPlan);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccessTiers_TenantId",
+                name: "IX_AccessTiers_IdTenant",
                 schema: "Catalog",
                 table: "AccessTiers",
-                column: "TenantId");
+                column: "IdTenant");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AddOns_TenantId",
+                name: "IX_AddOns_IdTenant",
                 schema: "Catalog",
                 table: "AddOns",
-                column: "TenantId");
+                column: "IdTenant");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AddOns_TenantId_AddOnKey",
+                name: "IX_AddOns_IdTenant_AddOnKey",
                 schema: "Catalog",
                 table: "AddOns",
-                columns: new[] { "TenantId", "AddOnKey" },
+                columns: new[] { "IdTenant", "AddOnKey" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -112,16 +112,16 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                 column: "CreatedByUser");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SellingPlans_SellingPlanId",
+                name: "IX_SellingPlans_IdSellingPlan",
                 schema: "Catalog",
                 table: "SellingPlans",
-                column: "SellingPlanId");
+                column: "IdSellingPlan");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SellingPlans_TenantId",
+                name: "IX_SellingPlans_IdTenant",
                 schema: "Catalog",
                 table: "SellingPlans",
-                column: "TenantId");
+                column: "IdTenant");
         }
 
         /// <inheritdoc />
