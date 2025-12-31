@@ -17,7 +17,7 @@ public static class AcxessInfrastrucureExtensions
         {
             cfg.RegisterServicesFromAssemblies(moduleAssemblies);
             cfg.RegisterServicesFromAssembly(typeof(AcxessInfrastrucureExtensions).Assembly);
-            cfg.AddBehavior(typeof(BehaviorsMediatR.TransactionalBehavior<,>));
+            cfg.AddOpenBehavior(typeof(BehaviorsMediatR.TransactionalBehavior<,>));
         });
 
         return services;

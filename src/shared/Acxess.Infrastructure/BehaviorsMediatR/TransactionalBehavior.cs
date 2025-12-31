@@ -6,18 +6,25 @@ using MediatR;
 namespace Acxess.Infrastructure.BehaviorsMediatR;
 
 public class TransactionalBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
-    where TResponse : Result
+    where TRequest : notnull
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        if (!typeof(Result).IsAssignableFrom(typeof(TResponse)))
+        {
+            return await next();
+        }
+
+        using var scope = new TransactionScope(
+            TransactionScopeOption.Required,
+            new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+            TransactionScopeAsyncFlowOption.Enabled);
 
         try
         {
             var response = await next();
-
-            if (response.IsSuccess)
+            var result = response as Result;
+            if (result is not null && result.IsSuccess)
             {
                 scope.Complete();
             }
@@ -26,15 +33,18 @@ public class TransactionalBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         }
         catch(IntegrationEventException ex)
         {
-            var failureMethod = typeof(TResponse)
-                .GetMethod("Failure", [typeof(Error)]) 
-                ?? typeof(Result).GetMethod("Failure", [typeof(Error)]);
+            var failureMethod = typeof(TResponse).GetMethod("Failure", [typeof(Error)]) 
+                                ?? typeof(Result).GetMethod("Failure", [typeof(Error)]);
 
-            return (TResponse)failureMethod!.Invoke(null, [ex.Error])!;
+            if (failureMethod is not null)
+            {
+                return (TResponse)failureMethod.Invoke(null, [ex.Error])!;
+            }
+
+            throw;
         }
         catch (Exception )
         {
-            
             throw;
         }
     }
