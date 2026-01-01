@@ -1,6 +1,7 @@
 using System;
 using Acxess.Identity.Domain.Entities;
 using Acxess.Shared.Abstractions;
+using Acxess.Shared.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,7 @@ public class IdentitySeeder(
     {
         await context.Database.MigrateAsync();
 
-        string[] roleNames = ["SuperAdmin","Admin", "Agent"];
+        string[] roleNames = [ApplicationRoles.SuperAdmin, ApplicationRoles.Admin, ApplicationRoles.User];
         foreach (var roleName in roleNames)
         {
             if (!await roleManager.RoleExistsAsync(roleName))
@@ -37,7 +38,7 @@ public class IdentitySeeder(
             };
             string pass = configuration["SystemUser:Password"] ?? throw new InvalidOperationException("System user password is not configured.");
             var result = await userManager.CreateAsync(user, pass);
-            if (result.Succeeded) await userManager.AddToRoleAsync(user, "SuperAdmin");
+            if (result.Succeeded) await userManager.AddToRoleAsync(user, ApplicationRoles.SuperAdmin);
         }
     }
 }

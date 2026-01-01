@@ -23,4 +23,9 @@ public class AddOn : IHasTenant
         Price = price;
         ShowInCheckout = showInCheckout;
     }
+
+    public static AddOn Create(int tenantId, string addOnKey, string name, decimal price,  bool showInCheckout = false)
+    {
+        return new AddOn(tenantId, addOnKey, name, price, showInCheckout);
+    }
 }
