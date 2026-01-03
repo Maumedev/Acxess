@@ -13,5 +13,12 @@
     <ProjectReference Include="..\..\shared\Acxess.Shared\Acxess.Shared.csproj" />
     <ProjectReference Include="..\..\shared\Acxess.Infrastructure\Acxess.Infrastructure.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Application/Features/SellingPlans/" />
+    <Folder Include="Application/Features/SellingPlans/Commands/" />
+    <Folder Include="Application/Features/SellingPlans/Commands/NewSellingPlan/" />
+    <Folder Include="Infrastructure/Persistence/Repositories/" />
+  </ItemGroup>
   
 </Project>

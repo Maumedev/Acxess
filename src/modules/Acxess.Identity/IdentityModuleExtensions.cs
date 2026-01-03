@@ -1,6 +1,8 @@
+using Acxess.Identity.Domain.Absractions;
 using Acxess.Identity.Domain.Entities;
 using Acxess.Identity.Infrastructure.Identity;
 using Acxess.Identity.Infrastructure.Persistence;
+using Acxess.Identity.Infrastructure.Persistence.Repositories;
 using Acxess.Shared.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,8 @@ public static class IdentityModuleExtensions
         services.AddApplicationIdentity();
 
         services.AddScoped<IDataSeeder, IdentitySeeder>();
+        services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
+        services.AddScoped<ITenantRepository, TenantRepository>();
 
         return services;
     }

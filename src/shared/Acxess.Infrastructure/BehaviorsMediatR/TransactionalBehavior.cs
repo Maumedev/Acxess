@@ -4,7 +4,9 @@ using Acxess.Shared.ResultManager;
 using MediatR;
 
 namespace Acxess.Infrastructure.BehaviorsMediatR;
-
+/// <summary>
+/// A transactional behavior for MediatR requests that ensures operations are executed within a transaction scope.
+/// </summary>
 public class TransactionalBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
