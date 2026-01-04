@@ -1,0 +1,80 @@
+﻿@page
+@model Acxess.Web.Pages.Identity.LoginModel
+@{
+    ViewData["Title"] = "Acceso Seguro";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-100 dark:bg-[#0b0f19]">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Acxess Portal</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/alpine.min.js" defer></script>
+    <script>
+        // Init theme immediately to avoid flash
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        }
+    </script>
+</head>
+<body class="h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8" x-data="layout()">
+    
+    <div class="sm:mx-auto sm:w-full sm:max-w-[400px]">
+        <div class="text-center mb-8">
+             <div class="h-10 w-10 bg-primary rounded mx-auto mb-4 flex items-center justify-center text-white font-bold text-xl">A</div>
+             <h2 class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                Acxess Portal
+             </h2>
+             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                Gestión y Administración Centralizada
+             </p>
+        </div>
+
+        <div class="bg-white dark:bg-[#151b28] py-8 px-8 shadow-lg shadow-slate-200/50 dark:shadow-none sm:rounded-md border border-slate-200 dark:border-slate-800">
+            <form class="space-y-5" method="POST">
+                
+                <div>
+                    <label for="email" class="block text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">Usuario / Correo</label>
+                    <div class="mt-1.5">
+                        <input id="email" name="email" type="email" autocomplete="email" required 
+                               class="input-field" placeholder="nombre@empresa.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">Contraseña</label>
+                    <div class="mt-1.5">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required 
+                               class="input-field">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary bg-slate-100 dark:bg-slate-800 dark:border-slate-600">
+                        <label for="remember-me" class="ml-2 block text-xs text-slate-600 dark:text-slate-400">Mantener sesión</label>
+                    </div>
+
+                    <div class="text-xs">
+                        <a href="#" class="font-medium text-primary hover:text-primary-hover hover:underline">Recuperar acceso</a>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="btn-primary">
+                        Ingresar al Portal
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <p class="mt-8 text-center text-xs text-slate-400">
+            &copy; @DateTime.Now.Year Acxess Inc. Todos los derechos reservados.
+        </p>
+    </div>
+    
+    <script src="~/js/site.js"></script>
+</body>
+</html>
