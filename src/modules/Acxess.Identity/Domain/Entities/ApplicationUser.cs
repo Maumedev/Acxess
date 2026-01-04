@@ -11,4 +11,16 @@ public class ApplicationUser : IdentityUser
     public int? IdTenant { get; set; }
     public string FullName { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+
+    public static ApplicationUser Create(string userName, string email, string fullName, int? idTenant = null)
+    {
+        return new ApplicationUser
+        {
+            UserName = userName,
+            Email = email,
+            FullName = fullName,
+            IsActive = true,
+            IdTenant = idTenant
+        };
+    }
 }

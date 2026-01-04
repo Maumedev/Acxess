@@ -4,6 +4,8 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
+
+    <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
@@ -14,6 +16,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Acxess.Shared\Acxess.Shared.csproj" />
+    <ProjectReference Include="..\..\shared\Acxess.Infrastructure\Acxess.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure/Persistence/Repositories/" />
   </ItemGroup>
 
 </Project>

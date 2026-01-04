@@ -6,6 +6,12 @@ namespace Acxess.Catalog.Domain.Entities;
 
 public class SellingPlan : IHasTenant
 {
+
+    public static SellingPlan Create(int tenantId, string name, int totalMembers, int durationInValue, DurationUnit durationUnit, decimal price, int createdByUser)
+    {
+        return new SellingPlan(tenantId, name, totalMembers, durationInValue, durationUnit, price, createdByUser);
+    }
+
     private SellingPlan(int tenantId, string name, int totalMembers, int durationInValue, DurationUnit durationUnit, decimal price, int createdByUser)
     {
         IdTenant = tenantId;

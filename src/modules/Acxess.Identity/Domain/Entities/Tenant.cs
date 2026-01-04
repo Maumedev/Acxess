@@ -1,4 +1,5 @@
-using System;
+using Acxess.Identity.Domain.Errors;
+using Acxess.Shared.ResultManager;
 
 namespace Acxess.Identity.Domain.Entities;
 
@@ -21,12 +22,12 @@ public class Tenant
     public void SetLogo(string logo)
         => Logo = logo;
 
-    public void Desactive()
+    public Result Desactive()
     {
         if (!IsActive)
-            // return Result.Failure("El tenant ya a sido desactivado.");
-            throw new InvalidOperationException("El tenant ya a sido desactivado.");
+            return Result.Failure(TenantErros.AlreadyDesactivated);
 
         IsActive = false;
+        return Result.Success();
     }
 }
