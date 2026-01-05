@@ -1,15 +1,21 @@
 services:
-  # SERVICIO 1: Base de Datos
+  # ==============================
+  # Base de Datos
+  # ==============================
   acxess-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sql_acxess_container
+    restart: unless-stopped
+    mem_limit: 1024m
+    cpus: 1.0
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=${DB_PASSWORD} 
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Express  
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD} -C -Q 'SELECT 1' || exit 1"]
-      interval: 10s
-      retries: 5
+      interval: 5s
+      retries: 10
       start_period: 10s
       timeout: 3s
     ports:
@@ -18,28 +24,52 @@ services:
       - sql_data:/var/opt/mssql 
     networks:
       - acxess-network
+  # ==============================
+  #  Migrator de Base de Datos
+  # ==============================
+  acxess-migrator:
+    build:
+      context: .
+      dockerfile: Acxess.Web/DOCKERFILE
+    container_name: acxess_migrator
+    command: ["dotnet", "Acxess.Web.dll", "--migrate-only"]
+    depends_on:
+      acxess-db:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__Default=Server=acxess-db;Database=AcxessDB;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;
+      - SystemUser__Password=${SYSTEM_USER_PASSWORD}
+    networks:
+      - acxess-network
+    profiles: ["tools", "app"]
 
-  # SERVICIO 2: App Web
+  # ==============================
+  #  App Web
+  # ==============================
   acxess-web:
     build:
       context: . 
       dockerfile: Acxess.Web/DOCKERFILE
     container_name: acxess_web
+    mem_limit: 512m
+    restart: always
     depends_on:
-       acxess-db:
+      acxess-db:
         condition: service_healthy
+      acxess-migrator:
+        condition: service_completed_successfully
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT} 
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__Default=Server=acxess-db;Database=AcxessDB;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;
       - SystemUser__Password=${SYSTEM_USER_PASSWORD}
-      - RUN_MIGRATIONS=true
+      - RUN_MIGRATIONS=false
     ports:
       - "5000:8080" 
     networks:
       - acxess-network
-    restart: on-failure 
-    
+    profiles: ["app"]
+
 volumes:
   sql_data:
 

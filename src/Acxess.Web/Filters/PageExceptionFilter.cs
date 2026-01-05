@@ -11,8 +11,8 @@ public class PageExceptionFilter(ILogger<PageExceptionFilter> logger, IHostEnvir
 
         if (context.HttpContext.Request.Method == "POST")
         {
-            var message = env.IsDevelopment() 
-                ? $"DEBUG ERROR: {context.Exception.Message}" 
+            var message = (env.IsDevelopment() || env.IsEnvironment("Localhost"))
+                ? $"{context.Exception.Message}" 
                 : "Ocurrió un error inesperado. Por favor intente más tarde.";
 
             context.ModelState.AddModelError(string.Empty, message);

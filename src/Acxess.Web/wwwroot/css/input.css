@@ -3,19 +3,16 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Azure/Microsoft Blue style */
   --color-primary: #0078d4; 
   --color-primary-hover: #106ebe;
   
-  /* Un gris pizarra más corporativo para fondos */
   --color-slate-850: #1e293b; 
 }
 
 @layer base {
   html {
-    /* Inter o Segoe UI son estándares en Enterprise */
     font-family: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-    font-size: 14px; /* Un poco más pequeño para mayor densidad de información */
+    font-size: 15px; 
   }
 
   body {
@@ -23,12 +20,11 @@
   }
 
   :root.dark body {
-    @apply bg-[#0b0f19] text-slate-200; /* Fondo casi negro, no gris medio */
+    @apply bg-[#0b0f19] text-slate-200; 
   }
 }
 
 @layer components {
-  /* Inputs más definidos, menos redondeados */
   .input-field {
     @apply w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition-colors
            placeholder:text-slate-400
@@ -37,19 +33,17 @@
            dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:ring-offset-0;
   }
 
-  /* Botones con bordes sutiles y serios */
   .btn-primary {
     @apply flex w-full justify-center rounded bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm 
            hover:bg-primary-hover 
            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
-           transition-all active:scale-[0.98];
+           transition-all active:scale-[0.98] cursor-pointer;
   }
   
   .card {
     @apply bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-800 rounded;
   }
   
-  /* Utilidad para el Sidebar Active Item (Estilo Azure) */
   .nav-item-active {
     @apply bg-slate-800 text-white border-l-4 border-primary;
   }

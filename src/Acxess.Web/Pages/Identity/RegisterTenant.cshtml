@@ -1,0 +1,172 @@
+﻿@page
+@model Acxess.Web.Pages.Identity.RegisterTenantModel
+@{
+    ViewData["Title"] = "Registro de Inquilino";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-100 dark:bg-[#0b0f19]">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Acxess Portal</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/alpine.min.js" defer></script>
+    <script>
+        // Init theme immediately to avoid flash
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        }
+    </script>
+</head>
+<body class="h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8" x-data="layout()">
+    
+    <div class="sm:mx-auto sm:w-full sm:max-w-[600px]">
+        <div class="text-center mb-8">
+             <p class="mt-2 text-lg text-slate-500 dark:text-slate-400">
+                Registro de Nuevo Negocio
+             </p>
+        </div>
+
+        <div class="bg-white dark:bg-[#151b28] py-8 px-8 shadow-lg shadow-slate-200/50 dark:shadow-none sm:rounded-md border border-slate-200 dark:border-slate-800">
+            <form 
+                class="space-y-5" 
+                method="POST"
+                x-data="{ state: 'idle' }" 
+                x-on:submit="
+                    if ($el.checkValidity()) { 
+                        state = 'loading'; 
+                    } else { 
+                        $event.preventDefault(); 
+                        $el.reportValidity(); 
+                    }">
+
+                <div asp-validation-summary="ModelOnly" class="rounded-sm p-1 text-sm text-red-600 text-center "></div>
+
+                <div class="flex flex-col-2 gap-4 w-full">
+                    <div class="w-full">
+                        <label 
+                            for="nameTenant" 
+                            class="block text-md font-medium leading-6 text-slate-700 dark:text-slate-300">
+                            Nombre Negocio 
+                        </label>
+                        <div class="mt-1.5">
+                            <input 
+                                asp-for="Input.NameTenant"
+                                id="nameTenant" 
+                                name="nameTenant" 
+                                type="text" 
+                                required 
+                                class="input-field" 
+                                placeholder="ej. Mi Empresa">
+                            <span asp-validation-for="Input.NameTenant" class="text-xs text-red-500 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <div class="w-full">
+                        <label 
+                            for="username" 
+                            class="block text-md font-medium leading-6 text-slate-700 dark:text-slate-300">
+                            Usuario 
+                        </label>
+                        <div class="mt-1.5">
+                            <input
+                                asp-for="Input.Username" 
+                                id="username" 
+                                name="username" 
+                                type="text" 
+                                required 
+                                class="input-field" 
+                                placeholder="ej. usuario1">
+                            <span asp-validation-for="Input.Username" class="text-xs text-red-500 mt-1 block"></span>
+                        </div>
+                    </div>
+                    
+                </div>
+
+
+                <div class="flex flex-col-2 gap-4 w-full">
+                    <div class="w-full">
+                        <label 
+                            for="nombreAdmin" 
+                            class="block text-md font-medium leading-6 text-slate-700 dark:text-slate-300">
+                            Nombre Completo 
+                        </label>
+                        <div class="mt-1.5">
+                            <input 
+                                asp-for="Input.NombreAdmin"
+                                id="nombreAdmin" 
+                                name="nombreAdmin" 
+                                type="text" 
+                                required 
+                                class="input-field" 
+                                placeholder="Nombre del administrador">
+                            <span asp-validation-for="Input.NombreAdmin" class="text-xs text-red-500 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <div class="w-full">
+                        <label 
+                            for="email" 
+                            class="block text-md font-medium leading-6 text-slate-700 dark:text-slate-300">
+                            Correo Electrónico
+                        </label>
+                        <div class="mt-1.5">
+                            <input 
+                                asp-for="Input.Email"
+                                id="email" 
+                                name="email" 
+                                type="email"
+                                required 
+                                class="input-field" 
+                                placeholder="ej. usuario@dominio.com">
+                            <span asp-validation-for="Input.Email" class="text-xs text-red-500 mt-1 block"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label 
+                        for="password" 
+                        class="block text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">
+                        Contraseña 
+                    </label>
+                    <div class="mt-1.5">
+                        <input 
+                            asp-for="Input.Password"
+                            id="password" 
+                            name="password" 
+                            type="password"  
+                            placeholder="*****" 
+                            required 
+                            class="input-field">
+                        <span asp-validation-for="Input.Password" class="text-xs text-red-500 mt-1 block"></span>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button 
+                        type="submit" 
+                        class="btn-primary flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed"
+                        :disabled="state === 'loading'">
+                         
+                        <span x-show="state !== 'loading'" >Registrarse</span> 
+                        <div x-show="state === 'loading'" style="display: none;" >
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <p class="mt-8 text-center text-xs text-slate-400">
+            &copy; @DateTime.Now.Year Acxess
+        </p>
+    </div>
+    
+    <script src="~/js/site.js"></script>
+</body>
+</html>
