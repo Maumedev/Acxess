@@ -1,0 +1,50 @@
+﻿@model Acxess.Web.Pages.Catalog.AccessTiers.EditModel
+@{ Layout = null; }
+
+<div id="slide-over-container" class="h-full flex flex-col bg-white dark:bg-[#151b28] shadow-xl">
+    <div class="flex items-center justify-between px-4 py-6 border-b border-slate-200 dark:border-slate-800">
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Editar Nivel de Acceso</h2>
+                 @* hx-get="@Url.Page("Edit")" 
+            *@
+        <button 
+     hx-target="#slide-over-container" 
+            hx-swap="outerHTML"
+            @@click="open = false" 
+            class="text-slate-400 hover:text-slate-500 cursor-pointer">
+            <span class="sr-only">Cerrar</span>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <form method="post" 
+          hx-post="@Url.Page("Edit", new { id = Model.Id })"
+          hx-target="#slide-over-container"
+          hx-swap="outerHTML"
+          class="flex-1 flex flex-col overflow-y-auto"
+          x-data="{ state: 'idle' }" 
+          x-on:submit="state = 'loading'">
+        
+        <partial name="_Form" model="Model.Input" />
+
+        <div class="border-t border-slate-200 dark:border-slate-800 px-4 py-4 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/50">
+                    @* hx-post="@Url.Page("Edit", new { id = Model.Id })" *@
+            <button type="button" 
+                    hx-target="#slide-over-container" 
+                    hx-swap="outerHTML"
+                    @@click="open = false" 
+                    class="btn-white cursor-pointer">
+                Cancelar
+            </button>
+            
+            <button type="submit" class="btn-primary" :disabled="state === 'loading'">
+                <span x-show="state !== 'loading'">Guardar</span> 
+                <svg x-show="state === 'loading'" style="display: none;"  class="htmx-indicator animate-spin ml-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+            </button>
+        </div>
+    </form>
+</div>

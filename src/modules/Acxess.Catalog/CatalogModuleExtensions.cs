@@ -26,6 +26,7 @@ public static class CatalogModuleExtensions
 
         services.AddScoped<IAddOnRepository, AddOnRepository>();
         services.AddScoped<ISellingPlanRepository, SellingPlanRepository>();
+        services.AddScoped<IAccessTierRepository, AccessTierRepository>();
 
         return services;
     }

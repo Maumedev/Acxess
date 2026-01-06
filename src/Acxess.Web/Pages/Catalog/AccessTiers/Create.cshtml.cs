@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using Acxess.Catalog.Application.Features.AccessTiers.Commands.AddAccessTier;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,9 +11,9 @@ public class CreateSellingPlanInput
 {
     [Required(ErrorMessage = "El nombre es obligatorio. ")]
     public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
 }
-public class CreateModel : PageModel
+public class CreateModel(IMediator mediator) : PageModel
 {
 
     [BindProperty]
@@ -29,35 +31,29 @@ public class CreateModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        await Task.Delay(5000);
-        // if (!ModelState.IsValid) 
-        // {
-        //     return Partial("_Create", this);
-        // }
-        // bool huboErrorAlGuardar = true;
+        if (!ModelState.IsValid) 
+        {
+            return Partial("_Create", this);
+        }
 
-        // if (huboErrorAlGuardar)
-        // {
-        //     ModelState.AddModelError(string.Empty, "Error: No se ha implementado la persistencia aún.");
-        //     return Partial("_Create", this);
-        // }
+        var addCommand = new AddAccessTierCommand(Input.Name, Input.Description);   
+        var result = await mediator.Send(addCommand);
 
-        // Aquí iría la lógica para guardar el nuevo nivel de acceso en la base de datos
-        // var triggers = new { 
-        //     closeSlide = true,      
-        //     refreshTable = true 
-        // };
+        if (result.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, result.Error.Description);
+            return Partial("_Create", this);
+        }
 
         var triggers = new { 
             closeSlide = true,      
-            refreshTable = true,
+            refreshTable = true ,
             notify = new { 
-                type = "error", 
-                message = "Nivel de acceso actualizado correctamente." 
+                type = "success", 
+                message = result.Value 
             }
         };
-
-
+        
         Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(triggers));
         return new NoContentResult();
     }

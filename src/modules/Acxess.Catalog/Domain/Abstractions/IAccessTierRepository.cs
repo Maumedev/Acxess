@@ -4,5 +4,7 @@ namespace Acxess.Catalog.Domain.Abstractions;
 
 public interface IAccessTierRepository
 {
-    List<AccessTier> GetAccessTiers();
+    void Add(AccessTier accessTier);
+    void Update(AccessTier accessTier);
+    Task<AccessTier?> GetById(int id, CancellationToken cancellationToken);
 }

@@ -16,8 +16,13 @@
 
   <ItemGroup>
     <Folder Include="Application/Features/AccessTiers/" />
+    <Folder Include="Application/Features/AccessTiers/Commands/" />
+    <Folder Include="Application/Features/AccessTiers/Commands/AddAccessTier/" />
+    <Folder Include="Application/Features/AccessTiers/Commands/DeactivateAccessTier/" />
+    <Folder Include="Application/Features/AccessTiers/Commands/UpdateAccessTier/" />
     <Folder Include="Application/Features/AccessTiers/Queries/" />
     <Folder Include="Application/Features/AccessTiers/Queries/GetAccessTiers/" />
+    <Folder Include="Application/Features/AccessTiers/Queries/GetAccesTierById/" />
     <Folder Include="Application/Features/SellingPlans/" />
     <Folder Include="Application/Features/SellingPlans/Commands/" />
     <Folder Include="Application/Features/SellingPlans/Commands/NewSellingPlan/" />

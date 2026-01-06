@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Acxess.Catalog.Application.Features.AccessTiers.Commands.DeactivateAccessTier;
 using Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccessTiers;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -27,11 +29,42 @@ public class IndexModel(IMediator sender) : PageModel
 
         var result = await sender.Send(query);
 
-        if (result.IsSuccess && Request.Headers.ContainsKey("HX-Request"))
+        if (result.IsSuccess)
         {
+            Data = result.Value;
+        }
+
+        if (result.IsSuccess && Request.Headers.ContainsKey("HX-Request"))
+        {   
             return Partial("_Table", this);
         }
     
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostDeactivateAsync(int  id)
+    {
+        var command = new DeactivateAccessTierCommand(id);
+        var result = await sender.Send(command);
+
+        if (result.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, result.Error.Description);
+            return BadRequest(ModelState);
+        }
+
+        var triggers = new
+        {
+            refreshTable = true, 
+            notify = new
+            {
+                type = "success",
+                message = result.Value
+            }
+        };
+
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(triggers));
+        
+        return new NoContentResult();
     }
 }
