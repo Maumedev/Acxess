@@ -1,0 +1,102 @@
+﻿@model Acxess.Web.Pages.Catalog.AccessTiers.IndexModel
+
+<div class="overflow-x-auto">
+    <table class="min-w-full text-left text-sm whitespace-nowrap">
+        <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-xs uppercase font-semibold text-slate-500">
+            <tr>
+                <th scope="col" class="px-4 py-3 cursor-pointer hover:text-primary"
+                    hx-get
+                    hx-route-Sort="@(Model.Sort == "name" ? "name_desc" : "name")"
+                    hx-route-Search="@Model.Search"
+                    hx-target="#table-container">
+                    Nombre
+                    @if(Model.Sort.Contains("name")) { <span class="ml-1 text-primary">⇅</span> }
+                </th>
+                <th scope="col" class="px-4 py-3">Descripción</th>
+                @* <th scope="col" class="px-4 py-3 text-right">Precio</th> *@
+                <th scope="col" class="px-4 py-3 text-center">Estado</th>
+                <th scope="col" class="px-4 py-3 text-right">Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+            @if (!Model.Data.Items.Any())
+            {
+                <tr>
+                    <td colspan="4" class="px-4 py-8 text-center text-slate-500">
+                        No se encontraron registros.
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model.Data.Items)
+            {
+                <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                    <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">@item.Name</td>
+                    <td class="px-4 py-3 text-slate-500">@item.Description</td>
+                    <td class="px-4 py-3 text-center">
+                        @if(item.IsActive) {
+                            <span class="inline-flex items-center rounded-sm bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>
+                        } else {
+                            <span class="inline-flex items-center rounded-sm bg-slate-50 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/20">Inactivo</span>
+                        }
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            
+                            @* 1. EDITAR (Abre Slide-Over) *@
+                            @* En Angular esto sería un routerLink o un (click)="openModal()". 
+                               Aquí despachamos el evento para que Alpine cargue el HTML del formulario *@
+                            <button type="button" 
+                                    class="text-slate-400 hover:text-indigo-600 transition-colors"
+                                    title="Editar"
+                                    @@click="$dispatch('open-slide', { url: '/Catalog/AccessTiers/Edit?id=@item.Id' })">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+
+                            @* 2. BAJA LÓGICA (HTMX) *@
+                            @* hx-page-url="index" ayuda a que la URL del navegador no cambie a la del handler *@
+                            <button type="button"
+                                    class="text-slate-400 hover:text-red-600 transition-colors"
+                                    title="@(item.IsActive ? "Desactivar" : "Activar")"
+                                    hx-post
+                                    hx-page-handler="Deactivate"
+                                    hx-route-id="@item.Id"
+                                    hx-confirm="¿Estás seguro de cambiar el estado de este registro?"
+                                    hx-target="#table-container">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.Data.TotalPages > 1)
+{
+    <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#1b1b1c] px-4 py-3">
+        <div class="text-xs text-slate-500">
+            Página <span class="font-medium text-slate-900 dark:text-white">@Model.Data.PageIndex</span> de @Model.Data.TotalPages
+        </div>
+        <div class="flex gap-2">
+            <button class="btn-white px-2 py-1 text-xs border border-slate-300 rounded disabled:opacity-50"
+                    disabled="@(!Model.Data.HasPreviousPage)"
+                    hx-get
+                    hx-route-PageIndex="@(Model.Data.PageIndex - 1)"
+                    hx-route-Search="@Model.Search"
+                    hx-route-Sort="@Model.Sort"
+                    hx-target="#table-container">
+                Anterior
+            </button>
+            <button class="btn-white px-2 py-1 text-xs border border-slate-300 rounded disabled:opacity-50"
+                    disabled="@(!Model.Data.HasNextPage)"
+                    hx-get
+                    hx-route-PageIndex="@(Model.Data.PageIndex + 1)"
+                    hx-route-Search="@Model.Search"
+                    hx-route-Sort="@Model.Sort"
+                    hx-target="#table-container">
+                Siguiente
+            </button>
+        </div>
+    </div>
+}

@@ -1,0 +1,17 @@
+﻿@model Acxess.Web.Pages.Catalog.AccessTiers.CreateSellingPlanInput
+
+<div class="p-6 space-y-6 flex-1">
+    <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4"></div>
+
+    <div>
+        <label asp-for="Name" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nombre</label>
+        <input asp-for="Name" class="input-field mt-1 w-full" placeholder="Ej. Premium, Básico..." />
+        <span asp-validation-for="Name" class="text-xs text-red-500 mt-1 block"></span>
+    </div>
+
+    <div>
+        <label asp-for="Description" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Descripción</label>
+        <textarea asp-for="Description" rows="3" class="input-field mt-1 w-full"></textarea>
+        <span asp-validation-for="Description" class="text-xs text-red-500 mt-1 block"></span>
+    </div>
+</div>
