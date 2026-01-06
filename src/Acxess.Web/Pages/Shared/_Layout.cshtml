@@ -45,9 +45,11 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script src="~/lib/alpine.min.js" defer asp-append-version="true"></script> 
     <script src="~/lib/htmx.min.js" asp-append-version="true"></script>
+
     <meta name="htmx-config" content='{"includeAspNetAntiforgeryToken": true}' />
 </head>
-<body class="h-full bg-slate-100 dark:bg-[#0b0f19]" x-data="layout()">
+<body class="h-full bg-slate-100 dark:bg-[#0b0f19]" 
+    x-data="layout()">
     
     @Html.AntiForgeryToken()
 
@@ -177,9 +179,9 @@
         </main>
     </div>
 
+    <partial name="_Toast" />
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
 
 
 

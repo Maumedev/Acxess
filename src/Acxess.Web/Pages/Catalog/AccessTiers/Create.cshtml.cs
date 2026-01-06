@@ -30,24 +30,34 @@ public class CreateModel : PageModel
     public async Task<IActionResult> OnPost()
     {
         await Task.Delay(5000);
-        if (!ModelState.IsValid) 
-        {
-            return Partial("_Create", this);
-        }
-        bool huboErrorAlGuardar = true;
+        // if (!ModelState.IsValid) 
+        // {
+        //     return Partial("_Create", this);
+        // }
+        // bool huboErrorAlGuardar = true;
 
-        if (huboErrorAlGuardar)
-        {
-            ModelState.AddModelError(string.Empty, "Error: No se ha implementado la persistencia aún.");
-            return Partial("_Create", this);
-        }
+        // if (huboErrorAlGuardar)
+        // {
+        //     ModelState.AddModelError(string.Empty, "Error: No se ha implementado la persistencia aún.");
+        //     return Partial("_Create", this);
+        // }
 
         // Aquí iría la lógica para guardar el nuevo nivel de acceso en la base de datos
+        // var triggers = new { 
+        //     closeSlide = true,      
+        //     refreshTable = true 
+        // };
+
         var triggers = new { 
             closeSlide = true,      
-            refreshTable = true 
+            refreshTable = true,
+            notify = new { 
+                type = "error", 
+                message = "Nivel de acceso actualizado correctamente." 
+            }
         };
-        
+
+
         Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(triggers));
         return new NoContentResult();
     }
