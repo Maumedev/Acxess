@@ -24,7 +24,7 @@ public class IndexModel(IMediator sender) : PageModel
             Search,
             Sort,
             PageIndex,
-            10
+            5
         );
 
         var result = await sender.Send(query);

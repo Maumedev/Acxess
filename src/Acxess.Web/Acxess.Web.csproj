@@ -2,8 +2,6 @@
 
   <ItemGroup>
     <Folder Include="Pages/Catalog/" />
-    <Folder Include="Pages/Catalog/AccessTiers/" />
-    <Folder Include="Pages/Catalog/AddOns/" />
     <Folder Include="Pages/Catalog/SellingPlans/" />
     <Folder Include="wwwroot/lib/" />
   </ItemGroup>

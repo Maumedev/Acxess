@@ -1,7 +1,7 @@
 ﻿@page
-@model Acxess.Web.Pages.Catalog.AccessTiers.IndexModel
+@model Acxess.Web.Pages.Catalog.AddOns.IndexModel
 @{
-    ViewData["Title"] = "Gestión de Niveles de Acceso";
+    ViewData["Title"] = "Gestión de Complementos";
 }
 
 <div class="flex items-center justify-between mb-6 gap-8">
@@ -19,19 +19,7 @@
     </div>
     
     <button class="btn-primary  max-w-xs" 
-            @@click="$dispatch('open-slide', { url: '/Catalog/AccessTiers/Create' })">
-        Nuevo Nivel de Acceso
+            @@click="$dispatch('open-slide', { url: '/Catalog/AddOns/Create' })">
+        Nuevo Complemento
     </button>
-</div>
-
-<div 
-    id="table-container" 
-    class="bg-white dark:bg-[#151b28] border border-slate-200 dark:border-slate-800 rounded shadow-sm overflow-hidden"
-    hx-get="@Url.Page("Index", new { 
-                        Sort = (Model.Sort), 
-                        Search = Model.Search,
-                        PageIndex = Model.Data.PageIndex
-                    }) "
-    hx-trigger="refreshTable from:body">
-    <partial name="_Table" model="Model" />
 </div>

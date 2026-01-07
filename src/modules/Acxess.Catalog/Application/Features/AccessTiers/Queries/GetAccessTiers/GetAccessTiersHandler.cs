@@ -21,6 +21,7 @@ public class GetAccessTiersHandler(
         query = request.SortOrder switch
         {
             "name_desc" => query.OrderByDescending(x => x.Name),
+            "name" => query.OrderBy(x => x.Name),
             _ => query.OrderBy(x => x.Name)
         };
 
