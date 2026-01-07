@@ -8,7 +8,7 @@ public class Tenant
     public int IdTenant { get; private set; }
     public string Name { get; private set; }
     public string? Logo { get; private set; }
-    public bool IsActive { get; private set; }
+    public bool IsActive { get; private set; } = true;
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     private Tenant(string name)

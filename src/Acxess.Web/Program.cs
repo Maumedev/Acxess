@@ -15,7 +15,12 @@ builder.Services
 
 builder.Services.AddScoped<PageExceptionFilter>();
 
-builder.Services.AddRazorPages()
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/");
+    options.Conventions.AllowAnonymousToPage("/Identity/Login");
+    options.Conventions.AllowAnonymousToPage("/Identity/RegisterTenant");
+})
     .AddMvcOptions(options =>
     {
         options.Filters.Add<PageExceptionFilter>();
@@ -41,9 +46,12 @@ builder.Services.AddMarketingModule(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
+if (args.Contains("--migrate-only"))
 {
+    Console.WriteLine("--> Iniciando modo MIGRACIÓN...");
     await app.ApplyMigrationsAndSeedsAsync();
+    Console.WriteLine("--> Migración finalizada. Cerrando proceso.");
+    return; 
 }
 
 if (!app.Environment.IsDevelopment())

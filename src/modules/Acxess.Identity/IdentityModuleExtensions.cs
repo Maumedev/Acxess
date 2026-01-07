@@ -4,6 +4,7 @@ using Acxess.Identity.Infrastructure.Identity;
 using Acxess.Identity.Infrastructure.Persistence;
 using Acxess.Identity.Infrastructure.Persistence.Repositories;
 using Acxess.Shared.Abstractions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -47,6 +48,20 @@ public static class IdentityModuleExtensions
         .AddEntityFrameworkStores<IdentityModuleContext>()
         .AddDefaultTokenProviders()
         .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        }).AddCookie(options =>
+        {
+            options.LoginPath = "/Identity/Login"; 
+            options.LogoutPath = "/Identity/Logout";
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+            options.SlidingExpiration = true;
+            options.AccessDeniedPath = "/Identity/AccessDenied";
+        });
+
 
         return services;
     }

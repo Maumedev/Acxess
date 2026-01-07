@@ -1,0 +1,54 @@
+﻿<div x-data="{ 
+        open: false, 
+        contentUrl: null 
+    }"
+    @@open-slide.window="open = true; contentUrl = $event.detail.url; $nextTick(() => htmx.process($el))"
+    @@close-slide.window="open = false; contentUrl = null"
+    class="relative z-50"
+    aria-labelledby="slide-over-title" 
+    role="dialog" 
+    aria-modal="true"
+    style="display: none;"
+    x-show="open">
+
+    <div x-show="open"
+        x-transition:enter="ease-in-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in-out duration-300"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity pointer-events-none">
+    </div>
+
+    <div class="fixed inset-0 overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                
+                    @* @@click.away="open = false" *@
+                <div x-show="open"
+                    x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
+                    x-transition:enter-start="translate-x-full"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="translate-x-full"
+                    class="pointer-events-auto w-screen max-w-md">
+                    
+                    <div 
+                        class="flex h-full flex-col bg-white shadow-xl"
+                        x-effect="if(contentUrl) htmx.ajax('GET', contentUrl, {target: $el, swap:'innerHTML'})">
+                        
+                        <div class="flex h-full items-center justify-center">
+                            <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
