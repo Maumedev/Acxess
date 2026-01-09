@@ -19,4 +19,5 @@ public class CurrentTenantService(IHttpContextAccessor httpContextAccessor) : IC
     }
 
     public bool IsAvailable => Id.HasValue;
+
 }

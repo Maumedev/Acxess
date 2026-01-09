@@ -3,6 +3,7 @@
   <ItemGroup>
     <Folder Include="Pages/Catalog/" />
     <Folder Include="Pages/Catalog/SellingPlans/" />
+    <Folder Include="Pages/Membership/" />
     <Folder Include="wwwroot/lib/" />
   </ItemGroup>
   <Target Name="Tailwind" BeforeTargets="Build">

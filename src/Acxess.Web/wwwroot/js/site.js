@@ -12,11 +12,6 @@ document.addEventListener('alpine:init', () => {
             if (this.darkMode) document.documentElement.classList.add('dark');
             else document.documentElement.classList.remove('dark');
         },
-
-        toggleSidebar() {
-            this.sidebarOpen = !this.sidebarOpen;
-        },
-
         toggleTheme() {
             this.darkMode = !this.darkMode;
             localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
@@ -24,22 +19,9 @@ document.addEventListener('alpine:init', () => {
             else document.documentElement.classList.remove('dark');
         }
     }));
-    // "success", "error", "info"
-    Alpine.store('notifications', {
-        items: [],
-        add(type, message) {
-            const id = Date.now();
-            this.items.push({ id, type, message });
-            setTimeout(() => {
-                this.remove(id);
-            }, 4000);
-        },
-        remove(id) {
-            this.items = this.items.filter(item => item.id !== id);
-        }
-    });
+
 });
 
-document.body.addEventListener('notify', (event) => {
-    Alpine.store('notifications').add(event.detail.type, event.detail.message);
-});
+// document.body.addEventListener('notify', (event) => {
+//     Alpine.store('notifications').add(event.detail.type, event.detail.message);
+// });

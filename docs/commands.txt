@@ -22,3 +22,7 @@ dotnet ef migrations add InitMarketing -p ./modules/Acxess.Marketing/ -s Acxess.
 ASPNETCORE_ENVIRONMENT=Localhost dotnet watch run --project ./Acxess.Web/
 
 npx @tailwindcss/cli -i ./wwwroot/css/input.css -o ./wwwroot/css/site.css --watch
+
+sudo usermod -aG docker $USER
+newgrp docker
+

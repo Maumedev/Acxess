@@ -12,6 +12,7 @@
     <title>Login - Acxess Portal</title>
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="~/lib/alpine.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script>
         // Init theme immediately to avoid flash
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -19,97 +20,122 @@
         }
     </script>
 </head>
-<body class="h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8" 
-    x-data="layout()" >
-    
-    <div class="sm:mx-auto sm:w-full sm:max-w-[400px]">
-        <div class="text-center mb-8">
-             <p class="mt-2 text-md text-slate-500 dark:text-slate-400">
-                Acceso de Seguridad
-             </p>
-        </div>
+<body class="h-full bg-white dark:bg-[#0b0f19] transition-colors duration-300" x-data="layout()">
 
-        <div class="bg-white dark:bg-[#151b28] py-8 px-8 shadow-lg shadow-slate-200/50 dark:shadow-none sm:rounded-md border border-slate-200 dark:border-slate-800">
-            <form 
-                class="space-y-5" 
-                method="POST"
-                id="login-form"
-                x-data="{ state: 'idle' }" 
-                x-on:submit="
-                    if ($el.checkValidity()) { 
-                        state = 'loading'; 
-                    } else { 
-                        $event.preventDefault(); 
-                        $el.reportValidity(); 
-                    }
-                "
-                novalidate>
+    <div class="flex min-h-full">
 
+        <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24 bg-white dark:bg-[#0b0f19] z-10">
+            <div class="mx-auto w-full max-w-sm lg:w-96">
                 
                 <div>
-                    <label 
-                        asp-for="Input.Username" 
-                        class="block text-md font-medium leading-6 text-slate-700 dark:text-slate-300">
-                        Usuario
-                    </label>
-                    <div class="mt-1.5">
-                        <input 
-                            asp-for="Input.Username" 
-                            id="username" 
-                            name="username" 
-                            type="text" 
-                            required 
-                            class="input-field" 
-                            placeholder="ej. jdoe12">
-                        <span asp-validation-for="Input.Username" class="text-xs text-red-500 mt-1 block"></span>
-                    </div>
+                    <h1 class="text-3xl font-bold tracking-tighter text-slate-900 dark:text-white">
+                        Acxees <span class="text-blue-600">Portal</span>
+                    </h1>
+                    <h2 class="mt-6 text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-100">
+                        Bienvenido
+                    </h2>
+                    <p class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">
+                        Ingresa tus credenciales para continuar.
+                    </p>
                 </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">Contraseña</label>
-                    <div class="mt-1.5">
-                        <input 
-                            asp-for="Input.Password" 
-                            id="password" 
-                            name="password" 
-                            type="password"  
-                            placeholder="*****" 
-                            required 
-                            class="input-field">
-                        <span asp-validation-for="Input.Password" class="text-xs text-red-500 mt-1 block"></span>
-                    </div>
-                </div>
+                <div class="mt-10">
+                    <form 
+                        class="space-y-6" 
+                        method="POST"
+                        id="login-form"
+                        novalidate
+                        x-data="{ state: 'idle', showPass: false }" 
+                        x-on:submit="
+                            if ($el.checkValidity()) { 
+                                state = 'loading'; 
+                            } else { 
+                                $event.preventDefault(); 
+                                $el.reportValidity(); 
+                            }
+                        ">
 
-                <div class="flex items-center justify-between">
-                    <div class="text-xs">
-                        <a href="#" class="font-medium text-primary hover:text-primary-hover hover:underline">Recuperar contraseña</a>
-                    </div>
-                </div>
+                        <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm font-medium bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-100 dark:border-red-900/50 text-center"></div>
 
-                <div class="pt-2">
-                    <button  
-                        type="submit" 
-                        class="btn-primary flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed"
-                        :disabled="state === 'loading'">
-                        
-                        <span x-show="state !== 'loading'" >Ingresar</span> 
-
-                        <div x-show="state === 'loading'" style="display: none;" >
-                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
+                        <div>
+                            <label asp-for="Input.Username" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-300">
+                                Usuario
+                            </label>
+                            <div class="mt-2">
+                                <input 
+                                    asp-for="Input.Username" 
+                                    type="text" 
+                                    required 
+                                    class="block w-full rounded-lg border-0 py-3 pl-4 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-slate-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 outline-none transition-all"
+                                    placeholder="ej. jdoe12">
+                                <span asp-validation-for="Input.Username" class="text-xs text-red-500 mt-1 block font-medium"></span>
+                            </div>
                         </div>
-                    </button>
 
+                        <div>
+                            <label asp-for="Input.Password" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-300">
+                                Contraseña
+                            </label>
+                            <div class="mt-2 relative">
+                                <input 
+                                    asp-for="Input.Password" 
+                                    :type="showPass ? 'text' : 'password'"
+                                    required 
+                                    class="block w-full rounded-lg border-0 py-3 pl-4 pr-10 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-slate-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 outline-none transition-all"
+                                    placeholder="••••••••">
+                                
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                                     x-on:click="showPass = !showPass">
+                                    <svg x-show="showPass" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    <svg x-show="!showPass" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-xs text-red-500 mt-1 block font-medium"></span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm">
+                                <a href="#" class="font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 hover:underline">Recuperar contraseña</a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" 
+                                    class="flex w-full justify-center items-center rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                                    :disabled="state === 'loading'">
+                                
+                                <span x-show="state !== 'loading'">Ingresar</span>
+                                
+                                <div x-show="state === 'loading'" style="display: none;">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div asp-validation-summary="ModelOnly" class="rounded-sm p-1 text-sm text-red-600 text-center "></div>
-            </form>
+                
+                <p class="mt-10 text-center text-xs text-gray-500 dark:text-gray-500">
+                    &copy; @DateTime.Now.Year Acxess Technology
+                </p>
+
+            </div>
         </div>
-        
-        <p class="mt-8 text-center text-xs text-slate-400">
-            &copy; @DateTime.Now.Year Acxess
-        </p>
+
+        <div class="relative hidden w-0 flex-1 lg:block">
+            <img class="absolute inset-0 h-full w-full object-cover" 
+                 src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop" 
+                 alt="Gimnasio Acxees">
+            <div class="absolute inset-0 bg-slate-900/60 mix-blend-multiply backdrop-blur-[1px]"></div>
+            <div class="absolute bottom-0 left-0 p-12 text-white z-10">
+                <blockquote class="space-y-2">
+                    <p class="text-lg font-medium">"El dolor que sientes hoy es la fuerza que sentirás mañana."</p>
+                </blockquote>
+            </div>
+        </div>
+
     </div>
     
     <script src="~/js/site.js"></script>

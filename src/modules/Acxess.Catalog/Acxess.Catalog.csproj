@@ -23,6 +23,7 @@
     <Folder Include="Application/Features/AccessTiers/Queries/" />
     <Folder Include="Application/Features/AccessTiers/Queries/GetAccessTiers/" />
     <Folder Include="Application/Features/AccessTiers/Queries/GetAccesTierById/" />
+    <Folder Include="Application/Features/AddOns/Commands/UpdateAddOn/" />
     <Folder Include="Application/Features/SellingPlans/" />
     <Folder Include="Application/Features/SellingPlans/Commands/" />
     <Folder Include="Application/Features/SellingPlans/Commands/NewSellingPlan/" />
