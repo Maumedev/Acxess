@@ -1,19 +1,30 @@
 using System;
+using Acxess.Shared.Abstractions;
 
 namespace Acxess.Catalog.Domain.Entities;
 
-public class PlanAccessTiers
+public class PlanAccessTiers : IHasTenant
 {
     private PlanAccessTiers()
     {
     }
-    private PlanAccessTiers(int accessTierId, int sellingPlanId)
+    private PlanAccessTiers(int idTenant, int accessTierId, int sellingPlanId)
     {
+        IdTenant = idTenant;
         IdAccessTier = accessTierId;
         IdSellingPlan = sellingPlanId;
     }
 
     public int IdPlanAccessTier { get; private set; }
     public int IdAccessTier { get; private set; }
+    public virtual AccessTier AccessTier { get; private set; } = null!;
     public int IdSellingPlan { get; private set; }
+    public virtual SellingPlan SellingPlan { get; private set; } = null!;
+
+    public int IdTenant { get; private set; }
+
+    public static PlanAccessTiers Create(int idTenant, int accessTierId, int sellingPlanId)
+    {
+        return new PlanAccessTiers(idTenant, accessTierId, sellingPlanId);
+    }
 }

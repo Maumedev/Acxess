@@ -37,6 +37,14 @@ public class SellingPlan : IHasTenant
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public int CreatedByUser { get; private set; }
 
-    
+    public virtual ICollection<PlanAccessTiers> AccessTiers { get; private set; } = new List<PlanAccessTiers>();
+    public void AddAccessTier(int accessTierId)
+    {
 
+        if (AccessTiers.Any(x => x.IdAccessTier == accessTierId)) return;
+
+        var link =  PlanAccessTiers.Create(this.IdTenant, accessTierId, this.IdSellingPlan);
+        
+        AccessTiers.Add(link);
+    }
 }

@@ -1,0 +1,38 @@
+<div class="flex flex-col items-center justify-center border-l border-gray-200 dark:border-slate-700 pl-0 lg:pl-12 border-dashed">
+    <span class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Vista Previa en Mostrador</span>
+    
+    <div class="w-74 p-5 rounded-xl border-2 transition-all relative shadow-lg bg-white dark:bg-slate-800"
+            :class="form.isActive ? 'border-blue-500 ring-5 ring-blue-50 dark:ring-blue-900/20' : 'border-gray-200 dark:border-slate-600 opacity-60 grayscale'">
+        
+        <div class="flex justify-between items-start">
+            <div>
+                <h3 class="font-bold text-gray-800 dark:text-white text-lg leading-tight" x-text="form.name || 'Sin nombre'"></h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    Acceso por 
+                        <span x-text="form.durationInValue"></span> 
+                        <span x-text="mapDayUnit(form.durationUnit)"></span>
+                </p>
+
+                <span  class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                    <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+                    <span x-text="form.totalMembers+ ' Personas'"></span>
+                </span>
+
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <span x-text="showAccessTier()"></span>
+                </p>
+            </div>
+            <span class="text-xl font-bold text-blue-600 dark:text-blue-400" x-text="'$' + (form.price || 0)"></span>
+        </div>
+        
+        <div class="absolute top-1 right-1 text-blue-500 dark:text-blue-400">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+        </div>
+    </div>
+
+    <p class="mt-6 text-xs text-gray-400 dark:text-gray-500 text-center max-w-[200px]">
+        Así verá la tarjeta el recepcionista al momento de vender. <br>
+        <span x-show="!form.isActive" class="text-red-500 dark:text-red-400 font-bold mt-1 block">No visible (Inactivo)</span>
+    </p>
+
+</div>

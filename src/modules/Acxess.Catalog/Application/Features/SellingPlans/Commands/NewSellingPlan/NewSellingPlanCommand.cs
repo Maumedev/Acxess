@@ -6,11 +6,11 @@ namespace Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPl
 
 public record NewSellingPlanCommand
 (
-    int TenantId,
     int TotalMembers,
     int Duration,
     DurationUnit DurationUnit,
     string Name,
     decimal Price,
-    int CreatedBy
-) : IRequest<Result>;
+    int CreatedBy,
+    List<int> AccessTiersIds
+) : IRequest<Result<string>>;

@@ -6,6 +6,8 @@ using Acxess.Membership;
 using Acxess.Billing;
 using Acxess.Marketing;
 using Acxess.Web.Filters;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +73,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Pages")),
+    RequestPath = "/js-pages",
+    ContentTypeProvider = new FileExtensionContentTypeProvider
+    {
+        Mappings = { [".js"] = "application/javascript" }
+    }
+});
 
 app.MapRazorPages();
 

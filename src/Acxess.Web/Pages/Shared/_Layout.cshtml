@@ -50,7 +50,7 @@
         .menu-item:hover .tooltip { visibility: visible; opacity: 1; }
         
         /* Estilo para indicar módulo activo */
-        .active-module { border-left: 4px solid #3b82f6; background-color: #1e293b; color: #60a5fa; }
+        .active-module { z. border-left: 4px solid #3b82f6; background-color: rgba(51, 65, 85, 0.5); color: #60a5fa; }
         .inactive-module { border-left: 4px solid transparent; color: #94a3b8; }
         .inactive-module:hover { background-color: #1e293b; color: white; }
     </style>
@@ -122,6 +122,7 @@
         </main>
     </div>
 
+    <partial name="Shared/_Toast" />
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

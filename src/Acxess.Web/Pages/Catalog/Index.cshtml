@@ -1,7 +1,7 @@
 ﻿@page
 @model Acxess.Web.Pages.Catalog.IndexModel
 @{
-    ViewData["Title"] = "Configuración de Catálogos";
+    ViewData["Title"] = "Configuración General";
 
     // Función local simple para detectar la pestaña activa en el sub-menú
 }
@@ -13,7 +13,7 @@
         <div class="flex justify-between items-end">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">
-                    Configuración de <span class="text-blue-600 dark:text-blue-400">Catálogos</span>
+                    Configuración <span class="text-blue-600 dark:text-blue-400">General</span>
                 </h1>
                 <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
                     Selecciona el módulo que deseas administrar o editar.
@@ -34,7 +34,7 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-            <a href="/Catalog/Plans" 
+            <a href="/Catalog/SellingPLans" 
                x-show="'planes membresias suscripciones'.includes(filter.toLowerCase()) || filter === ''"
                class="group relative bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm hover:shadow-xl border border-gray-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-200 transform hover:-translate-y-1 cursor-pointer flex flex-col h-48">
                 

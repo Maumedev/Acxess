@@ -1,5 +1,6 @@
 using Acxess.Catalog.Domain.Abstractions;
 using Acxess.Catalog.Domain.Entities;
+using Acxess.Shared.Abstractions;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -7,13 +8,19 @@ namespace Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPl
 
 public class NewSellingPlansHandler(
     ISellingPlanRepository sellingPlanRepository,
-    ICatalogUnitOfWork catalogUnitOfWork
-) : IRequestHandler<NewSellingPlanCommand, Result>
+    ICatalogUnitOfWork catalogUnitOfWork,
+    ICurrentTenant currentTenant
+) : IRequestHandler<NewSellingPlanCommand, Result<string>>
 {
-    public async Task<Result> Handle(NewSellingPlanCommand request, CancellationToken cancellationToken)
+    
+
+    public async Task<Result<string>> Handle(NewSellingPlanCommand request, CancellationToken cancellationToken)
     {
+       if (!currentTenant.IsAvailable)
+            return Result<string>.Failure("TenantId.NotAvailable","Tenant information is not available.");
+
         var sellingPlan = SellingPlan.Create(
-            request.TenantId,
+            currentTenant.Id ?? 0,
             request.Name,
             request.TotalMembers,
             request.Duration,
@@ -22,16 +29,23 @@ public class NewSellingPlansHandler(
             request.CreatedBy
         );
 
+        if (request.AccessTiersIds != null && request.AccessTiersIds.Any())
+        {
+            foreach (var tierId in request.AccessTiersIds)
+            {
+                sellingPlan.AddAccessTier(tierId);
+            }
+        }
+
         sellingPlanRepository.Add(sellingPlan);
 
         var resultSave = await catalogUnitOfWork.SaveChangesAsync(cancellationToken);   
 
         if (resultSave.IsFailure)
         {
-            return Result.Failure(resultSave.Error);
+            return Result<string>.Failure(resultSave.Error);
         }
 
-        return Result.Success();
-        
+        return "Plan guardado correctamente";
     }
 }
