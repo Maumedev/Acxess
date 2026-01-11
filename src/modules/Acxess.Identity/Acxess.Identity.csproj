@@ -19,8 +19,5 @@
     <ProjectReference Include="..\..\shared\Acxess.Infrastructure\Acxess.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Infrastructure/Persistence/Repositories/" />
-  </ItemGroup>
 
 </Project>

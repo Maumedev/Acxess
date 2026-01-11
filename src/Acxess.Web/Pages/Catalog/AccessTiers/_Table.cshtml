@@ -1,5 +1,58 @@
-﻿@model Acxess.Web.Pages.Catalog.AccessTiers.IndexModel
+﻿
 
+<section class="col-span-4 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+    
+    <div class="p-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 flex justify-between items-center gap-2">
+        <div class="relative w-full">
+            <input type="text" x-model="search" placeholder="Filtrar..." 
+                    class="w-full pl-8 pr-2 py-1.5 text-sm bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-gray-700 dark:text-white placeholder-gray-400 transition-colors">
+            <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+        <button x-on:click="createNew()" class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium transition shadow-sm whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Nuevo
+        </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto custom-scrollbar">
+
+        <div x-show="filteredAccessTiers.length == 0" class="border-b border-gray-50 dark:border-slate-700/50 p-4 transition-all group">
+            <div class="flex justify-center items-center mb-1">
+                <h3 class=" text-gray-300 dark:text-gray-200  transition-colors" >sin registros</h3>
+            </div>
+        </div>
+
+        <template x-show="filteredAccessTiers.length > 0" x-for="accessTier in filteredAccessTiers" :key="accessTier.idSellingPlan">
+            <div x-on:click="selectItem(accessTier)" 
+                    :class="selectedId === accessTier.idSellingPlan 
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500' 
+                        : 'hover:bg-gray-50 dark:hover:bg-slate-700/50  border-b border-gray-50 dark:border-slate-700/50'"
+                    
+                    class="p-4 cursor-pointer transition-all group">
+                
+                <div class="flex justify-between items-start mb-1">
+                    <h3 class="font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors" x-text="accessTier.name"></h3>
+                    @* <span class="text-xs font-mono font-bold bg-gray-100 dark:bg-slate-900 text-gray-600 dark:text-gray-400 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600" x-text="'$' + plan.price"></span> *@
+                </div>
+                
+                <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                    @* <span x-text="accessTier.durationInValue + ' ' + mapDayUnit(accessTier.durationUnit)"></span> *@
+                    <span :class="accessTier.isActive ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-slate-700'" 
+                            class="px-2 py-0.5 rounded-full border border-transparent"
+                            :class="accessTier.isActive ? 'dark:border-green-900' : 'dark:border-slate-600'"
+                            x-text="accessTier.isActive ? 'Activo' : 'Inactivo'">
+                    </span>
+                </div>
+            </div>
+        </template>
+    </div>
+    
+    <div class="p-2 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 text-xs text-center text-gray-400 dark:text-gray-500">
+        Mostrando <span x-text="filteredAccessTiers.length"></span> registros
+    </div>
+</section>
+
+@* 
 <div class="overflow-x-auto">
     <table class="min-w-full text-left text-sm whitespace-nowrap">
         <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-xs uppercase font-semibold text-slate-500">
@@ -28,7 +81,6 @@
                     </div>
                 </th>
                 <th scope="col" class="px-4 py-3">Descripción</th>
-                @* <th scope="col" class="px-4 py-3 text-right">Precio</th> *@
                 <th scope="col" class="px-4 py-3 text-center">Estado</th>
                 <th scope="col" class="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -86,8 +138,8 @@
             }
         </tbody>
     </table>
-</div>
-
+</div> *@
+@* 
 @if (Model.Data.TotalPages > 1)
 {
     <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-3">
@@ -117,4 +169,4 @@
             </button>
         </div>
     </div>
-}
+} *@

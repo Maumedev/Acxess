@@ -1,7 +1,7 @@
 using System.Text.Json;
-using Acxess.Catalog.Application.Features.AccessTiers.Commands.DeactivateAccessTier;
+using Acxess.Catalog.Application.Features.AccessTiers.Commands.AddAccessTier;
+using Acxess.Catalog.Application.Features.AccessTiers.Commands.UpdateAccessTier;
 using Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccessTiers;
-using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,61 +10,74 @@ namespace Acxess.Web.Pages.Catalog.AccessTiers;
 public class IndexModel(IMediator sender) : PageModel
 {
 
-    public PaginatedResult<AccessTierDto> Data { get; private set; } = new PaginatedResult<AccessTierDto>(new List<AccessTierDto>(), 0, 1, 10);
+    public List<AccessTierDto> items { get; private set; } = new();
 
-    [BindProperty(SupportsGet = true)] public string Search { get; set; } = "";
-    [BindProperty(SupportsGet = true)] public string Sort { get; set; } = "name";
-    [BindProperty(SupportsGet = true)] public int PageIndex { get; set; } = 1;
+    [BindProperty]
+    public AccessTierInput Input {get; set;}= new();
 
 
-    public async Task<IActionResult> OnGet()
+    public async Task OnGet()
     {
-        var query = new GetAccessTiersQuery
-        (
-            Search,
-            Sort,
-            PageIndex,
-            5
-        );
+        var query = new GetAccessTiersQuery(true);
 
         var result = await sender.Send(query);
 
         if (result.IsSuccess)
         {
-            Data = result.Value;
+            items = result.Value;
         }
-
-        if (result.IsSuccess && Request.Headers.ContainsKey("HX-Request"))
-        {   
-            return Partial("_Table", this);
-        }
-    
-        return Page();
     }
 
-    public async Task<IActionResult> OnPostDeactivateAsync(int  id)
+    public async Task<IActionResult> OnPostSaveAsync()
     {
-        var command = new DeactivateAccessTierCommand(id);
-        var result = await sender.Send(command);
+       if (!ModelState.IsValid) return Partial("_Form", Input); 
 
-        if (result.IsFailure)
+        string message = "";
+    
+        if (Input.IdAccessTier == 0)
         {
-            ModelState.AddModelError(string.Empty, result.Error.Description);
-            return BadRequest(ModelState);
+            var command = new AddAccessTierCommand(Input.Name, Input.Description);
+            var resultSaved = await sender.Send(command);
+
+            if (resultSaved.IsFailure)
+            {
+                ModelState.AddModelError(string.Empty, resultSaved.Error.Description);
+                return Partial("_Form", Input); 
+            }
+
+            message = resultSaved.Value;
         }
+        else
+        {
+            var commandUpd = new UpdateAccessTierCommand(Input.IdAccessTier, Input.Name, Input.Description, Input.IsActive);
+            var resultSaved = await sender.Send(commandUpd);
+
+            if (resultSaved.IsFailure)
+            {
+                ModelState.AddModelError(string.Empty, resultSaved.Error.Description);
+                return Partial("_Form", Input); 
+            }
+
+           message = resultSaved.Value;
+        }
+
+        var query = new GetAccessTiersQuery(true);
+
+        var result = await sender.Send(query);
+
+        if (result.IsSuccess) items = result.Value;
 
         var triggers = new
         {
-            refreshTable = true, 
-            notify = new
-            {
-                type = "success",
-                message = result.Value
-            }
+            listUpdated = items, 
+            notify = new { message, type = "success" }
         };
-
-        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(triggers));
         
-        return new NoContentResult();
+        var opciones = new JsonSerializerOptions 
+        { 
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+        };
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(triggers, opciones)); 
+        return new NoContentResult(); 
     }
 }

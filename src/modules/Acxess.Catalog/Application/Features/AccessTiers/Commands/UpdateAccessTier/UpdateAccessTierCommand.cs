@@ -8,5 +8,6 @@ public record UpdateAccessTierCommand
 (
     int Id,
     string Name,
-    string? Description
+    string? Description,
+    bool IsActive
 ): IRequest<Result<string>>;

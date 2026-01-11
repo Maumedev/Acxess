@@ -7,37 +7,24 @@ namespace Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccessTiers
 
 public class GetAccessTiersHandler(
     CatalogModuleContext context
-) : IRequestHandler<GetAccessTiersQuery, Result<PaginatedResult<AccessTierDto>>>
+) : IRequestHandler<GetAccessTiersQuery, Result<List<AccessTierDto>>>
 {
-    public async Task<Result<PaginatedResult<AccessTierDto>>> Handle(GetAccessTiersQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<AccessTierDto>>> Handle(GetAccessTiersQuery request, CancellationToken cancellationToken)
     {
-        var query = context.AccessTiers.AsNoTracking();
+         var query = context.AccessTiers.AsNoTracking();
 
-        if (!string.IsNullOrEmpty(request.Search))
+        if (!request.IncludesInactives)
         {
-            query = query.Where(x => x.Name.Contains(request.Search));
+            query = query.Where(p => p.IsActive);
         }
 
-        query = request.SortOrder switch
-        {
-            "name_desc" => query.OrderByDescending(x => x.Name),
-            "name" => query.OrderBy(x => x.Name),
-            _ => query.OrderBy(x => x.Name)
-        };
+        var items = await query.Select(a => new AccessTierDto(
+            a.IdAccessTier,
+            a.Name,
+            a.Description!,
+            a.IsActive
+        )).ToListAsync();
 
-        var count = await query.CountAsync(cancellationToken);
-
-        var items = await query
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(p => new AccessTierDto(
-                p.IdAccessTier, 
-                p.Name, 
-                p.Description ?? "", 
-                p.IsActive
-            )) 
-            .ToListAsync(cancellationToken);
-
-        return new PaginatedResult<AccessTierDto>(items, count, request.Page, request.PageSize);
+        return items;
     }
 }
