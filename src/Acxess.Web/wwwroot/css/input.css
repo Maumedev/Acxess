@@ -19,6 +19,19 @@ body { font-family: 'Inter', sans-serif; }
 .inactive-module { border-left: 4px solid transparent; color: #94a3b8; }
 .inactive-module:hover { background-color: #1e293b; color: white; }
 
+
+
+
+.htmx-indicator {
+    opacity: 0;
+    pointer-events: none;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
