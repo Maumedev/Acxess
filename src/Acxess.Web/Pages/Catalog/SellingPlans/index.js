@@ -16,7 +16,8 @@ document.addEventListener('alpine:init', () => {
                 isActive: true,
                 accessTiersIds : [],
             },
-            selectedId: null,
+            selectedId: null, 
+            isLoading: false,
             isDirty: false,
             get filteredPlans() {
                 if (this.search === '') return this.items;
