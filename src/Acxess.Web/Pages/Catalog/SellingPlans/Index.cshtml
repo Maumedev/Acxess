@@ -17,9 +17,6 @@
 
     <main class="flex-1 grid grid-cols-12 gap-0 overflow-hidden">
 
-
-        @* <partial name="_List" /> *@
-
         <section 
             class="col-span-4 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
             id="table-container"
@@ -37,70 +34,9 @@
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
                 </div>
-                
             </div>
 
         </section>
-
-
-        @* <section 
-            class="col-span-8 bg-gray-50 dark:bg-[#0f1523] flex flex-col relative h-full" 
-            x-show="form.idSellingPlan !== null" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-x-4">
-            
-            <div class="flex-1 p-8 grid grid-cols-1 lg:grid-cols-2 gap-12 overflow-y-auto custom-scrollbar">
-
-                <div class="space-y-6">
-                    <div>
-                        <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                            <span x-text="form.idSellingPlan === 0 ? 'Crear Nuevo Plan' : 'Editar Plan'"></span>
-                            <span x-show="isDirty" class="text-xs font-normal text-amber-700 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-400 px-2 py-0.5 rounded animate-pulse border border-amber-200 dark:border-amber-800">● Cambios sin guardar</span>
-                        </h2>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Define las reglas de negocio para este producto.</p>
-                    </div>
-
-                    <partial name="_Form" model="Model.Input" />
-                </div>
-
-                <partial name="_PreviewPlan" ></partial>
-                
-            </div>
-
-            <div class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4 flex justify-between items-center shrink-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-                <button :disabled="state === 'loading'" x-on:click="resetForm()" class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-sm transition-colors">
-                    Cancelar <span class="bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-gray-300 px-1 py-0.5 rounded text-[10px] ml-1 border border-gray-300 dark:border-slate-500">Esc</span>
-                </button>
-                   
-                <button 
-                    id="btnSave"
-                    class="px-6 py-2 bg-slate-900 hover:bg-black dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg shadow-lg text-sm font-bold flex items-center gap-2 transform active:scale-95 transition-all"
-                    type="submit"
-                    form="sellingPlanForm"
-                    :disabled="state === 'loading'"
-                    >
-                    <span x-show="state !== 'loading'" >GUARDAR CAMBIOS</span>
-                    <span x-show="state === 'loading'" >GUARDANDO</span>
-
-                    
-                    <svg x-show="state === 'loading'" style="display: none;"  class="htmx-indicator animate-spin ml-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                </button>
-
-
-            </div>
-
-
-        </section> *@
-
-@* 
-        <section class="col-span-8 bg-gray-50 dark:bg-[#0f1523] flex flex-col items-center justify-center text-gray-400 dark:text-gray-600" x-show="form.idSellingPlan === null">
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-full shadow-sm mb-4">
-                <svg class="w-12 h-12 text-gray-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            </div>
-            <p>Selecciona un registro para editar o crea uno nuevo</p>
-        </section>
- *@
 
         <section class="col-span-8 bg-gray-50 dark:bg-[#0f1523] flex flex-col relative h-full" id="form-section">
 

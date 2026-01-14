@@ -5,41 +5,16 @@
     var successMsg = ViewData["SuccessMessage"] as string;
     var errorMsg = ViewData["ErrorMessage"] as string;
     var warningMsg = ViewData["WarningMessage"] as string;
-
-    var availableTiers = ViewData["AvailableTiers"] as List<AccessTierDto> ?? new List<AccessTierDto>();
-
-    var initialDurationVal = Model.DurationInValue > 0 ? Model.DurationInValue : 1;
-    var initialDurationUnit = Model.DurationUnit > 0 ? Model.DurationUnit : 1;
-
-
-    var selectedIdsJson = JsonSerializer.Serialize(Model.AccessTiersIds);
-    var tiersMapJson = JsonSerializer.Serialize(availableTiers.ToDictionary(x => x.IdAccessTier, x => x.Name));
+    
+    var tiersList = ViewData["AvailableTiers"] as List<AccessTierDto> ?? [];
+    var modelJson = System.Text.Json.JsonSerializer.Serialize(Model);
+    var tiersJson = System.Text.Json.JsonSerializer.Serialize(tiersList);
 }
+<script>
+    window.availableTiersData = @Html.Raw(tiersJson);
+</script>
 <div class="h-full flex flex-col bg-gray-50 dark:bg-[#0f1523]"
-    x-data='{ 
-        name: "@(Model.Name?.Replace("\"", "\\\"") ?? "")",
-        price: "@(Model.Price)",
-        isActive: @Model.IsActive.ToString().ToLower(),
-        totalMembers: @(Model.TotalMembers > 0 ? Model.TotalMembers : 1),
-        durationVal: @initialDurationVal,
-        durationUnit: @initialDurationUnit,
-        selectedTiers: @Html.Raw(selectedIdsJson),
-        tiersMap: @Html.Raw(tiersMapJson),
-        units: { 
-            1: "Días", 
-            2: "Meses", 
-            3: "Años" 
-        },
-        getTiersNames() {
-            if (this.selectedTiers.length > 0) {
-                return this.selectedTiers
-                    .map(id => this.tiersMap[id])
-                    .filter(n => n) 
-                    .join(", ");
-            }
-            return "";
-        }
-     }'>
+     x-data="sellingPlanForm(@modelJson)">
 
 
     <div class="flex-1 p-8 grid grid-cols-1  lg:grid-cols-2 overflow-y-auto gap-12 custom-scrollbar content-start">
@@ -193,7 +168,7 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
-                    @foreach (var tier in availableTiers)
+                    @foreach (var tier in tiersList)
                     {
                         bool isSelected = Model.AccessTiersIds.Contains(tier.IdAccessTier);
                         
