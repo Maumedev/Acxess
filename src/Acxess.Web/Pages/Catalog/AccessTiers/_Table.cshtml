@@ -1,40 +1,13 @@
-﻿
-@model Acxess.Web.Pages.Catalog.AccessTiers.IndexModel
+﻿@model Acxess.Web.Pages.Catalog.AccessTiers.IndexModel
 
-
-<div class="h-full flex flex-col bg-white dark:bg-slate-800"
-    x-data="{ show: false }"
+<div class="h-full flex flex-col overflow-hidden bg-white dark:bg-slate-800"
+     x-data="{ show: false }"
      x-init="$nextTick(() => show = true)"
      x-show="show"
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0"
      x-transition:enter-end="opacity-100">
-
-
-    <div class="p-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 flex justify-between items-center gap-2">
-        <div class="relative w-full">
-            <input type="text" 
-                name="Search"
-                value="@Model.Search"
-                placeholder="Filtrar..." 
-                class="w-full pl-8 pr-2 py-1.5 text-sm bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
-                hx-get="@Url.Page("Index", "Items")"
-                hx-target="#table-content"
-                hx-trigger="keyup changed delay:500ms">
-            <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        </div>
-        
-    <button 
-        @@click="selectedId = 0"
-        hx-get="@Url.Page("Index", "Form", new { id = 0 })"
-        hx-target="#form-container"
-        class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium transition shadow-sm whitespace-nowrap">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        Nuevo
-    </button>
-</div>
-
-
+    
     @if (Model.Items.Count == 0)
     {
         <div class="border-b border-gray-50 dark:border-slate-700/50 p-4 transition-all group">
@@ -45,27 +18,26 @@
     }
     else
     {
-
-
-
         <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0">
             @foreach (var item in Model.Items)
             {
-                <div 
+                <div
                     @@click="selectedId = @item.IdAccessTier"
                     hx-get="@Url.Page("Index", "Form", new { id = item.IdAccessTier })"
                     hx-target="#form-container"
+                    @@htmx:before-request="if(loadedId === @item.IdAccessTier) $event.preventDefault()"
+                    @@htmx:after-on-load="loadedId = @item.IdAccessTier"
                     :class="selectedId === @item.IdAccessTier 
                         ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500' 
                         : 'hover:bg-gray-50 dark:hover:bg-slate-700/50 border-l-4 border-transparent border-b border-gray-50 dark:border-slate-700/50'"
                     class="p-4 cursor-pointer transition-all group">
-                    
+
                     <div class="flex justify-between items-start mb-1">
                         <h3 class="font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
                             @item.Name
                         </h3>
                     </div>
-                    
+
                     <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
                         <span class="@(item.IsActive ? "text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 dark:border-green-900" : "text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-slate-700 dark:border-slate-600") px-2 py-0.5 rounded-full border border-transparent">
                             @(item.IsActive ? "Activo" : "Inactivo")
@@ -73,185 +45,10 @@
                     </div>
                 </div>
             }
-
         </div>
-        
-       <div class="p-2 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 text-xs text-center text-gray-400 dark:text-gray-500 shrink-0 z-20">
+
+        <div class="p-2 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 text-xs text-center text-gray-400 dark:text-gray-500 shrink-0 z-20">
             Mostrando @Model.Items.Count registros
         </div>
     }
-
-
 </div>
-
-
-
-@* 
-<section class="col-span-4 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-    
-    <div class="p-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 flex justify-between items-center gap-2">
-        <div class="relative w-full">
-            <input type="text" x-model="search" placeholder="Filtrar..." 
-                    class="w-full pl-8 pr-2 py-1.5 text-sm bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-gray-700 dark:text-white placeholder-gray-400 transition-colors">
-            <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        </div>
-        <button x-on:click="createNew()" class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium transition shadow-sm whitespace-nowrap">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Nuevo
-        </button>
-    </div>
-
-    <div class="flex-1 overflow-y-auto custom-scrollbar">
-
-        <div x-show="filteredAccessTiers.length == 0" class="border-b border-gray-50 dark:border-slate-700/50 p-4 transition-all group">
-            <div class="flex justify-center items-center mb-1">
-                <h3 class=" text-gray-300 dark:text-gray-200  transition-colors" >sin registros</h3>
-            </div>
-        </div>
-
-        <template x-show="filteredAccessTiers.length > 0" x-for="accessTier in filteredAccessTiers" :key="accessTier.idSellingPlan">
-            <div x-on:click="selectItem(accessTier)" 
-                    :class="selectedId === accessTier.idSellingPlan 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500' 
-                        : 'hover:bg-gray-50 dark:hover:bg-slate-700/50  border-b border-gray-50 dark:border-slate-700/50'"
-                    
-                    class="p-4 cursor-pointer transition-all group">
-                
-                <div class="flex justify-between items-start mb-1">
-                    <h3 class="font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors" x-text="accessTier.name"></h3>
-                </div>
-                
-                <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
-                    <span :class="accessTier.isActive ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30' : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-slate-700'" 
-                            class="px-2 py-0.5 rounded-full border border-transparent"
-                            :class="accessTier.isActive ? 'dark:border-green-900' : 'dark:border-slate-600'"
-                            x-text="accessTier.isActive ? 'Activo' : 'Inactivo'">
-                    </span>
-                </div>
-            </div>
-        </template>
-    </div>
-    
-    <div class="p-2 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 text-xs text-center text-gray-400 dark:text-gray-500">
-        Mostrando <span x-text="filteredAccessTiers.length"></span> registros
-    </div>
-</section> *@
-
-@* 
-<div class="overflow-x-auto">
-    <table class="min-w-full text-left text-sm whitespace-nowrap">
-        <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-xs uppercase font-semibold text-slate-500">
-            <tr>
-                <th scope="col" class="px-4 py-3 cursor-pointer hover:text-primary"
-                    hx-get="@Url.Page("Index", new { 
-                        Sort = (Model.Sort == "name" ? "name_desc" : "name"), 
-                        Search = Model.Search,
-                        PageIndex = Model.Data.PageIndex
-                    }) "
-                    hx-target="#table-container"
-                    hx-push-url="true">
-                   <div class="flex items-center gap-1">
-                        Nombre
-                        
-                        @if (Model.Sort == "name")
-                        {
-                            <span>&uarr;</span> }
-                        else if (Model.Sort == "name_desc")
-                        {
-                            <span>&darr;</span> }
-                        else
-                        {
-                            <span class="opacity-0 group-hover:opacity-50 transition-opacity">⇅</span>
-                        }
-                    </div>
-                </th>
-                <th scope="col" class="px-4 py-3">Descripción</th>
-                <th scope="col" class="px-4 py-3 text-center">Estado</th>
-                <th scope="col" class="px-4 py-3 text-right">Acciones</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
-            @if (!Model.Data.Items.Any())
-            {
-                <tr>
-                    <td colspan="4" class="px-4 py-8 text-center text-slate-500">
-                        No se encontraron registros.
-                    </td>
-                </tr>
-            }
-            @foreach (var item in Model.Data.Items)
-            {
-                <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
-                    <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">@item.Name</td>
-                    <td class="px-4 py-3 text-slate-500">@item.Description</td>
-                    <td class="px-4 py-3 text-center">
-                        @if(item.IsActive) {
-                            <span class="inline-flex items-center rounded-sm bg-green-50 dark:bg-slate-900/50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/30">Activo</span>
-                        } else {
-                            <span class="inline-flex items-center rounded-sm bg-slate-50  dark:bg-slate-900/50 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/20">Inactivo</span>
-                        }
-                    </td>
-                    <td class="px-4 py-3 text-right">
-                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            
-                            <button type="button" 
-                                    class="text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
-                                    title="Editar"
-                                    @@click="$dispatch('open-slide', { url: '/Catalog/AccessTiers/Edit?id=@item.Id' })">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                            </button>
-                            <form method="post" 
-                                class="inline-flex" 
-                                hx-post="@Url.Page("Index", "Deactivate")" 
-                                hx-swap="none"
-                                hx-confirm="¿Estás seguro de cambiar el estado de este registro?">
-                                
-                               <input type="hidden" name="id" value="@item.Id" />
-                                
-                                <button type="submit" 
-                                        class="text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                                        title="@(item.IsActive ? "Desactivar" : "Activar")">
-                                        
-                                    <svg class="w-4 h-4 @(item.IsActive ? "text-slate-400" : "text-red-500")" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div> *@
-@* 
-@if (Model.Data.TotalPages > 1)
-{
-    <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-3">
-        <div class="text-xs text-slate-500">
-            Página <span class="font-medium text-slate-900 dark:text-white">@Model.Data.PageIndex</span> de @Model.Data.TotalPages
-        </div>
-        <div class="flex gap-2">
-            <button class="btn-white px-2 py-1 text-xs border border-primary rounded-md disabled:opacity-50 cursor-pointer"
-                    disabled="@(!Model.Data.HasPreviousPage)"
-                    hx-get="@Url.Page("Index", new { 
-                        Sort = (Model.Sort), 
-                        Search = Model.Search,
-                        PageIndex = Model.Data.PageIndex - 1
-                    }) "
-                    hx-target="#table-container">
-                Anterior
-            </button>
-            <button class="btn-white px-2 py-1 text-xs border border-primary rounded-md disabled:opacity-50 cursor-pointer"
-                    disabled="@(!Model.Data.HasNextPage)"
-                    hx-get="@Url.Page("Index", new { 
-                        Sort = (Model.Sort), 
-                        Search = Model.Search,
-                        PageIndex = Model.Data.PageIndex + 1
-                    }) "
-                    hx-target="#table-container">
-                Siguiente
-            </button>
-        </div>
-    </div>
-} *@
