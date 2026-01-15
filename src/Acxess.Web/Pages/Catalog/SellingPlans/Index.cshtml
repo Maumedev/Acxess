@@ -1,55 +1,38 @@
 ﻿@page
-@using System.Text.Json
 @model Acxess.Web.Pages.Catalog.SellingPlans.IndexModel
 @section Scripts {
     <script src="/js-pages/Catalog/SellingPlans/index.js" asp-append-version="true"></script>
 }
 @{
-    var _title = "Planes de Venta";
-    ViewData["Title"] = _title;
+    const string title = "Planes de Venta";
+    ViewData["Title"] = title;
 }
 <div class="h-full w-full flex flex-col bg-gray-100 dark:bg-[#0b0f19] transition-colors duration-300" 
-    x-data="sellingPlanApp()"
-    @@htmx:before-request="isLoading = true"  
-    @@htmx:after-request="isLoading = false">
+    x-data="sellingPlanApp()">
 
-    <partial name="/Pages/Catalog/Shared/_HeaderCatalogs.cshtml" model="_title" />
+    <partial name="/Pages/Catalog/Shared/_HeaderCatalogs.cshtml" model="title" />
 
     <main class="flex-1 grid grid-cols-12 gap-0 overflow-hidden">
+        <div class="h-full col-span-4   flex flex-col bg-white dark:bg-slate-800">
+            <partial name="_Filter" model="@Model"/>
+            <section
+                class="flex-1 min-h-0  relative bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
+                id="table-container"
+                hx-get="@Url.Page("Index", pageHandler: "Items")"
+                hx-trigger="load, refreshItems from:body"
+                hx-target="#table-content"
+                hx-swap="innerHTML"
+                hx-include="[name='Search']">
 
-        <section 
-            class="col-span-4 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
-            id="table-container"
-            hx-get="@Url.Page("Index", pageHandler: "Items")"
-            hx-trigger="load, refreshItems from:body"
-            hx-target="#table-content"
-            hx-swap="innerHTML">
-            
-            <div id="table-content" class="h-full flex flex-col overflow-hidden">
-
-                <div class="flex gap-2 justify-center items-center">
-                    <div class="p-4 text-center text-gray-400 htmx-indicator">Cargando</div>
-                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
+                <div id="table-content" class="h-full flex flex-col overflow-hidden">
+                    <partial name="/Pages/Catalog/Shared/_LoadingList.cshtml" />
                 </div>
-            </div>
-
-        </section>
-
-        <section class="col-span-8 bg-gray-50 dark:bg-[#0f1523] flex flex-col relative h-full" id="form-section">
-
+            </section>
+        </div>
+        <section class="col-span-8 bg-gray-50 dark:bg-[#0f1523] flex flex-col relative h-full min-h-0" id="form-section">
             <div id="form-container" class="h-full w-full">
-                <div class="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-600">
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-full shadow-sm mb-4">
-                        <svg class="w-12 h-12 text-gray-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    </div>
-                    <p>Selecciona un registro para editar o crea uno nuevo</p>
-                </div>
+                <partial name="/Pages/Catalog/Shared/_EmptySelectionBox.cshtml" />
             </div>
-
         </section>
-       
     </main>
 </div>

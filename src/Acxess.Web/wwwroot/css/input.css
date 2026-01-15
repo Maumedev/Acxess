@@ -1,7 +1,16 @@
 @import "tailwindcss";
 
 body { font-family: 'Inter', sans-serif; }
-/* Tooltip personalizado al hacer hover en el menu */
+
+@layer base {
+    body {
+        @apply bg-slate-100 text-slate-900 antialiased;
+    }
+    :root.dark body {
+        @apply bg-[#0b0f19] text-slate-200;
+    }
+}
+
 .tooltip {
     visibility: hidden; position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
     background-color: #1e293b; color: white; padding: 4px 8px; border-radius: 4px;
@@ -14,22 +23,12 @@ body { font-family: 'Inter', sans-serif; }
 }
 .menu-item:hover .tooltip { visibility: visible; opacity: 1; }
 
-/* Estilo para indicar módulo activo */
 .active-module { border-left: 4px solid #3b82f6; background-color: #1e293b; color: #60a5fa; }
 .inactive-module { border-left: 4px solid transparent; color: #94a3b8; }
 .inactive-module:hover { background-color: #1e293b; color: white; }
 
-
-
-
-.htmx-indicator {
-    opacity: 0;
-    pointer-events: none;
-}
-.htmx-request .htmx-indicator,
-.htmx-request.htmx-indicator {
-    opacity: 1;
-    pointer-events: auto;
+.form-input-acxess {
+    @apply w-full p-2.5 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none shadow-sm text-gray-900 dark:text-white transition-colors;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -37,50 +36,7 @@ body { font-family: 'Inter', sans-serif; }
 @theme {
   --color-primary: #0078d4; 
   --color-primary-hover: #106ebe;
-  
   --color-slate-850: #1e293b; 
 }
 
-@layer base {
-  /* html {
-    font-family: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-    font-size: 15px; 
-  } */
 
-  body {
-    @apply bg-slate-100 text-slate-900 antialiased;
-  }
-
-  :root.dark body {
-    @apply bg-[#0b0f19] text-slate-200; 
-  }
-}
-
-@layer components {
-  .input-field {
-    @apply w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition-colors
-           placeholder:text-slate-400
-           focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary 
-           disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500
-           dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:ring-offset-0;
-  }
-
-  .btn-primary {
-    @apply flex w-full justify-center rounded bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm 
-           hover:bg-primary-hover 
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
-           transition-all active:scale-[0.98] cursor-pointer;
-  }
-  
-  .card {
-    @apply bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-800 rounded;
-  }
-  
-  .nav-item-active {
-    @apply bg-slate-800 text-white border-l-4 border-primary;
-  }
-  
-  .nav-item-inactive {
-    @apply text-slate-400 hover:bg-slate-800 hover:text-white border-l-4 border-transparent transition-colors;
-  }
-}

@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Text.Json;
 using Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccessTiers;
 using Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPlan;
 using Acxess.Catalog.Application.Features.SellingPlans.Queries.GetSellingPlanById;
@@ -19,29 +18,26 @@ public class IndexModel(IMediator mediator) : PageModel
     public string? Search { get; set; } = string.Empty;
 
     public List<AccessTierDto> AccessTiers = [];
-    public List<SellingPlanDto> Items = new List<SellingPlanDto>();
+    public List<SellingPlanDto> Items = [];
 
     [BindProperty]
     public SellingPlanInputModel Input {get; set;} = new();
 
-
-    public void OnGet()
-    {
-
-
-    }
+    public void OnGet() { }
 
     public async Task<IActionResult> OnGetItemsAsync()
     {
         var query = new GetSellingPlanQuery(true);
         var result = await mediator.Send(query);
-
-        if (result.IsSuccess)
+        
+        if (result.IsFailure)
         {
-            Items = string.IsNullOrEmpty(Search) 
-                ? result.Value 
-                : result.Value.Where(x => x.Name.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
+            return Partial("_ErrorState", result.Error.Description);
         }
+        
+        Items = string.IsNullOrEmpty(Search) 
+            ? result.Value 
+            : result.Value.Where(x => x.Name.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
 
         return Partial("_List", this);
     }
@@ -97,7 +93,7 @@ public class IndexModel(IMediator mediator) : PageModel
         return Form();
     }
 
-    private PartialViewResult Form(string? SuccessMessage = null)
+    private PartialViewResult Form(string? successMessage = null, string? errorMessage = null)
     {
         var partialView = new PartialViewResult
         {
@@ -108,9 +104,14 @@ public class IndexModel(IMediator mediator) : PageModel
         partialView.ViewData.TemplateInfo.HtmlFieldPrefix = "Input";
         partialView.ViewData["AvailableTiers"] = AccessTiers;
 
-        if (!string.IsNullOrWhiteSpace(SuccessMessage))
+        if (!string.IsNullOrWhiteSpace(successMessage))
         {
-            partialView.ViewData["SuccessMessage"] = SuccessMessage;
+            partialView.ViewData["SuccessMessage"] = successMessage;
+        }
+        
+        if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            partialView.ViewData["ErrorMessage"] = errorMessage;
         }
 
         return partialView;
@@ -124,8 +125,7 @@ public class IndexModel(IMediator mediator) : PageModel
         if (!ModelState.IsValid)  return Form();
 
         var userNumberString = User.FindFirstValue("UserNumber");
-
-        int userNumber = int.TryParse(userNumberString, out var val) ? val : 0;
+        var userNumber = int.TryParse(userNumberString, out var val) ? val : 0;
 
         if (userNumber == 0)  return Unauthorized(); 
 
@@ -161,19 +161,15 @@ public class IndexModel(IMediator mediator) : PageModel
 
         if (resultSaved.IsFailure)
         {
-            ModelState.AddModelError(string.Empty, resultSaved.Error.Description);
-            return Form();
+            return Form(errorMessage: resultSaved.Error.Description);
         }
 
         Response.Headers.Append("HX-Trigger", "refreshItems");
 
-        if (Input.IdSellingPlan == 0)
-        {
-            Input = new SellingPlanInputModel();
-            ModelState.Clear();
-        }
-        
-        return Form(resultSaved.Value);
+        if (Input.IdSellingPlan != 0) return Form(successMessage: resultSaved.Value);
+        Input = new SellingPlanInputModel();
+        ModelState.Clear();
+        return Form(successMessage: resultSaved.Value);
     }
 }
 

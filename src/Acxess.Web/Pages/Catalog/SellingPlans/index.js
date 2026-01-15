@@ -1,53 +1,44 @@
 document.addEventListener('alpine:init', () => {
-    Alpine.data('sellingPlanForm', (initialData) => {
-        
-        
-        // state
+    Alpine.data('sellingPlanForm', (model, tiers) => {
         return {
-            id: initialData.IdSellingPlan,
-            name: initialData.Name || '',
-            price: initialData.Price || 0,
-            totalMembers: initialData.TotalMembers || 1,
-            isActive: initialData.IsActive,
-            durationVal: initialData.DurationInValue || 1,
-            durationUnit: initialData.DurationUnit || 2, // 2 = Meses default
-            selectedTiers: initialData.AccessTiersIds || [],
+            form: model,
+            initialState: null,
             tiersMap: {}, 
             units: { 1: "Días", 2: "Meses", 3: "Años" },
             init() {
-                if (window.availableTiersData) {
-                    this.tiersMap = window.availableTiersData.reduce((acc, tier) => {
+                if (tiers && tiers.length > 0) {
+                    this.tiersMap = tiers.reduce((acc, tier) => {
                         acc[tier.IdAccessTier] = tier.Name;
                         return acc;
                     }, {});
                 }
+                this.form.AccessTiersIds = this.form.AccessTiersIds || [];
+                this.initialState = JSON.stringify(this.form);
             },
             get formattedTiers() {
-                if (this.selectedTiers.length === 0) return "";
-                return this.selectedTiers
+                if (!this.form.AccessTiersIds || this.form.AccessTiersIds.length === 0) return "";
+                return this.form.AccessTiersIds
                     .map(id => this.tiersMap[id])
                     .filter(Boolean)
                     .join(", ");
             },
             get durationLabel() {
-                return this.units[this.durationUnit] || 'Unidad';
+                return this.units[this.form.DurationUnit] || 'Unidad';
+            },
+            get isDirty(){
+                return JSON.stringify(this.form) !== this.initialState;
             }
         }
     })
-    
-    Alpine.data('sellingPlanApp', (initialData, accesTiersData) => {
-
-
+    Alpine.data('sellingPlanApp', (initialData) => {
         return {
             selectedId: null, 
+            loadedId: null,
             isLoading: false,
-
             mapDayUnit(value){
                 const dict = {1: 'Días', 2: 'Meses', 3: 'Años'}
                 return dict[value] || 'Desconocido';
             }
-            
-
         }
     })
 })
