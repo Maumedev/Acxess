@@ -9,31 +9,6 @@
      x-transition:enter-start="opacity-0"
      x-transition:enter-end="opacity-100">
 
-
-    <div class="p-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 flex justify-between items-center gap-2">
-        <div class="relative w-full">
-            <input type="text" 
-                name="Search"
-                value="@Model.Search"
-                placeholder="Filtrar..." 
-                class="w-full pl-8 pr-2 py-1.5 text-sm bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
-                hx-get="@Url.Page("Index", "Items")"
-                hx-target="#table-content"
-                hx-trigger="keyup changed delay:500ms">
-            <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        </div>
-        
-        <button 
-            @@click="selectedId = 0"
-            hx-get="@Url.Page("Index", "Form", new { id = 0 })"
-            hx-target="#form-container"
-            class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium transition shadow-sm whitespace-nowrap">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Nuevo
-        </button>
-    </div>
-
-
      @if (Model.Items.Count == 0)
     {
         <div class="border-b border-gray-50 dark:border-slate-700/50 p-4 transition-all group">
@@ -51,6 +26,8 @@
                     @@click="selectedId = @item.IdAddOn"
                     hx-get="@Url.Page("Index", "Form", new { id = item.IdAddOn })"
                     hx-target="#form-container"
+                    @@htmx:before-request="if(loadedId === @item.IdAddOn) $event.preventDefault()"
+                    @@htmx:after-on-load="loadedId = @item.IdAddOn"
                     :class="selectedId === @item.IdAddOn 
                         ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500' 
                         : 'hover:bg-gray-50 dark:hover:bg-slate-700/50 border-l-4 border-transparent border-b border-gray-50 dark:border-slate-700/50'"
@@ -79,5 +56,4 @@
             Mostrando @Model.Items.Count registros
         </div>
     }
-     
 </div>

@@ -29,55 +29,58 @@ public class IndexModel(
     {
         var query = new GetAddOnsQuery(true);
         var result = await mediator.Send(query);
-
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            Items = string.IsNullOrEmpty(Search) 
+            return Partial("_ErrorState", result.Error.Description);
+        }
+      
+        Items = string.IsNullOrEmpty(Search) 
                 ? result.Value 
                 : result.Value.Where(x => x.Name.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
 
         return Partial("_Table", this);
     }
 
      public async Task<IActionResult> OnGetFormAsync(int? id)
     {   
-        if (id is null) return Partial("/Pages/Catalog/Shared/_NoSelectedItem.cshtml");
-
-        if (id == 0)
+        switch (id)
         {
-            Input = new AddOnInput();
-        }
-        else
-        {
-            var query = new GetAddOnQuery(id??0);
-            var result = await mediator.Send(query);
-
-            if (result.IsFailure)
+            case null:
+                return Partial("/Pages/Catalog/Shared/_NoSelectedItem.cshtml");
+            case 0:
+                Input = new AddOnInput();
+                break;
+            default:
             {
-                ModelState.AddModelError(string.Empty, result.Error.Description);
-                return Partial("_Form", Input);
-            }
+                var query = new GetAddOnQuery(id??0);
+                var result = await mediator.Send(query);
 
-            var item = result.Value;
+                if (result.IsFailure)
+                {
+                    return Form(errorMessage: result.Error.Description);
+                }
+
+                var item = result.Value;
             
-            Input = new AddOnInput 
-            { 
-                IdAddOn = item.IdAddOn,
-                AddOnKey = item.AddOnKey, 
-                Name = item.Name, 
-                Price = item.Price, 
-                IsActive = item.IsActive,
-                ShowInCheckout = item.ShowInCheckout 
-            };
+                Input = new AddOnInput 
+                { 
+                    IdAddOn = item.IdAddOn,
+                    AddOnKey = item.AddOnKey, 
+                    Name = item.Name, 
+                    Price = item.Price, 
+                    IsActive = item.IsActive,
+                    ShowInCheckout = item.ShowInCheckout 
+                };
+                break;
+            }
         }
 
-        return Partial("_Form", Input);
+        return Form();
     }
 
     public async Task<IActionResult> OnPostSaveAsync()
     {
-        if (!ModelState.IsValid) return Partial("_Form", Input);
+        if (!ModelState.IsValid) return Form();
 
         Result<string> resultSaved;
 
@@ -107,27 +110,40 @@ public class IndexModel(
 
         if (resultSaved.IsFailure)
         {
-            ModelState.AddModelError(string.Empty, resultSaved.Error.Description);
-            return Partial("_Form", Input); 
+            return Form(errorMessage: resultSaved.Error.Description);
         }
 
         Response.Headers.Append("HX-Trigger", "refreshItems");
 
-        if(Input.IdAddOn == 0){ 
-            Input = new AddOnInput();
-            ModelState.Clear();    
-        } 
+        if (Input.IdAddOn != 0) return Form(successMessage: resultSaved.Value);
+        
+        Input = new AddOnInput(); 
+        
+        ModelState.Clear();
+        
+        return Form(successMessage: resultSaved.Value);
 
+    }
+    
+    private PartialViewResult Form(string? successMessage = null, string? errorMessage = null)
+    {
         var partialView = new PartialViewResult
         {
             ViewName = "_Form",
             ViewData = new ViewDataDictionary<AddOnInput>(ViewData, Input)
         };
+
+        if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            partialView.ViewData["SuccessMessage"] = successMessage;
+        }
         
-        partialView.ViewData["SuccessMessage"] = resultSaved.Value;
+        if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            partialView.ViewData["ErrorMessage"] = errorMessage;
+        }
 
         return partialView;
-
     }
 
 }
