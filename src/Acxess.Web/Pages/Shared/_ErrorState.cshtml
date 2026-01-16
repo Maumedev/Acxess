@@ -1,6 +1,7 @@
 @model string
 @{
     var errorMessage = Model ?? "Ocurrió un error inesperado al cargar los datos.";
+    Layout = null;
 }
 <div class="h-full flex flex-col justify-center items-center gap-4 p-6 text-center animate-fade-in">
     <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-full">
@@ -10,7 +11,7 @@
     </div>
     
     <div>
-        <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200">Error de carga</h3>
+        <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200">Ocurrió un error interno</h3>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[250px] mx-auto">
             @errorMessage
         </p>
