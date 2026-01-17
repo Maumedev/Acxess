@@ -18,17 +18,21 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.Property(x => x.DiscountAmount)
-            .HasPrecision(10, 2);
+        builder.Property(x => x.DiscountType)
+            .IsRequired()
+            .HasColumnType("tinyint");
 
-        builder.Property(x => x.DiscountPercentage)
+        builder.Property(x => x.Discount)
             .HasPrecision(5, 2);
 
         builder.Property(x => x.RequiresCoupon)
             .IsRequired()
             .HasDefaultValue(false);
+        
+        builder.Property(x => x.AutoApply)
+            .IsRequired()
+            .HasDefaultValue(false);
 
-        builder.Property(x => x.MinItemsPurchase);
 
         builder.Property(x => x.AvailableFrom);
 

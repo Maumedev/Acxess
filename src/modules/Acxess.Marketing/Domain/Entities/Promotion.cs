@@ -1,3 +1,4 @@
+using Acxess.Marketing.Domain.Enums;
 using Acxess.Shared.Abstractions;
 
 namespace Acxess.Marketing.Domain.Entities;
@@ -8,27 +9,26 @@ public class Promotion : IHasTenant
     {
     }
 
-    private Promotion(int idTenant, string name, int createdByUser, decimal? discountAmount = null, decimal? discountPercentage = null, bool requiresCoupon = false, int? minItemsPurchase = null, DateTime? availableFrom = null, DateTime? availableTo = null, bool isActive = true)
+    private Promotion( int idTenant, DiscountType discountType, decimal discount, bool requiresCoupon, bool autoApply, DateTime? availableFrom, DateTime? availableTo, bool isActive, int createdByUser)
     {
         IdTenant = idTenant;
-        Name = name;
-        CreatedByUser = createdByUser;
-        DiscountAmount = discountAmount;
-        DiscountPercentage = discountPercentage;
+        DiscountType = discountType;
+        Discount = discount;
         RequiresCoupon = requiresCoupon;
-        MinItemsPurchase = minItemsPurchase;
+        AutoApply = autoApply;
         AvailableFrom = availableFrom;
         AvailableTo = availableTo;
         IsActive = isActive;
+        CreatedByUser = createdByUser;
     }
 
     public int IdPromotion { get; private set; }
     public int IdTenant { get; private set; }
     public string Name { get; private set; } = string.Empty;
-    public decimal? DiscountAmount { get; private set; }
-    public decimal? DiscountPercentage { get; private set; }
+    public DiscountType DiscountType { get; private set; }
+    public decimal Discount { get; private set; }
     public bool RequiresCoupon { get; private set; } = false;
-    public int? MinItemsPurchase { get; private set; }
+    public bool AutoApply { get; private set; } = false;
     public DateTime? AvailableFrom { get; private set; }
     public DateTime? AvailableTo { get; private set; }
     public bool IsActive { get; private set; } = true;
