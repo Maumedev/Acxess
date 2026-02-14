@@ -58,13 +58,13 @@ public class GetMemberDetailHandler(
         
         var lastSubscription = member.Subscriptions.FirstOrDefault(); 
         
-        var absoluteEndDate = activeOrFutureSubs.Count != 0
-            ? activeOrFutureSubs.Max(s => s.EndDate) 
-            : lastSubscription?.EndDate;
-
         var chainStartDate = activeOrFutureSubs.Count != 0
             ? activeOrFutureSubs.Min(s => s.StartDate) 
             : lastSubscription?.StartDate;
+
+        var absoluteEndDate = activeOrFutureSubs.Count != 0
+            ? activeOrFutureSubs.Max(s => s.EndDate) 
+            : lastSubscription?.EndDate;
         
         var displaySub = activeOrFutureSubs.FirstOrDefault(s => s.StartDate <= today) // La que corre hoy
                          ?? activeOrFutureSubs.FirstOrDefault() // O la futura próxima
@@ -131,43 +131,50 @@ public class GetMemberDetailHandler(
             }
         }
         
-        
-        var remainingDays = 0;
-        var totalDays = 1;
-        var progress = 0;
-        
-        if (absoluteEndDate.HasValue && !isExpired)
-        {
-            remainingDays = (absoluteEndDate.Value - today).Days;
-            
-            // Calculamos el total de días desde el inicio de esta "cadena" hasta el final acumulado
-            // Si chainStartDate es futuro (ej. pagó por adelantado y empieza mañana), usamos hoy para no romper la barra
-            var effectiveStart = chainStartDate < today ? chainStartDate.Value : today;
-            
-            totalDays = (absoluteEndDate.Value - effectiveStart).Days;
-            if (totalDays == 0) totalDays = 1; // Evitar div por cero
+        // 2. Cálculo Matemático Estable
+        int remainingDays = 0;
+        double progress = 0;
+        int totalDaysDuration = 1; // Valor seguro por defecto
 
-            var daysPassed = (today - effectiveStart).Days;
-            progress = (int)((double)daysPassed / totalDays * 100);
+        if (absoluteEndDate.HasValue && chainStartDate.HasValue)
+        {
+            // A. Días Restantes (Siempre respecto a hoy)
+            remainingDays = (absoluteEndDate.Value.Date - today).Days;
+
+            // B. Duración TOTAL fija (No cambia con el tiempo)
+            // Calculamos la distancia total desde el primer día pagado hasta el último vencimiento
+            var totalSpan = (absoluteEndDate.Value.Date - chainStartDate.Value.Date).TotalDays;
             
-            // Capar porcentaje por seguridad visual
-            if (progress > 100) progress = 100;
-            if (progress < 0) progress = 0;
+            // Si es 0 días (mismo día), ponemos 1 para evitar división por cero
+            totalDaysDuration = totalSpan <= 0 ? 1 : (int)totalSpan;
+
+            // C. Días Transcurridos
+            // ¿Cuántos días han pasado desde el inicio original?
+            var daysPassed = (today - chainStartDate.Value.Date).TotalDays;
+
+            // D. Cálculo del Porcentaje
+            // Fórmula: (Lo que ya pasamos / El total del camino) * 100
+            progress = (daysPassed / totalDaysDuration) * 100;
+
+            // E. Límites Visuales (Clamping)
+            if (progress < 0) progress = 0;     // Si la suscripción empieza en el futuro
+            if (progress > 100) progress = 100; // Si ya venció
         }
         else if (isExpired)
         {
-            progress = 100; 
+            progress = 100;
             remainingDays = 0;
         }
-
         
         var monthsSinceJoin = ((today.Year - member.CreatedAt.Year) * 12) + today.Month - member.CreatedAt.Month;
-        // var loyaltyLabel = "Nuevo Ingreso";
-        // var loyaltyIcon = "🌱"; // Semilla
-        //
-        // if (monthsSinceJoin >= 24) { loyaltyLabel = "Socio VIP"; loyaltyIcon = "👑"; }
-        // else if (monthsSinceJoin >= 6) { loyaltyLabel = "Recurrente"; loyaltyIcon = "⭐"; }
-        
+
+        var loyaltyLabel = monthsSinceJoin switch
+        {
+            >= 24 => "Excelente Socio",
+            >= 6 => "Recurrente",
+            _ => "Nuevo Ingreso"
+        };
+
         var billingInfo = await billingService.GetMemberStatsAsync(member.IdMember, cancellationToken);
         var cultureMx = new CultureInfo("es-MX");
         
@@ -195,8 +202,8 @@ public class GetMemberDetailHandler(
             AbsoluteExpirationDate = absoluteEndDate,
             
             RemainingDays = remainingDays,
-            TotalDays = totalDays,
-            ProgressPercentage = progress,
+            TotalDays = totalDaysDuration,
+            ProgressPercentage =(int)progress,
             
             IsInGracePeriod = inGracePeriod,
             GracePeriodEndDate = gracePeriodEnd,
@@ -206,7 +213,8 @@ public class GetMemberDetailHandler(
             // MemberSinceLabel = member.CreatedAt.ToString("dd MMM yyyy"),
             TotalSpentLabel = billingInfo.TotalSpent.ToString("C", cultureMx),
             PaymentBehaviorLabel = billingInfo.PaymentBehaviorLabel,
-            PaymentBehaviorColor = billingInfo.PaymentBehaviorColor
+            PaymentBehaviorColor = billingInfo.PaymentBehaviorColor,
+            LoyaltyLabel = loyaltyLabel
         });
     }
     

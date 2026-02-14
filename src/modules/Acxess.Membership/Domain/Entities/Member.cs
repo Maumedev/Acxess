@@ -56,6 +56,15 @@ public class Member : Entity, IHasTenant
         member.AddDomainEvent(new MemberCreatedDomainEvent(member.IdMember));
         return member;
     }
+    
+    public void UpdateInformation(string firstName, string lastName, string? phone, string? email)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Phone = phone;
+        Email = email;
+        UpdatedAt = DateTime.UtcNow;
+    }
 
     public void Subscribe(
         int idPlan, 

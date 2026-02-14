@@ -41,7 +41,9 @@ public record MemberDetailDto
     public string TotalSpentLabel { get; init; } = string.Empty;
     public string PaymentBehaviorColor { get; set; } = string.Empty;
     public string PaymentBehaviorLabel  { get; set; }= string.Empty;
-    
+
+    public string LoyaltyLabel { get; set; } = string.Empty;
+
 
 
 

@@ -2,6 +2,8 @@ using System.Security.Claims;
 using System.Text.Json;
 using Acxess.Marketing.Application.Features.Coupons.Commands.AssignCoupon;
 using Acxess.Marketing.Application.Features.Promotions.Queries.GetActiveCouponPromotions;
+using Acxess.Membership.Application.Features.Members.Commands.UpdateMember;
+using Acxess.Membership.Application.Features.Members.Queries.GetMember;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberDetail;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberHistory;
 using Acxess.Membership.Application.Features.Members.Queries.GetMembers;
@@ -19,6 +21,9 @@ public class IndexModel(IMediator mediator) : PageModel
     
     [BindProperty]
     public int? SelectedPromotionId { get; set; }
+    
+    [BindProperty]
+    public UpdateMemberInputModel EditMemberInput { get; set; } = new();
     
     public List<SelectListItem> ActivePromotions { get; set; } = [];
     
@@ -63,6 +68,58 @@ public class IndexModel(IMediator mediator) : PageModel
     {
         var result = await mediator.Send(new GetMemberHistoryQuery(id, ShowAll: true));
         return Partial("_MemberHistoryModal", result.Value);
+    }
+    
+    public async Task<IActionResult> OnGetEditMemberAsync(int id)
+    {
+        var query = new GetMemberQuery(id.ToString()); // Reusando el que ya hicimos
+        var result = await mediator.Send(query);
+
+        if (result.IsFailure) return Content("Error al cargar datos");
+        
+        var m = result.Value.FirstOrDefault();
+        if (m is null)  return Content("Error al cargar datos");
+        
+        EditMemberInput = new UpdateMemberInputModel
+        {
+            Id = m.Id,
+            FirstName = m.FirstName, 
+            LastName = m.LastName,
+            Phone = m.Phone,
+            Email = m.Email
+        };
+
+        return Partial("_EditMemberModal", this);
+    }
+    
+    public async Task<IActionResult> OnPostEditMemberAsync()
+    {
+        if (!ModelState.IsValid)
+        {
+            return Partial("_EditMemberModal", this);
+        }
+
+        var command = new UpdateMemberCommand(
+            EditMemberInput.Id,
+            EditMemberInput.FirstName,
+            EditMemberInput.LastName,
+            EditMemberInput.Phone,
+            EditMemberInput.Email
+        );
+
+        var result = await mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, result.Error.Description);
+            return Partial("_EditMemberModal", this);
+        }
+
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(new { 
+            memberUpdated = true 
+        }));
+
+        return Partial("_ActionSuccess", result.Value);
     }
     
     public async Task<IActionResult> OnGetAssignCouponAsync(int id)
