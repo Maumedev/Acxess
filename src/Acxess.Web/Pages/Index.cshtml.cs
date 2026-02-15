@@ -1,34 +1,28 @@
+using Acxess.Membership.Application.Features.Dashboard.Queries.GetDashboardStats;
+using Acxess.Shared.IntegrationEvents.Billing;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Acxess.Web.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel(IMediator mediator, IBillingIntegrationService billingService) : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
+    
+    public DashboardStatsDto Stats { get; private set; } = new();
+    public List<RecentActivityDto> RecentActivity { get; private set; } = [];
 
-    public IndexModel(ILogger<IndexModel> logger)
+  
+
+    public async Task OnGet()
     {
-        _logger = logger;
+        var statsResult = await mediator.Send(new GetDashboardStatsQuery());
+        if (statsResult.IsSuccess)
+        {
+            Stats = statsResult.Value;
+        }
+        RecentActivity = await billingService.GetRecentActivityAsync(8);
     }
 
-    public void OnGet()
-    {
 
-    }
-
-    public IActionResult OnGetDameLaHora()
-    {
-        // Simulamos un retraso de 1 segundo para ver el spinner de carga
-        System.Threading.Thread.Sleep(1000); 
-
-        // Retornamos HTML puro (normalmente esto sería una PartialView)
-        string htmlRespuesta = $@"
-            <div class='bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-4' role='alert'>
-                <p class='font-bold'>¡Respuesta del Servidor!</p>
-                <p>Hora generada en backend: {DateTime.Now.ToString("HH:mm:ss")}</p>
-            </div>";
-
-        return Content(htmlRespuesta, "text/html");
-    }
 }

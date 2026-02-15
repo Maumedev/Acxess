@@ -37,10 +37,16 @@ document.addEventListener('alpine:init', () => {
         amountGiven: '',
         transferRef: '',
         init() {
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const modeParam = urlParams.get('mode');
+            
             if (preselectedMember) {
                 this.setMode('renew');
                 this.selectMember(preselectedMember);
                 setTimeout(() => document.getElementById('plans-items-list')?.scrollIntoView({behavior: 'smooth'}), 500);
+            } else if (modeParam === 'renew') {
+                this.setMode('renew');
             } else {
                 this.setMode('new');
             }

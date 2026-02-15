@@ -48,4 +48,20 @@ public class BillingIntegrationService(BillingModuleContext context) : IBillingI
             ))
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<List<RecentActivityDto>> GetRecentActivityAsync(int count, CancellationToken cancellationToken = default)
+    {
+        return await context.MemberTransactions
+            .AsNoTracking()
+            .OrderByDescending(t => t.TransactionDate)
+            .Take(count)
+            .Select(t => new RecentActivityDto(
+                "Pago Recibido",
+                $"Ticket #{t.IdMemberTransaction}",
+                t.Total,
+                t.TransactionDate,
+                "payment"
+            ))
+            .ToListAsync(cancellationToken);
+    }
 }
