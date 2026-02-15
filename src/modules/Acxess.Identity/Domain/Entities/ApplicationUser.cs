@@ -1,10 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Acxess.Shared.Abstractions;
 using Microsoft.AspNetCore.Identity;
 
 namespace Acxess.Identity.Domain.Entities;
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser, IMayHaveTenant
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int UserNumber { get; set; }
@@ -23,4 +24,6 @@ public class ApplicationUser : IdentityUser
             IdTenant = idTenant
         };
     }
+    
+    
 }

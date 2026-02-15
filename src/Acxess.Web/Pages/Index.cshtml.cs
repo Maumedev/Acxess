@@ -8,11 +8,8 @@ namespace Acxess.Web.Pages;
 
 public class IndexModel(IMediator mediator, IBillingIntegrationService billingService) : PageModel
 {
-    
     public DashboardStatsDto Stats { get; private set; } = new();
     public List<RecentActivityDto> RecentActivity { get; private set; } = [];
-
-  
 
     public async Task OnGet()
     {
@@ -21,8 +18,6 @@ public class IndexModel(IMediator mediator, IBillingIntegrationService billingSe
         {
             Stats = statsResult.Value;
         }
-        RecentActivity = await billingService.GetRecentActivityAsync(8);
+        RecentActivity = await billingService.GetRecentActivityAsync(5);
     }
-
-
 }
