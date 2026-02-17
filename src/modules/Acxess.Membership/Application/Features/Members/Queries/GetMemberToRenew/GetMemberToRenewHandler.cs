@@ -1,15 +1,15 @@
-using Acxess.Membership.Domain.Entities;
+using Acxess.Membership.Application.Features.Members.Queries.GetMember;
 using Acxess.Membership.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Acxess.Membership.Application.Features.Members.Queries.GetMember;
+namespace Acxess.Membership.Application.Features.Members.Queries.GetMemberToRenew;
 
-internal sealed class GetMemberHandler(MembershipModuleContext context)
-    : IRequestHandler<GetMemberQuery, Result<List<MemberResponse>>>
+internal sealed class GetMemberToRenewHandler(MembershipModuleContext context)
+    : IRequestHandler<GetMemberToRenewQuery, Result<List<MemberResponse>>>
 {
-    public async Task<Result<List<MemberResponse>>> Handle(GetMemberQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<MemberResponse>>> Handle(GetMemberToRenewQuery request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.SearchTerm))
         {
@@ -32,9 +32,6 @@ internal sealed class GetMemberHandler(MembershipModuleContext context)
                 m.FirstName.Contains(term) ||
                 m.LastName.Contains(term));
         }
-        
-        
-        
         var members = await query
             .Select(m => new
             {
@@ -61,6 +58,7 @@ internal sealed class GetMemberHandler(MembershipModuleContext context)
                 x.LatestSubscription != null && x.LatestSubscription.EndDate > DateTime.Now
             ))
             .ToListAsync(cancellationToken);
+
 
         return members ?? Result<List<MemberResponse>>.Failure("Member.Query.NotFound", "Member not found");
     }

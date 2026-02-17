@@ -7,6 +7,8 @@ using Acxess.Membership.Application.Features.Members.Commands.NewMember;
 using Acxess.Membership.Application.Features.Members.Commands.RenewMember;
 using Acxess.Membership.Application.Features.Members.DTOs;
 using Acxess.Membership.Application.Features.Members.Queries.GetMember;
+using Acxess.Membership.Application.Features.Members.Queries.GetRenewalMemberContext;
+using Acxess.Membership.Application.Features.Members.Queries.SearchEligibleMembers;
 using Acxess.Shared.Abstractions;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -45,7 +47,7 @@ public class IndexModel(
         
         if (!string.IsNullOrWhiteSpace(SearchMember))
         {
-            var memberQuery = new GetMemberQuery(SearchMember);
+            var memberQuery = new GetMemberToRenewQuery(SearchMember);
             var resultMember = await mediator.Send(memberQuery);
 
             if (resultMember is { IsSuccess: true, Value.Count: > 0 })
@@ -58,7 +60,7 @@ public class IndexModel(
 
     public async Task<IActionResult> OnGetMemberAsync()
     {
-        var query = new GetMemberQuery(SearchMember);
+        var query = new GetMemberToRenewQuery(SearchMember);
         var result = await mediator.Send(query);
 
         if (result.IsFailure)
@@ -152,13 +154,23 @@ public class IndexModel(
         }
 
         if (result.IsFailure)
-        {
             return Feedback(errorMessage: result.Error.Description);
-        }
 
-        return Feedback(result.Value.Mensaje);
+        return Feedback(successMessage: result.Value.Mensaje);
         
 
+    }
+    
+    public async Task<IActionResult> OnGetRenewalContextAsync(int id)
+    {
+        var result = await mediator.Send(new GetRenewalMemberContextQuery(id));
+        return Partial("_RenewalSuggestions", result.IsSuccess ? result.Value : null);
+    }
+
+    public async Task<IActionResult> OnGetSearchBeneficiaryAsync(string term)
+    {
+        var result = await mediator.Send(new SearchEligibleMembersQuery(term));
+        return Partial("_BeneficiarySearchResults", result.IsSuccess ? result.Value : []);
     }
     
     private PartialViewResult Feedback(string? successMessage = null, string? errorMessage = null)

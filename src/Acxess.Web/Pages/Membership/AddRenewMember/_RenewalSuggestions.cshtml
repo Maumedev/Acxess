@@ -1,0 +1,48 @@
+@using System.Text.Json
+@model Acxess.Membership.Application.Features.Members.Queries.GetRenewalMemberContext.RenewalContextDto
+
+@if (Model.SuggestedBeneficiaries.Any())
+{
+    <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800 animate-in fade-in">
+        <p class="text-xs font-bold text-blue-600 dark:text-blue-400 mb-2 uppercase flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            Compañeros del plan anterior:
+        </p>
+
+        <div class="flex flex-wrap gap-2">
+            @foreach (var s in Model.SuggestedBeneficiaries)
+            {
+                var jsonMember = JsonSerializer.Serialize(new { 
+                    Id = s.Id, 
+                    FirstName = s.FirstName, 
+                    LastName = s.LastName,
+                    Phone = s.Phone, 
+                    Email = s.Email 
+                });
+
+                <button type="button"
+                        @if (s.IsEligible)
+                        {
+                            @: @@click="addSuggestion(@jsonMember)"
+                        }
+                        disabled="@(!s.IsEligible)"
+                        class="group flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all border shadow-sm
+                               @(s.IsEligible ? "bg-white hover:border-blue-500 text-gray-700" : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-70")">
+                    
+                    <span>@s.FirstName @s.LastName</span>
+                    
+                    @if (!s.IsEligible)
+                    {
+                         <span title="@s.IneligibilityReason">
+                             <svg class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                         </span>
+                    }
+                    else 
+                    {
+                        <svg class="w-4 h-4 text-blue-500 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                    }
+                </button>
+            }
+        </div>
+    </div>
+}

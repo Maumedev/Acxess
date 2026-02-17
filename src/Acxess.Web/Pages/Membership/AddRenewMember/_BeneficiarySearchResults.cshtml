@@ -1,0 +1,44 @@
+@using System.Text.Json
+@model List<Acxess.Membership.Application.Features.Members.Queries.SearchEligibleMembers.EligibleMemberDto>
+
+@if (!Model.Any())
+{
+    <div class="px-4 py-2 text-xs text-gray-400 italic">No se encontraron socios.</div>
+}
+else
+{
+    <ul class="py-1">
+        @foreach (var m in Model)
+        {
+            var jsonCandidate = JsonSerializer.Serialize(new { 
+                Id = m.IdMember, 
+                FirstName = m.FirstName, 
+                LastName = m.LastName, 
+                Phone = m.Phone, 
+                Email = m.Email 
+            });
+
+            <li class="px-4 py-2 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700/50 flex justify-between items-center group
+                       @(!m.IsEligible ? "opacity-60 cursor-not-allowed" : "")"
+                @if (m.IsEligible)
+                {
+                    @:@@click="selectBeneficiaryFromSearch(index, @jsonCandidate)"
+                }
+            >
+                <div>
+                    <p class="text-sm font-bold text-gray-800 dark:text-white">@m.FirstName @m.LastName</p>
+                    <p class="text-xs text-gray-500">ID: @m.IdMember • @m.Phone</p>
+                </div>
+                
+                @if (m.IsEligible)
+                {
+                    <span class="text-xs text-blue-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Seleccionar</span>
+                }
+                else
+                {
+                    <span class="text-[10px] bg-red-50 text-red-500 px-2 py-1 rounded">@m.IneligibilityReason</span>
+                }
+            </li>
+        }
+    </ul>
+}

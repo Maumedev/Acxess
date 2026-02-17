@@ -30,7 +30,7 @@ builder.Services.AddRazorPages(options =>
     .AddMvcOptions(options =>
     {
         options.Filters.Add<PageExceptionFilter>();
-    });;
+    }); ;
 
 
 var modulesAssemblies = new[]
@@ -42,7 +42,7 @@ var modulesAssemblies = new[]
     typeof(CatalogModuleExtensions).Assembly,
     typeof(Program).Assembly
 };
-builder.Services.AddAcxessInfrastructure(modulesAssemblies); 
+builder.Services.AddAcxessInfrastructure(modulesAssemblies);
 
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
@@ -61,7 +61,7 @@ if (args.Contains("--migrate-only"))
     Console.WriteLine("--> Iniciando modo MIGRACIÓN...");
     await app.ApplyMigrationsAndSeedsAsync();
     Console.WriteLine("--> Migración finalizada. Cerrando proceso.");
-    return; 
+    return;
 }
 
 if (!app.Environment.IsDevelopment())
@@ -81,15 +81,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Pages")),
-    RequestPath = "/js-pages",
-    ContentTypeProvider = new FileExtensionContentTypeProvider
-    {
-        Mappings = { [".js"] = "application/javascript" }
-    }
-});
 
 app.MapRazorPages();
 
