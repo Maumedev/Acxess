@@ -23,12 +23,41 @@ public class BillingIntegrationService(BillingModuleContext context) : IBillingI
         var totalTx = transactions.Count;
         var avgTicket = totalSpent / totalTx;
 
-        // Lógica simple de comportamiento (puedes hacerla tan compleja como quieras)
-        // Ej: Si sus últimos 3 pagos tienen más de 35 días de diferencia entre sí...
-        var behavior = "Puntual"; 
+        var behavior = "Puntual";
         var color = "green";
+
+        if (transactions.Count < 2) return new MemberFinancialStatsDto(totalSpent, avgTicket, totalTx, behavior, color);
         
-        // (Aquí podrías meter lógica real comparando fechas)
+        var gaps = new List<double>();
+        
+        for (var i = 1; i < transactions.Count; i++)
+        {
+            var diff = (transactions[i].TransactionDate - transactions[i - 1].TransactionDate).TotalDays;
+            if (diff > 1)   gaps.Add(diff);
+        }
+
+        if (gaps.Count <= 0) return new MemberFinancialStatsDto(totalSpent, avgTicket, totalTx, behavior, color);
+        
+        var avgGap = gaps.Average();
+            
+        var recentGaps = gaps.TakeLast(3).ToList();
+        var latePayments = recentGaps.Count(g => g > 35); 
+
+        switch (latePayments)
+        {
+            case 0:
+                behavior = "Puntual";
+                color = "green";
+                break;
+            case 1:
+                behavior = "Regular";
+                color = "yellow";
+                break;
+            default:
+                behavior = "Impuntual"; 
+                color = "red";
+                break;
+        }
 
         return new MemberFinancialStatsDto(totalSpent, avgTicket, totalTx, behavior, color);
     }
@@ -43,7 +72,7 @@ public class BillingIntegrationService(BillingModuleContext context) : IBillingI
                 t.IdMemberTransaction,
                 t.TransactionDate,
                 t.Total,
-                "Pagado", // Asumiendo que solo guardas pagadas por ahora
+                "Pagado", 
                 t.Details.Select(d => $"{d.Description ?? "item"} - {d.TotalLine.ToString("C")}" ).ToList()
             ))
             .ToListAsync(cancellationToken);
