@@ -39,7 +39,11 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
             .IsRequired();
 
         builder.Property(rt => rt.Notes)
-            .HasMaxLength(250);
+            .HasMaxLength(250);      
+        
+        builder.Property(rt => rt.SellingPlanName)
+            .IsRequired()
+            .HasMaxLength(150);
 
         builder.Property(rt => rt.CreatedAt)
             .IsRequired()

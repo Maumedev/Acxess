@@ -4,11 +4,16 @@ namespace Acxess.Membership.Domain.Entities;
 
 public class Subscription : IHasTenant
 {
-    private Subscription(){}
-    private Subscription(int tenantId, int ownerMemberId, int sellingPlanId, 
+    private Subscription(
+        int tenantId, 
+        int ownerMemberId, 
+        int sellingPlanId, 
         DateTime startDate,
         DateTime endDate, 
-        decimal priceSnapshot, int createdByUser, string? notes = null)
+        decimal priceSnapshot,
+        string sellingPlanName,
+        int createdByUser, 
+        string? notes = null)
     {
         IdTenant = tenantId;
         IdMemberOwner = ownerMemberId;
@@ -20,12 +25,17 @@ public class Subscription : IHasTenant
         EndDate = endDate;
         CreatedAt =  DateTime.UtcNow;
         IsActive = true;
+        SellingPlanName = sellingPlanName;
     }
 
+    private Subscription()
+    {
+    }
     public int IdSubscription { get; private set; }
     public int IdTenant { get; private set; }
     public int IdMemberOwner { get; private set; }
     public int IdSellingPlan { get; private set; }
+    public string SellingPlanName { get; private set; } = string.Empty;
     public bool IsActive { get; private set; } = true;
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
@@ -42,10 +52,24 @@ public class Subscription : IHasTenant
     private readonly List<SubscriptionAddOns> _addOns = [];
     public virtual IReadOnlyCollection<SubscriptionAddOns> AddOns => _addOns.AsReadOnly();
 
-    public static Subscription Create(int tenantId, Member owner, int sellingPlanId,
-        DateTime startDate, DateTime endDate, decimal priceSnapshot, int userId)
+    public static Subscription Create(
+        int tenantId, 
+        Member owner, 
+        int sellingPlanId,
+        DateTime startDate, 
+        DateTime endDate, 
+        decimal priceSnapshot, 
+        int userId,
+        string sellingPlanName)
     {
-        Subscription subscription = new (tenantId, owner.IdMember, sellingPlanId, startDate, endDate, priceSnapshot,  userId)
+        Subscription subscription = new (
+            tenantId, 
+            owner.IdMember, 
+            sellingPlanId, 
+            startDate, 
+            endDate, 
+            priceSnapshot, 
+            sellingPlanName, userId)
             {
                 OwnerMember = owner
             };

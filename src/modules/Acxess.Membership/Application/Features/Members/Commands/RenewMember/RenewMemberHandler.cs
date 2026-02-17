@@ -77,6 +77,7 @@ public class RenewMemberHandler(
         
         mainMember.Subscribe(
             planInfo.Id,
+            planInfo.Name,
             planInfo.Price,
             planInfo.Duration,
             planInfo.DurationUnit,

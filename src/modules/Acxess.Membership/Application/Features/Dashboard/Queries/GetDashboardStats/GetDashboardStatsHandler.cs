@@ -49,7 +49,7 @@ public class GetDashboardStatsHandler(MembershipModuleContext context) : IReques
             .Select(sm => new ExpiringMemberItem(
                 sm.IdMember,
                 $"{sm.Member.FirstName} {sm.Member.LastName}",
-                "Plan #" + sm.Subscription.IdSellingPlan, 
+                sm.Subscription.SellingPlanName, 
                 sm.Subscription.EndDate,
                 (sm.Subscription.EndDate.Date - today).Days
             ))

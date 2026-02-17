@@ -68,6 +68,7 @@ public class Member : Entity, IHasTenant
 
     public void Subscribe(
         int idPlan, 
+        string sellingPlanName,
         decimal priceSnapshot, 
         int duration, 
         int durationUnit, 
@@ -84,7 +85,8 @@ public class Member : Entity, IHasTenant
             startDate,
             endDate,
             priceSnapshot,
-            userId
+            userId,
+            sellingPlanName
         );
         
         foreach (var beneficiaryId in beneficiaryIds)
