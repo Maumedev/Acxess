@@ -16,7 +16,8 @@
         </div>
 
         <div id="modal-content">
-            <form hx-post="@Url.Page("Index", "AssignCoupon")"
+            <form id="assign-coupon-form" 
+                  hx-post="@Url.Page("Index", "AssignCoupon")"
                         hx-target="#modal-container" 
                         hx-swap="innerHTML"
                         hx-indicator="#btn-spinner"
@@ -33,9 +34,15 @@
                             <div>
                                 <p class="font-bold">No se pudo realizar la acción:</p>
                                 <ul class="list-disc list-inside mt-1">
-                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                    @foreach (var entry in ViewData.ModelState)
                                     {
-                                        <li>@error.ErrorMessage</li>
+                                        if (entry.Key is not ("" or nameof(Model.SelectedPromotionId)))
+                                            continue;
+
+                                        foreach (var error in entry.Value.Errors)
+                                        {
+                                            <li>@error.ErrorMessage</li>
+                                        }
                                     }
                                 </ul>
                             </div>
@@ -47,8 +54,10 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Selecciona Promoción</label>
                         <div class="relative">
-                            <select asp-for="SelectedPromotionId" asp-items="Model.ActivePromotions"
-                                    class="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700/50 text-sm focus:ring-blue-500 focus:border-blue-500 py-2.5">
+                            <select 
+                                    asp-for="SelectedPromotionId" 
+                                    asp-items="Model.ActivePromotions"
+                                    class="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700/50 text-sm focus:ring-blue-500 focus:border-blue-500 py-3 px-1.5">
                                 <option value="">-- Selecciona una opción --</option>
                             </select>
                         </div>

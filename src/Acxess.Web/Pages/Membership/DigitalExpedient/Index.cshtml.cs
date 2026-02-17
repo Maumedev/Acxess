@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text.Json;
 using Acxess.Marketing.Application.Features.Coupons.Commands.AssignCoupon;
@@ -92,7 +93,7 @@ public class IndexModel(IMediator mediator) : PageModel
     
     public async Task<IActionResult> OnPostEditMemberAsync()
     {
-        if (!ModelState.IsValid)
+        if (!TryValidateModel(EditMemberInput, nameof(EditMemberInput)))
         {
             return Partial("_EditMemberModal", this);
         }
@@ -141,12 +142,16 @@ public class IndexModel(IMediator mediator) : PageModel
     
     public async Task<IActionResult> OnPostAssignCouponAsync()
     {
+        
+        ModelState.ClearValidationState(nameof(EditMemberInput));
+        ModelState.MarkFieldValid(nameof(EditMemberInput));
+        
         var userNumberString = User.FindFirstValue("UserNumber");
         var userNumber = int.TryParse(userNumberString, out var val) ? val : 0;
         
         await LoadPromotionsDropdown();
         
-        if (SelectedPromotionId  <= 0)
+        if (SelectedPromotionId is null or <= 0)
         {
             ModelState.AddModelError(string.Empty, "Debes seleccionar una promoción válida.");
             return Partial("_AssignCouponModal", this);

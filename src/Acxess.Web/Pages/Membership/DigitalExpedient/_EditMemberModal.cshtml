@@ -34,9 +34,17 @@
                     {
                         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-lg text-xs font-medium">
                             <ul class="list-disc list-inside">
-                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                @foreach (var entry in ViewData.ModelState)
                                 {
-                                    <li>@error.ErrorMessage</li>
+                                    if (entry.Key != string.Empty && !entry.Key.StartsWith("EditMemberInput"))
+                                    {
+                                        continue;
+                                    }
+
+                                    foreach (var error in entry.Value.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
                                 }
                             </ul>
                         </div>
