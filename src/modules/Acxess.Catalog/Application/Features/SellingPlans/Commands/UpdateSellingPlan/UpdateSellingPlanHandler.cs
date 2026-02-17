@@ -22,7 +22,8 @@ public class UpdateSellingPlanHandler(
             request.TotalMembers,
             request.Duration,
             request.DurationUnit,
-            request.Price
+            request.Price,
+            request.IsActive
         );
 
         sellingPlan.SyncAccessTiers(request.AccessTiersIds ?? new List<int>());

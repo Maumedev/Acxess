@@ -64,7 +64,7 @@
                                    id="Input_Price"
                                    asp-for="Price"
                                    x-model="form.Price"
-                                   class="form-input-acxess !pl-9 font-mono font-bold">
+                                   class="form-input-acxess !skillspl-9 font-mono font-bold">
 
                             <span asp-validation-for="Price" class="text-xs text-red-500 font-bold mt-1 block"></span>
                         </div>
@@ -73,7 +73,11 @@
                     <div class="flex flex-col justify-end pb-2">
                         <label class="flex items-center cursor-pointer group">
                             <div class="relative">
-                                <input type="checkbox" asp-for="IsActive" x-model="form.IsActive" class="sr-only">
+                                <input 
+                                    type="checkbox" 
+                                    asp-for="IsActive" 
+                                    x-model="form.IsActive" 
+                                    class="sr-only">
                                 <div :class="form.IsActive ? 'bg-green-500' : 'bg-gray-300 dark:bg-slate-600'" class="w-10 h-6 rounded-full shadow-inner transition-colors"></div>
                                 <div :class="form.IsActive ? 'translate-x-4' : 'translate-x-0'" class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transition-transform transform"></div>
                             </div>
@@ -126,7 +130,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     @foreach (var tier in tiersList)
                     {
-                        bool isSelected = Model.AccessTiersIds.Contains(tier.IdAccessTier);
+                        var isSelected = Model.AccessTiersIds.Contains(tier.IdAccessTier);
 
                         <label x-data="{ checked: @isSelected.ToString().ToLower() }"
                                class="cursor-pointer border p-2 rounded text-xs flex items-center gap-2 transition-colors duration-200 select-none"

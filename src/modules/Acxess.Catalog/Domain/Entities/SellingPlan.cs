@@ -12,13 +12,20 @@ public class SellingPlan : IHasTenant
         return new SellingPlan(tenantId, name, totalMembers, durationInValue, durationUnit, price, createdByUser);
     }
 
-    public void  Update(string name, int totalMembers, int durationInValue, DurationUnit durationUnit, decimal price)
+    public void  Update(
+        string name, 
+        int totalMembers, 
+        int durationInValue, 
+        DurationUnit durationUnit, 
+        decimal price,
+        bool isActive)
     {
         Name = name;
         TotalMembers = totalMembers;
         DurationInValue = durationInValue;
         DurationUnit = durationUnit;
         Price = price;
+        IsActive = isActive;
     }
 
 

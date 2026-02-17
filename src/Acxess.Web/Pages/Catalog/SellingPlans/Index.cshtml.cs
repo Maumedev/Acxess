@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccessTiers;
 using Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPlan;
+using Acxess.Catalog.Application.Features.SellingPlans.Commands.UpdateSellingPlan;
 using Acxess.Catalog.Application.Features.SellingPlans.Queries.GetSellingPlanById;
 using Acxess.Catalog.Application.Features.SellingPlans.Queries.GetSellingPlans;
 using Acxess.Catalog.Domain.Enums;
@@ -153,7 +154,8 @@ public class IndexModel(IMediator mediator) : PageModel
                 (DurationUnit)Input.DurationUnit,
                 Input.Name,
                 Input.Price,
-                Input.AccessTiersIds
+                Input.AccessTiersIds,
+                Input.IsActive
             );
             resultSaved =  await mediator.Send(command);
         }
