@@ -52,6 +52,10 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
         builder.Property(t => t.CreatedByUser)
             .IsRequired();
 
+        builder.Property(t => t.CancelledAt);
+        builder.Property(t => t.CancellationReason).HasMaxLength(200);
+        builder.Property(t => t.CancelledBy);
+
         builder.HasIndex(t => t.IdTenant);
         
         builder.HasMany(s => s.SubscriptionMembers)

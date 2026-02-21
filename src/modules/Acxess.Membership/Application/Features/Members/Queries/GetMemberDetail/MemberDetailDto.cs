@@ -18,7 +18,6 @@ public record MemberDetailDto
     public bool HasActiveMembership { get; init; }
     public string PlanName { get; init; } = "Sin Plan";
     public string PlanDescription { get; init; } = string.Empty;
-
     
     // --- Fechas y Tiempos ---
     public DateTime JoinedDate { get; init; }
@@ -34,8 +33,6 @@ public record MemberDetailDto
     
     public List<string> ActiveAddOns { get; init; } = [];
     public string? InternalNotes { get; init; }
-    
-    
 
     public string MemberSinceLabel { get; init; } = string.Empty;
     public string TotalSpentLabel { get; init; } = string.Empty;
@@ -43,8 +40,9 @@ public record MemberDetailDto
     public string PaymentBehaviorLabel  { get; set; }= string.Empty;
 
     public string LoyaltyLabel { get; set; } = string.Empty;
-
-
-
-
+    
+    public int? CurrentSubscriptionId { get; init; }
+    public bool HasActiveSubscription { get; init; }
+    public bool IsSubscriptionCancelled { get; init; }
+    public string ColorSubscription { get; set; } = string.Empty;
 };

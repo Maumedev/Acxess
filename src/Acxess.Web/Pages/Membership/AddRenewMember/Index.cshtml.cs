@@ -156,9 +156,15 @@ public class IndexModel(
         if (result.IsFailure)
             return Feedback(errorMessage: result.Error.Description);
 
-        return Feedback(successMessage: result.Value.Mensaje);
-        
+        var targetUrl = Url.Page(
+            "/Membership/DigitalExpedient/Index", 
+            new { SearchMember = result.Value.IdMember }
+        );
 
+        Response.Headers.Append("HX-Redirect", targetUrl);
+
+        TempData["SuccessMessage"] = result.Value.Mensaje;
+        return new EmptyResult();
     }
     
     public async Task<IActionResult> OnGetRenewalContextAsync(int id)

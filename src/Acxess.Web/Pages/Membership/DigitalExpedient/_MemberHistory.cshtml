@@ -47,9 +47,11 @@
                     @switch (item.Type)
                     {
                         case "Expiration":
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">@item.Date.ToString("hh:mm tt")</p>
                             <p class="text-xs text-red-500 dark:text-red-400 font-medium mb-2">Sistema desactivó acceso.</p>
                             break;
                         case "SubscriptionStart":
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">@item.Date.ToString("hh:mm tt")</p>
                             <p class="text-xs text-green-500 dark:text-green-400 font-medium mb-2">Sistema habilitó acceso.</p>
                             break;
                         default:

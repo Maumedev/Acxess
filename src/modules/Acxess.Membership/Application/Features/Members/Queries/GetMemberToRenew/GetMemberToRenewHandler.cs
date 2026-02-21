@@ -38,11 +38,13 @@ internal sealed class GetMemberToRenewHandler(MembershipModuleContext context)
                 Member = m,
                 LatestSubscription = m.SubscriptionMemberships
                     .Select(sm => sm.Subscription)
+                    .Where(sm => sm.IsActive)
                     .OrderByDescending(s => s.EndDate)
                     .Select(s => new
                     {
                         s.EndDate,
-                        s.IdSellingPlan
+                        s.IdSellingPlan,
+                        s.SellingPlanName
                     })
                     .FirstOrDefault()
             })
@@ -54,8 +56,8 @@ internal sealed class GetMemberToRenewHandler(MembershipModuleContext context)
                 x.Member.Phone ?? string.Empty,
                 x.Member.CreatedAt,
                 x.LatestSubscription != null ? (DateTime?)x.LatestSubscription.EndDate : null,
-                x.LatestSubscription != null ? $"Plan #{x.LatestSubscription.IdSellingPlan}" : null,
-                x.LatestSubscription != null && x.LatestSubscription.EndDate > DateTime.Now
+                x.LatestSubscription != null ? x.LatestSubscription.SellingPlanName : null,
+                x.LatestSubscription != null && x.LatestSubscription.EndDate > DateTime.Now 
             ))
             .ToListAsync(cancellationToken);
 

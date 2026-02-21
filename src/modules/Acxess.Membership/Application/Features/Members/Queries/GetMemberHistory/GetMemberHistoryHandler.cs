@@ -29,7 +29,7 @@ public class GetMemberHistoryHandler(
         var subscriptionDates = await context.Subscriptions
             .AsNoTracking()
             .Where(s => s.SubscriptionMembers.Any(sm => sm.IdMember == request.IdMember))
-            .Select(s => new { s.EndDate, s.StartDate })
+            .Select(s => new { s.EndDate, s.StartDate, s.CancelledAt, s.CreatedAt })
             .ToListAsync(cancellationToken);
         
         foreach (var sub in subscriptionDates)
@@ -37,7 +37,7 @@ public class GetMemberHistoryHandler(
             timeline.Add(new TimelineItemDto
             {
                 Title = "Membresía Activada", 
-                Date = sub.StartDate,
+                Date = sub.CreatedAt,
                 Amount = null,
                 Type = "SubscriptionStart", // Nuevo Tipo
                 ColorClass = "blue",
@@ -57,6 +57,20 @@ public class GetMemberHistoryHandler(
                     Details = []
                 });
             }
+
+            if (sub.CancelledAt.HasValue)
+            {
+                timeline.Add(new TimelineItemDto
+                {
+                    Title = "Membresía Cancelada",
+                    Date = sub.CancelledAt.Value,
+                    Amount = null,
+                    Type = "Expiration",
+                    ColorClass = "red",
+                    Details = []
+                });
+            }
+            
         }
         
         var sortedTimeline = timeline.OrderByDescending(x => x.Date).ToList();

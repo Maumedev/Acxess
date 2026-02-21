@@ -3,11 +3,14 @@ using System.Security.Claims;
 using System.Text.Json;
 using Acxess.Marketing.Application.Features.Coupons.Commands.AssignCoupon;
 using Acxess.Marketing.Application.Features.Promotions.Queries.GetActiveCouponPromotions;
+using Acxess.Membership.Application.Features.Members.Commands.DeleteMember;
+using Acxess.Membership.Application.Features.Members.Commands.RestoreMember;
 using Acxess.Membership.Application.Features.Members.Commands.UpdateMember;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberById;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberDetail;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberHistory;
 using Acxess.Membership.Application.Features.Members.Queries.GetMembers;
+using Acxess.Membership.Application.Features.Subscriptions.Commands.CancelSubscription;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -29,11 +32,35 @@ public class IndexModel(IMediator mediator) : PageModel
     public List<SelectListItem> ActivePromotions { get; set; } = [];
     
     public MemberDetailDto? SelectedMember { get; set; }
+    public MemberHistoryDto? InitialMemberHistory { get; set; }
     
     [BindProperty(SupportsGet = true)]
     public string? SearchMember { get; set; } = string.Empty;
 
     public MembersResponse? MembersResponse { get; set; }
+    
+    public async Task OnGet()
+    {
+        if (string.IsNullOrWhiteSpace(SearchMember)) return;
+        
+        var membersResult = await mediator.Send(new GetMembersQuery(SearchMember));
+        if (membersResult.IsFailure || !membersResult.Value.Members.Any())  return; 
+        
+        MembersResponse = membersResult.Value;
+        var firstMember = MembersResponse.Members.First();
+        
+        var detailResult = await mediator.Send(new GetMemberDetailQuery(firstMember.IdMember));
+        if (detailResult.IsSuccess)
+        {
+            SelectedMember = detailResult.Value;
+        }
+        
+        var historyResult = await mediator.Send(new GetMemberHistoryQuery(firstMember.IdMember, ShowAll: false));
+        if (historyResult.IsSuccess)
+        {
+            InitialMemberHistory = historyResult.Value;
+        }
+    }
 
     public async Task<IActionResult> OnGetMembersAsync()
     {
@@ -166,8 +193,73 @@ public class IndexModel(IMediator mediator) : PageModel
         return Partial("_AssignCouponModal", this);
 
     }
-    public void OnGet()
+    
+    public async Task<IActionResult> OnGetCancelSubscriptionModalAsync(int id)
     {
+        await OnGetMemberDetailAsync(id);
         
+        if (SelectedMember == null || !SelectedMember.HasActiveSubscription)
+            return Content(""); 
+
+        return Partial("_CancelSubscriptionModal", this);
     }
+    
+    public async Task<IActionResult> OnPostCancelSubscriptionAsync(int subscriptionId, int memberId, string reason)
+    {
+        var userNumberString = User.FindFirstValue("UserNumber");
+        var userNumber = int.TryParse(userNumberString, out var val) ? val : 0;
+
+        var command = new CancelSubscriptionCommand(subscriptionId, reason, userNumber);
+        var result = await mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, result.Error.Description);
+            await OnGetMemberDetailAsync(memberId);
+            return Partial("_CancelSubscriptionModal", this);
+        }
+
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(new { 
+            memberUpdated = true, 
+            closeModal = true
+        }));
+
+        return Partial("_ActionSuccess", "Suscripción cancelada correctamente.");
+    }
+    
+    public async Task<IActionResult> OnGetDeleteMemberModalAsync(int id)
+    {
+        await OnGetMemberDetailAsync(id);
+        return Partial("_DeleteMemberModal", this);
+    }
+    
+    public async Task<IActionResult> OnPostDeleteMemberAsync(int id)
+    {
+        var userNumber = int.Parse(User.FindFirstValue("UserNumber") ?? "0");
+        var result = await mediator.Send(new DeleteMemberCommand(id, userNumber));
+
+        if (result.IsFailure)
+        {
+
+        }
+
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(new { 
+            memberUpdated = true, 
+        }));
+
+        return Partial("_ActionSuccess", "Socio eliminado correctamente.");
+    }
+    
+    public async Task<IActionResult> OnPostRestoreMemberAsync(int id)
+    {
+        var result = await mediator.Send(new RestoreMemberCommand(id));
+
+        if (result.IsFailure) return BadRequest(result.Error.Description);
+
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(new { memberUpdated = true }));
+        
+        return new EmptyResult(); 
+    }
+    
+    
 }

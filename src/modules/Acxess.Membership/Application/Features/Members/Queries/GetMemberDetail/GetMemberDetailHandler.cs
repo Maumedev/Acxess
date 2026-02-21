@@ -16,11 +16,7 @@ public class GetMemberDetailHandler(
 {
     public async Task<Result<MemberDetailDto>> Handle(GetMemberDetailQuery request, CancellationToken cancellationToken)
     {
-        
-        
         var today = DateTime.UtcNow.Date;
-        
-        
         var member = await context.Members
             .AsNoTracking()
             .Where(m => m.IdMember == request.IdMember)
@@ -42,6 +38,8 @@ public class GetMemberDetailHandler(
                         s.StartDate, 
                         s.EndDate, 
                         s.IdSellingPlan,
+                        s.IsActive,
+                        s.CancelledAt,
                         AddOns = s.AddOns.Select(ao => new { ao.IdAddOn, ao.PriceSnapshot }).ToList() 
                     })
                     .ToList()
@@ -52,11 +50,14 @@ public class GetMemberDetailHandler(
             return Result<MemberDetailDto>.Failure(Error.NotFound("Member.NotFound", "Socio no encontrado"));
         
         var activeOrFutureSubs = member.Subscriptions
-            .Where(s => s.EndDate >= today)
+            .Where(s => s.EndDate >= today && s.IsActive)
             .OrderBy(s => s.StartDate)
             .ToList();
         
-        var lastSubscription = member.Subscriptions.FirstOrDefault(); 
+        var lastSubscription = member.Subscriptions
+            .OrderByDescending(s => s.EndDate)
+            .FirstOrDefault(); 
+        
         
         var chainStartDate = activeOrFutureSubs.Count != 0
             ? activeOrFutureSubs.Min(s => s.StartDate) 
@@ -98,29 +99,44 @@ public class GetMemberDetailHandler(
         DateTime? gracePeriodEnd = null;
         var statusLabel = "ACTIVO";
         var statusColor = "green";
+        var colorSubscription = "text-blue-600";
         var renewalMsg = "Tu membresía está al corriente.";
+
+        var hasActiveSubscripton = displaySub != null && displaySub.IsActive && !isExpired;
+        var isSubscriptionCancelled = displaySub != null && !displaySub.IsActive &&
+                                      displaySub.CancelledAt.HasValue;
         
         if (member.IsDeleted)
         {
             statusLabel = "BAJA / ELIMINADO";
             statusColor = "gray"; // U opacity-50
+            colorSubscription = "text-red-500";
             renewalMsg = "Este miembro ha sido dado de baja.";
         }
         else if (displaySub == null)
         {
             statusLabel = "NUEVO / SIN PLAN";
             statusColor = "yellow";
+            colorSubscription = "text-orange-500";
             renewalMsg = "Selecciona 'Renovar' para asignar el primer plan.";
         }
-        else if (isExpired)
+        else if (!hasActiveSubscripton)
         {
             gracePeriodEnd = absoluteEndDate!.Value.AddDays(Configurations.PRORROGA_DAYS);
             inGracePeriod = today <= gracePeriodEnd;
 
-            if (inGracePeriod)
+            if (isSubscriptionCancelled)
+            {
+                statusLabel = "CANCELADA";
+                statusColor = "red";
+                renewalMsg = "La membresía ha sido cancelada por el administrador.";
+                colorSubscription = "text-red-500";
+            }
+            else if (inGracePeriod)
             {
                 statusLabel = "EN PRÓRROGA";
                 statusColor = "yellow"; 
+                colorSubscription = "text-orange-500";
                 renewalMsg = $"¡Cuidado! Renueva antes del {gracePeriodEnd:dd/MMM} para conservar su antigüedad.";
             }
             else
@@ -128,13 +144,14 @@ public class GetMemberDetailHandler(
                 statusLabel = "VENCIDO";
                 statusColor = "red";
                 renewalMsg = "La membresía venció. Al renovar, la fecha de corte se reiniciará.";
+                colorSubscription = "text-red-500";
             }
         }
         
         // 2. Cálculo Matemático Estable
-        int remainingDays = 0;
+        var remainingDays = 0;
         double progress = 0;
-        int totalDaysDuration = 1; // Valor seguro por defecto
+        var totalDaysDuration = 1; // Valor seguro por defecto
 
         if (absoluteEndDate.HasValue && chainStartDate.HasValue)
         {
@@ -180,6 +197,10 @@ public class GetMemberDetailHandler(
         
         var datePart = cultureMx.TextInfo.ToTitleCase(member.CreatedAt.ToString("dd MMM yyyy", cultureMx));
         var memberSinceLabel = $"{datePart}";
+        
+        
+        var activeSub = activeOrFutureSubs.FirstOrDefault();
+        
         return Result<MemberDetailDto>.Success(new MemberDetailDto
         {
             IdMember = member.IdMember,
@@ -214,7 +235,12 @@ public class GetMemberDetailHandler(
             TotalSpentLabel = billingInfo.TotalSpent.ToString("C", cultureMx),
             PaymentBehaviorLabel = billingInfo.PaymentBehaviorLabel,
             PaymentBehaviorColor = billingInfo.PaymentBehaviorColor,
-            LoyaltyLabel = loyaltyLabel
+            LoyaltyLabel = loyaltyLabel,
+            
+            CurrentSubscriptionId = activeSub?.IdSubscription,
+            HasActiveSubscription = hasActiveSubscripton,
+            IsSubscriptionCancelled = isSubscriptionCancelled,
+            ColorSubscription = colorSubscription
         });
     }
     

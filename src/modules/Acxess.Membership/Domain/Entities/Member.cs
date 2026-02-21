@@ -57,6 +57,23 @@ public class Member : Entity, IHasTenant
         return member;
     }
     
+    public void Delete(int userId)
+    {
+        if (IsDeleted) return; 
+        IsDeleted = true;
+    }
+    
+    public void Restore()
+    {
+        if (!IsDeleted) return;
+        IsDeleted = false;
+    }
+    
+    public bool HasActiveSubscription()
+    {
+        return _subscriptionMemberships.Any(sm => sm.Subscription.IsActive && sm.Subscription.EndDate > DateTime.UtcNow);
+    }
+    
     public void UpdateInformation(string firstName, string lastName, string? phone, string? email)
     {
         FirstName = firstName;
@@ -110,6 +127,7 @@ public class Member : Entity, IHasTenant
 
         var lastSubscription = _subscriptionMemberships
             .Select(sm => sm.Subscription)
+            .Where(sm => sm.IsActive)
             .OrderByDescending(s => s.EndDate)
             .FirstOrDefault();
 
@@ -117,7 +135,7 @@ public class Member : Entity, IHasTenant
         {
             var lastEnd = lastSubscription.EndDate.Date;
 
-            if (lastEnd >= today || today <= lastEnd.AddDays(Configurations.PRORROGA_DAYS))
+            if (lastEnd >= today || today <= lastEnd.AddDays(Configurations.PRORROGA_DAYS) && lastSubscription.IsActive)
                 startDate = lastEnd; 
             else
                 startDate = today; 

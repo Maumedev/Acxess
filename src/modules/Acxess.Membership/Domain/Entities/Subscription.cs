@@ -1,4 +1,5 @@
 using Acxess.Shared.Abstractions;
+using Acxess.Shared.ResultManager;
 
 namespace Acxess.Membership.Domain.Entities;
 
@@ -43,6 +44,10 @@ public class Subscription : IHasTenant
     public string? Notes { get; private set; }
     public DateTime CreatedAt { get; private set; } =  DateTime.UtcNow;
     public int CreatedByUser { get; private set; }
+    
+    public DateTime? CancelledAt { get; private set; }
+    public string? CancellationReason { get; private set; }
+    public int? CancelledBy { get; private set; }
     
     public virtual Member OwnerMember { get; private set; } = null!;
     
@@ -100,5 +105,27 @@ public class Subscription : IHasTenant
         var addon =  SubscriptionAddOns.Create(addOnId, IdSubscription, priceSnapshot, this.IdTenant);
         
         _addOns.Add(addon);
+    }
+    
+    public Result Cancel(string reason, int userId)
+    {
+        if (!IsActive)
+        {
+           return Result.Failure("Subsctiprion.IsCanceled","Subscription is already cancel");
+        }
+
+        IsActive = false;
+        
+        CancelledAt = DateTime.UtcNow;
+        CancellationReason = reason;
+        CancelledBy = userId;
+
+        // AddDomainEvent(new SubscriptionCancelledEvent(this.Id));
+        return Result.Success();
+    }
+    
+    public void MarkAsExpired()
+    {
+        if (IsActive && EndDate < DateTime.UtcNow) IsActive = false;
     }
 }
