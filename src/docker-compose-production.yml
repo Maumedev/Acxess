@@ -46,9 +46,7 @@ services:
   #  Migrator de Base de Datos
   # ==============================
   acxess-migrator:
-    build:
-      context: .
-      dockerfile: Acxess.Web/DOCKERFILE
+    image: ghcr.io/maumedev/acxess-web:latest 
     container_name: acxess_migrator
     command: ["dotnet", "Acxess.Web.dll", "--migrate-only"]
     depends_on:
@@ -65,9 +63,7 @@ services:
   #  App Web
   # ==============================
   acxess-web:
-    build:
-      context: . 
-      dockerfile: Acxess.Web/DOCKERFILE
+    image: ghcr.io/maumedev/acxess-web:latest 
     container_name: acxess_web
     mem_limit: 512m
     restart: always
