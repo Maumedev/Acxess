@@ -1,3 +1,5 @@
+using Acxess.Membership.Domain.Abstractions;
+using Acxess.Membership.Infrastructure.BackgroundJobs;
 using Acxess.Membership.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +23,9 @@ public static class MembershipModuleExtensions
         });
 
         services.AddScoped<IDataSeeder, MembershipSeeder>();
+        services.AddScoped<IMembershipUnitOfWork, MembershipUnitOfWork>();
+        
+        services.AddHostedService<SubscriptionExpirationWorker>();
 
         return services;
     }

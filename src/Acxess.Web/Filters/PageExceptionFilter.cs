@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Acxess.Web.Filters;
@@ -15,45 +14,21 @@ public class PageExceptionFilter(ILogger<PageExceptionFilter> logger, IHostEnvir
         if (executedContext.Exception != null)
         {
             logger.LogError(executedContext.Exception, "Error no controlado en Razor Page: {Message}", executedContext.Exception.Message);
+            var message = (env.IsDevelopment() || env.IsEnvironment("Localhost"))
+                ? $"{executedContext.Exception.Message}" 
+                : "Ocurrió un error inesperado. Por favor intente más tarde.";
 
-            if (context.HttpContext.Request.Method == "POST")
+            executedContext.ModelState.AddModelError(string.Empty, message);
+            executedContext.ExceptionHandled = true;
+
+            executedContext.Result = new PartialViewResult()
             {
-                var message = (env.IsDevelopment() || env.IsEnvironment("Localhost"))
-                    ? $"{executedContext.Exception.Message}" 
-                    : "Ocurrió un error inesperado. Por favor intente más tarde.";
-
-                executedContext.ModelState.AddModelError(string.Empty, message);
-                executedContext.ExceptionHandled = true;
-
-                var isAjax = context.HttpContext.Request.Headers.ContainsKey("HX-Request") || 
-                             context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
-
-                if (isAjax)
+                ViewName = "_ErrorState",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(),executedContext.ModelState)
                 {
-                    string viewName = "_Form";
-
-                    if (context.ActionDescriptor is PageActionDescriptor pageDescriptor)
-                    {
-                        var pageName = Path.GetFileNameWithoutExtension(pageDescriptor.RelativePath);
-                        viewName = $"_{pageName}";
-                    }
-
-                    var result = new PartialViewResult
-                    {
-                        ViewName = viewName,
-                        ViewData = new ViewDataDictionary<object>(new EmptyModelMetadataProvider(), executedContext.ModelState)
-                        {
-                            Model = executedContext.HandlerInstance // Recuperamos tu PageModel con los datos
-                        }
-                    };
-
-                    executedContext.Result = result;
+                    Model = message
                 }
-                else
-                {
-                    executedContext.Result = new PageResult();
-                }
-            }
+            };
         }
     }
 

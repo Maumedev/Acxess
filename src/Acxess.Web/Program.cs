@@ -4,8 +4,14 @@ using Acxess.Infrastructure.Extensions;
 using Acxess.Infrastructure.Middlewares;
 using Acxess.Membership;
 using Acxess.Billing;
+using Acxess.Billing.Infrastructure.Services;
+using Acxess.Catalog.Infrastructure.Services;
 using Acxess.Marketing;
+using Acxess.Shared.IntegrationEvents.Billing;
+using Acxess.Shared.IntegrationEvents.Catalog;
 using Acxess.Web.Filters;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +30,7 @@ builder.Services.AddRazorPages(options =>
     .AddMvcOptions(options =>
     {
         options.Filters.Add<PageExceptionFilter>();
-    });;
+    }); ;
 
 
 var modulesAssemblies = new[]
@@ -36,13 +42,17 @@ var modulesAssemblies = new[]
     typeof(CatalogModuleExtensions).Assembly,
     typeof(Program).Assembly
 };
-builder.Services.AddAcxessInfrastructure(modulesAssemblies); 
+builder.Services.AddAcxessInfrastructure(modulesAssemblies);
 
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddMembershipModule(builder.Configuration);
 builder.Services.AddBillingModule(builder.Configuration);
 builder.Services.AddMarketingModule(builder.Configuration);
+
+// integrations services
+builder.Services.AddScoped<ICatalogIntegrationService, CatalogIntegrationService>();
+builder.Services.AddScoped<IBillingIntegrationService, BillingIntegrationService>();
 
 var app = builder.Build();
 
@@ -51,7 +61,7 @@ if (args.Contains("--migrate-only"))
     Console.WriteLine("--> Iniciando modo MIGRACIÓN...");
     await app.ApplyMigrationsAndSeedsAsync();
     Console.WriteLine("--> Migración finalizada. Cerrando proceso.");
-    return; 
+    return;
 }
 
 if (!app.Environment.IsDevelopment())

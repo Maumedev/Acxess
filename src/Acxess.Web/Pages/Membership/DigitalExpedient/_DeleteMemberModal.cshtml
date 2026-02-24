@@ -1,0 +1,43 @@
+@model Acxess.Web.Pages.Membership.DigitalExpedient.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+     x-data="{ isLoading: false }"
+     @@close-modal.window="$el.remove()" 
+     @@click.self="$el.remove()">
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm animate-in fade-in zoom-in duration-200 overflow-hidden">
+        
+        <div class="p-6 text-center">
+            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </div>
+            
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">¿Eliminar Socio?</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                El socio <strong>@Model.SelectedMember?.FullName</strong> será marcado como eliminado. Podrás restaurarlo después si es necesario.
+            </p>
+
+            <form hx-post="@Url.Page("Index", "DeleteMember")"
+                  hx-target="#modal-container"
+                  hx-swap="innerHTML"
+                  method="post"
+                  @@submit="isLoading = true">
+                
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.SelectedMember?.IdMember" />
+
+                <div class="flex gap-3 justify-center">
+                    <button type="button" @@click="$el.closest('.fixed').remove()" 
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full">
+                        Cancelar
+                    </button>
+                    <button type="submit" :disabled="isLoading" 
+                            class="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors w-full flex justify-center items-center gap-2 disabled:opacity-70">
+                        <span x-text="isLoading ? '...' : 'Sí, Eliminar'"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -2,13 +2,13 @@ using Acxess.Shared.ResultManager;
 using MediatR;
 namespace Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccessTiers;
 
-public record GetAccessTiersQuery(string? Search, string? SortOrder, int Page, int PageSize)
-: IRequest<Result<PaginatedResult<AccessTierDto>>> ; 
+public record GetAccessTiersQuery(bool IncludesInactives)
+: IRequest<Result<List<AccessTierDto>>>; 
 
 
 public record AccessTierDto
 (
-    int Id,
+    int IdAccessTier,
     string Name,
     string Description,
     bool IsActive

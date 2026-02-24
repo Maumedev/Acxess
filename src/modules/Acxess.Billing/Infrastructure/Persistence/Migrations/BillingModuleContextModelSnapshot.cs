@@ -31,13 +31,12 @@ namespace Acxess.Billing.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdMemberTransaction"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
                     b.Property<int>("CreatedByUser")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Difference")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("IdMember")
                         .HasColumnType("int");
@@ -48,13 +47,26 @@ namespace Acxess.Billing.Infrastructure.Persistence.Migrations
                     b.Property<int>("IdTenant")
                         .HasColumnType("int");
 
+                    b.Property<string>("Member")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<decimal>("Received")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("Total")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("IdMemberTransaction");
 
@@ -73,9 +85,6 @@ namespace Acxess.Billing.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdMemberTransactionDetail"));
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -90,14 +99,20 @@ namespace Acxess.Billing.Infrastructure.Persistence.Migrations
                     b.Property<int?>("IdSubscription")
                         .HasColumnType("int");
 
+                    b.Property<int>("IdTenant")
+                        .HasColumnType("int");
+
                     b.Property<byte>("ItemTransactionType")
                         .HasColumnType("tinyint");
 
-                    b.Property<decimal>("Price")
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalLine")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Total")
+                    b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -127,6 +142,22 @@ namespace Acxess.Billing.Infrastructure.Persistence.Migrations
                     b.HasKey("IdPaymentMethod");
 
                     b.ToTable("PaymentMethods", "Billing");
+                });
+
+            modelBuilder.Entity("Acxess.Billing.Domain.Entities.MemberTransactionDetail", b =>
+                {
+                    b.HasOne("Acxess.Billing.Domain.Entities.MemberTransaction", "Transaction")
+                        .WithMany("Details")
+                        .HasForeignKey("IdMemberTransaction")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("Acxess.Billing.Domain.Entities.MemberTransaction", b =>
+                {
+                    b.Navigation("Details");
                 });
 #pragma warning restore 612, 618
         }

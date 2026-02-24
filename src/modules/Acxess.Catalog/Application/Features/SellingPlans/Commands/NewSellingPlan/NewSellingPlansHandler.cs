@@ -1,5 +1,6 @@
 using Acxess.Catalog.Domain.Abstractions;
 using Acxess.Catalog.Domain.Entities;
+using Acxess.Shared.Abstractions;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -7,31 +8,44 @@ namespace Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPl
 
 public class NewSellingPlansHandler(
     ISellingPlanRepository sellingPlanRepository,
-    ICatalogUnitOfWork catalogUnitOfWork
-) : IRequestHandler<NewSellingPlanCommand, Result>
+    ICatalogUnitOfWork catalogUnitOfWork,
+    ICurrentTenant currentTenant
+) : IRequestHandler<NewSellingPlanCommand, Result<string>>
 {
-    public async Task<Result> Handle(NewSellingPlanCommand request, CancellationToken cancellationToken)
+    
+
+    public async Task<Result<string>> Handle(NewSellingPlanCommand request, CancellationToken cancellationToken)
     {
-        var sellingPlan = SellingPlan.Create(
-            request.TenantId,
-            request.Name,
-            request.TotalMembers,
-            request.Duration,
-            request.DurationUnit,
-            request.Price,
-            request.CreatedBy
-        );
+       if (!currentTenant.IsAvailable)
+            return Result<string>.Failure("TenantId.NotAvailable","Tenant information is not available.");
 
-        sellingPlanRepository.Add(sellingPlan);
+       var sellingPlan = SellingPlan.Create(
+           currentTenant.Id ?? 0,
+           request.Name,
+           request.TotalMembers,
+           request.Duration,
+           request.DurationUnit,
+           request.Price,
+           request.CreatedBy
+       );
 
-        var resultSave = await catalogUnitOfWork.SaveChangesAsync(cancellationToken);   
+       if (request.AccessTiersIds != null && request.AccessTiersIds.Any())
+       {
+           foreach (var tierId in request.AccessTiersIds)
+           {
+               sellingPlan.AddAccessTier(tierId);
+           }
+       }
 
-        if (resultSave.IsFailure)
-        {
-            return Result.Failure(resultSave.Error);
-        }
+       sellingPlanRepository.Add(sellingPlan);
 
-        return Result.Success();
-        
+       var resultSave = await catalogUnitOfWork.SaveChangesAsync(cancellationToken);   
+
+       if (resultSave.IsFailure)
+       {
+           return Result<string>.Failure(resultSave.Error);
+       }
+
+       return "Plan guardado correctamente";
     }
 }

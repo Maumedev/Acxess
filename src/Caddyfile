@@ -1,0 +1,3 @@
+acxess-app.com, www.acxess-app.com {
+    reverse_proxy acxess-web:8080
+}

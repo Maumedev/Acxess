@@ -17,7 +17,8 @@ public class MemberTransactionDetailConfiguration : IEntityTypeConfiguration<Mem
 
         builder.Property(t => t.IdMemberTransaction)
             .IsRequired();
-
+        builder.Property(t => t.IdTenant)
+            .IsRequired();
         builder.Property(t => t.IdSubscription);
         builder.Property(t => t.IdItem);
 
@@ -28,14 +29,14 @@ public class MemberTransactionDetailConfiguration : IEntityTypeConfiguration<Mem
         builder.Property(t => t.Description)
             .HasMaxLength(500);
 
-        builder.Property(t => t.Amount)
+        builder.Property(t => t.Quantity)
             .IsRequired();
 
-        builder.Property(t => t.Price)
+        builder.Property(t => t.UnitPrice)
             .HasPrecision(18, 2)
             .IsRequired();
 
-        builder.Property(t => t.Total)
+        builder.Property(t => t.TotalLine)
             .HasPrecision(18, 2)
             .IsRequired();
 

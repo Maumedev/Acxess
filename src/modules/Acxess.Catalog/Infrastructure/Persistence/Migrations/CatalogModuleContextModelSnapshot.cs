@@ -71,6 +71,12 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<int>("IdTenant")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVisit")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -107,7 +113,14 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<int>("IdSellingPlan")
                         .HasColumnType("int");
 
+                    b.Property<int>("IdTenant")
+                        .HasColumnType("int");
+
                     b.HasKey("IdPlanAccessTier");
+
+                    b.HasIndex("IdAccessTier");
+
+                    b.HasIndex("IdSellingPlan");
 
                     b.ToTable("PlanAccessTiers", "Catalog");
                 });
@@ -163,6 +176,30 @@ namespace Acxess.Catalog.Infrastructure.Persistence.Migrations
                     b.HasIndex("IdTenant");
 
                     b.ToTable("SellingPlans", "Catalog");
+                });
+
+            modelBuilder.Entity("Acxess.Catalog.Domain.Entities.PlanAccessTiers", b =>
+                {
+                    b.HasOne("Acxess.Catalog.Domain.Entities.AccessTier", "AccessTier")
+                        .WithMany()
+                        .HasForeignKey("IdAccessTier")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Acxess.Catalog.Domain.Entities.SellingPlan", "SellingPlan")
+                        .WithMany("AccessTiers")
+                        .HasForeignKey("IdSellingPlan")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AccessTier");
+
+                    b.Navigation("SellingPlan");
+                });
+
+            modelBuilder.Entity("Acxess.Catalog.Domain.Entities.SellingPlan", b =>
+                {
+                    b.Navigation("AccessTiers");
                 });
 #pragma warning restore 612, 618
         }

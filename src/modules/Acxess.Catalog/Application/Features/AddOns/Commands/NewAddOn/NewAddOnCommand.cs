@@ -8,4 +8,5 @@ public record NewAddOnCommand
  string AddOnKey,
  string Name,
  decimal Price,
- bool ShowInCheckout = false) : IRequest<Result>;
+ bool IsVisit = false,
+ bool ShowInCheckout = false) : IRequest<Result<string>>;

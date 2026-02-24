@@ -1,5 +1,150 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model AddOnInput
 @{
+    var modelJson = System.Text.Json.JsonSerializer.Serialize(Model);
 }
+@* x-data="{  *@
+@* previewName: '@(Model.Name ?? "")', *@
+@* isActive: @Model.IsActive.ToString().ToLower(), *@
+@* previewPrice: '@(Model.Price)' *@
+@* }" *@
+<div class="h-full flex flex-col bg-gray-50 dark:bg-[#0f1523]"
+     x-data="addOnsForm(@modelJson)"
+>
+    <div class="flex-1 p-8 grid grid-cols-1  lg:grid-cols-2 overflow-y-auto gap-12 custom-scrollbar content-start">
+        <div class="space-y-6">
+            <div class="mb-6">
+                 <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                     <span>@(Model.IdAddOn == 0 ? "Crear Nuevo" : "Editar Registro")</span>
+                     <span x-show="isDirty" 
+                           class="text-xs font-normal text-amber-600 bg-amber-100 dark:text-amber-300 dark:bg-amber-900/50 px-2 py-0.5 rounded animate-pulse">
+                         ● Cambios sin guardar
+                     </span>
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Define las reglas de negocio para esta configuración.</p>
+                <partial name="_FormFeedback"/>
+            </div>
+
+            <form 
+                id="addOnForm"
+                method="post" 
+                hx-post="@Url.Page("Index", "Save")" 
+                hx-target="#form-container" 
+                class="flex flex-col gap-3 max-w-2xl"
+                >
+
+                <input type="hidden" asp-for="IdAddOn" />
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Clave del complemento</label>
+                    <input 
+                        type="text" 
+                        asp-for="AddOnKey"
+                        x-model="form.AddOnKey"
+                        class="form-input-acxess" 
+                        placeholder="Ej. COMP1">
+                    <span asp-validation-for="AddOnKey" class="text-xs text-red-500 font-bold mt-1 block"></span>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre del complemento</label>
+                    <input 
+                        x-model="form.Name"
+                        type="text"
+                        asp-for="Name"
+                        class="form-input-acxess" 
+                        placeholder="Ej. Complemento 1">
+                    <span asp-validation-for="Name" class="text-xs text-red-500 font-bold mt-1 block"></span>
+                </div>
+                
+                <div class="relative group">
+                    <span class="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-blue-500 transition-colors">$</span>
+                    <input
+                            type="number"
+                        x-model="form.Price"
+                        asp-for="Price"
+                        class="form-input-acxess  !pl-9 font-mono font-bold"
+                        placeholder="0.0">
+                    <span asp-validation-for="Price" class="text-xs text-red-500 font-bold mt-1 block"></span>
+                </div>
+
+                <div class="flex flex-col justify-end pb-2" >
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estado</label>
+                    <label class="flex items-center cursor-pointer group">
+                        <div class="relative">
+                            <input 
+                                type="checkbox" 
+                                asp-for="IsActive" 
+                                x-model="form.IsActive" 
+                                class="sr-only" >
+                            
+                            <div :class="form.IsActive ? 'bg-green-500' : 'bg-gray-300 dark:bg-slate-600'" class="w-10 h-6 rounded-full shadow-inner transition-colors"></div>
+                            <div :class="form.IsActive ? 'translate-x-4' : 'translate-x-0'" class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transition-transform transform"></div>
+                        </div>
+                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300" x-text="form.IsActive ? 'Visible' : 'No visible'"></span>
+                    </label>
+                </div>
+
+                @* <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción (opcional)</label>
+                    <textarea asp-for="Description"
+                        class="form-input-acxess" 
+                        rows="3"
+                        placeholder="Ej. Descripción del área..."></textarea>
+                </div> *@
+            </form>
+        </div>
+
+        <div class="flex flex-col items-center justify-center border-l border-gray-200 dark:border-slate-700 pl-0 lg:pl-12 border-dashed">
+            <span class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Vista Previa en Mostrador</span>
+
+            <div class="w-xs">
+                <label class="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 transition">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 bg-gray-100 dark:bg-slate-900 border-gray-300 dark:border-slate-500">
+                        <span 
+                            class="text-sm text-gray-700 dark:text-gray-200" 
+                            x-text="form.Name || 'Sin Nombre'">
+                        </span>
+                    </div>
+                    <span class="text-xs font-bold text-gray-500" x-text="'+$' + (form.Price || '0.00')"></span>
+                </label>
+            </div>
+
+            <p class="mt-6 text-xs text-gray-400 dark:text-gray-500 text-center max-w-[200px]">
+                Así verá la tarjeta el recepcionista al momento de vender. <br>
+                <span x-show="!form.IsActive" class="text-red-500 dark:text-red-400 font-bold mt-1 block">No visible</span>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4 flex justify-between items-center shrink-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+            
+        <button 
+            type="button"
+            @@click="selectedId = null"
+            hx-get="@Url.Page("Index", "Form")" 
+            hx-target="#form-container"
+            class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-sm transition-colors">
+            Cancelar <span class="bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-gray-300 px-1 py-0.5 rounded text-[10px] ml-1 border border-gray-300 dark:border-slate-500">Esc</span>
+        </button>
+            
+        <button 
+            id="btnSave"
+            class="px-6 py-2 bg-slate-900 hover:bg-black dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg shadow-lg text-sm font-bold flex items-center gap-2 transform active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            type="submit"
+            form="addOnForm"
+            :disabled=" !isDirty">
+            
+            <span x-show="!isLoading">GUARDAR CAMBIOS</span>
+            
+            <span x-show="isLoading" class="flex items-center gap-2">
+                GUARDANDO...
+                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+            </span>
+        </button>
+    </div>
+</div>

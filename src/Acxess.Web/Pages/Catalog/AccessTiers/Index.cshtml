@@ -1,37 +1,47 @@
 ﻿@page
+@using Acxess.Web.Pages.Catalog.Shared
 @model Acxess.Web.Pages.Catalog.AccessTiers.IndexModel
+@section Scripts {
+    <script src="~/js/Pages/Catalog/AccessTiersIndex.js" asp-append-version="true"></script>
+}
 @{
-    ViewData["Title"] = "Gestión de Niveles de Acceso";
+    const string title = "Niveles de Acceso";
+    ViewData["Title"] = title;
 }
 
-<div class="flex items-center justify-between mb-6 gap-8">
-    <div class="w-full  relative">
-        <input type="text" name="Search" placeholder="Buscar" 
-               class="input-field pl-9"
-               value="@Model.Search"
-               hx-get
-               hx-page-url="true"
-               hx-target="#table-container"
-               hx-trigger="keyup changed delay:400ms">
-        <svg class="absolute left-3 top-2.5 h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
-        </svg>
-    </div>
-    
-    <button class="btn-primary  max-w-xs" 
-            @@click="$dispatch('open-slide', { url: '/Catalog/AccessTiers/Create' })">
-        Nuevo Nivel de Acceso
-    </button>
-</div>
+<div class="h-full w-full flex flex-col bg-gray-100 dark:bg-[#0b0f19] transition-colors duration-300"
+     x-data="accessTiersApp()">
 
-<div 
-    id="table-container" 
-    class="bg-white dark:bg-[#151b28] border border-slate-200 dark:border-slate-800 rounded shadow-sm overflow-hidden"
-    hx-get="@Url.Page("Index", new { 
-                        Sort = (Model.Sort), 
-                        Search = Model.Search,
-                        PageIndex = Model.Data.PageIndex
-                    }) "
-    hx-trigger="refreshTable from:body">
-    <partial name="_Table" model="Model" />
+    <partial name="/Pages/Catalog/Shared/_HeaderCatalogs.cshtml" model="title" />
+
+    <main class="flex-1 grid grid-cols-12 gap-0 overflow-hidden">
+        
+
+        <div class="h-full col-span-4   flex flex-col bg-white dark:bg-slate-800">
+
+            <partial name="/Pages/Catalog/Shared/_CatalogListFilter.cshtml"
+                     model='new CatalogListFilterViewModel { SearchValue = Model.Search!, FilterUrl = Url.Page("Index", "Items")!, CreateUrl = Url.Page("Index", "Form", new { id = 0 })!, CreateButtonText = "Nuevo Nivel de Acceso" }'/>
+
+            <section
+                class=" flex-1 min-h-0  bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
+                id="table-container"
+                hx-get="@Url.Page("Index", pageHandler: "Items")"
+                hx-trigger="load, refreshItems from:body"
+                hx-target="#table-content"
+                hx-swap="innerHTML">
+
+                <div id="table-content" class="h-full flex flex-col overflow-hidden">
+                    <partial name="/Pages/Catalog/Shared/_LoadingList.cshtml"/>
+                </div>
+
+            </section>
+        </div>
+
+        <section class="col-span-8 bg-gray-50 dark:bg-[#0f1523] flex flex-col relative h-full" id="form-section">
+            <div id="form-container" class="h-full w-full">
+                <partial name="/Pages/Catalog/Shared/_EmptySelectionBox.cshtml"/>
+            </div>
+        </section>
+
+    </main>
 </div>

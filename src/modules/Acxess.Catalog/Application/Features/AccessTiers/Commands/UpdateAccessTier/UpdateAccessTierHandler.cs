@@ -17,6 +17,14 @@ public class UpdateAccessTierHandler(
             return Result<string>.Failure("NotFound", "Access Tier not found.");
         }
 
+        if (!request.IsActive)
+        {
+            accessTier.Deactivate();
+        }else
+        {
+            accessTier.Activate();
+        }
+
         accessTier.Update(request.Name, request.Description);
         accessTierRepository.Update(accessTier);
         

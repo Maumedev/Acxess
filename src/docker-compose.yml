@@ -6,22 +6,24 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sql_acxess_container
     restart: unless-stopped
-    mem_limit: 1024m
+    mem_limit: 3072m
     cpus: 1.0
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${DB_PASSWORD}
       - MSSQL_PID=Express  
+      - TZ=America/Mexico_City 
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD} -C -Q 'SELECT 1' || exit 1"]
       interval: 5s
       retries: 10
-      start_period: 10s
+      start_period: 30s
       timeout: 3s
     ports:
       - "1433:1433" 
     volumes:
       - sql_data:/var/opt/mssql 
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - acxess-network
   # ==============================
@@ -64,6 +66,7 @@ services:
       - ConnectionStrings__Default=Server=acxess-db;Database=AcxessDB;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;
       - SystemUser__Password=${SYSTEM_USER_PASSWORD}
       - RUN_MIGRATIONS=false
+      - TZ=America/Mexico_City 
     ports:
       - "5000:8080" 
     networks:

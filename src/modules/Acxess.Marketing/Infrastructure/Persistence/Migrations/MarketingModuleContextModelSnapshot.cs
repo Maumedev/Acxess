@@ -44,11 +44,18 @@ namespace Acxess.Marketing.Infrastructure.Persistence.Migrations
                     b.Property<int?>("IdPromotion")
                         .HasColumnType("int");
 
+                    b.Property<int>("IdTenant")
+                        .HasColumnType("int");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("IdAppliedPromotion");
+
+                    b.HasIndex("IdCoupon");
+
+                    b.HasIndex("IdPromotion");
 
                     b.ToTable("AppliedPromotions", "Marketing");
                 });
@@ -88,6 +95,8 @@ namespace Acxess.Marketing.Infrastructure.Persistence.Migrations
 
                     b.HasKey("IdCoupon");
 
+                    b.HasIndex("IdPromotion");
+
                     b.ToTable("Coupons", "Marketing");
                 });
 
@@ -98,6 +107,11 @@ namespace Acxess.Marketing.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPromotion"));
+
+                    b.Property<bool>("AutoApply")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("AvailableFrom")
                         .HasColumnType("datetime2");
@@ -113,13 +127,12 @@ namespace Acxess.Marketing.Infrastructure.Persistence.Migrations
                     b.Property<int>("CreatedByUser")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("DiscountAmount")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<decimal?>("DiscountPercentage")
+                    b.Property<decimal>("Discount")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
+
+                    b.Property<byte>("DiscountType")
+                        .HasColumnType("tinyint");
 
                     b.Property<int>("IdTenant")
                         .HasColumnType("int");
@@ -128,9 +141,6 @@ namespace Acxess.Marketing.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<int?>("MinItemsPurchase")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -145,6 +155,37 @@ namespace Acxess.Marketing.Infrastructure.Persistence.Migrations
                     b.HasKey("IdPromotion");
 
                     b.ToTable("Promotions", "Marketing");
+                });
+
+            modelBuilder.Entity("Acxess.Marketing.Domain.Entities.AppliedPromotion", b =>
+                {
+                    b.HasOne("Acxess.Marketing.Domain.Entities.Coupon", "Coupon")
+                        .WithMany()
+                        .HasForeignKey("IdCoupon");
+
+                    b.HasOne("Acxess.Marketing.Domain.Entities.Promotion", "Promotion")
+                        .WithMany()
+                        .HasForeignKey("IdPromotion");
+
+                    b.Navigation("Coupon");
+
+                    b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("Acxess.Marketing.Domain.Entities.Coupon", b =>
+                {
+                    b.HasOne("Acxess.Marketing.Domain.Entities.Promotion", "Promotion")
+                        .WithMany("Coupons")
+                        .HasForeignKey("IdPromotion")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("Acxess.Marketing.Domain.Entities.Promotion", b =>
+                {
+                    b.Navigation("Coupons");
                 });
 #pragma warning restore 612, 618
         }

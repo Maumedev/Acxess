@@ -1,70 +1,130 @@
-using System.Text.Json;
-using Acxess.Catalog.Application.Features.AccessTiers.Commands.DeactivateAccessTier;
+using Acxess.Catalog.Application.Features.AccessTiers.Commands.AddAccessTier;
+using Acxess.Catalog.Application.Features.AccessTiers.Commands.UpdateAccessTier;
 using Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccessTiers;
+using Acxess.Catalog.Application.Features.AccessTiers.Queries.GetAccesTierById;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Acxess.Web.Pages.Catalog.AccessTiers;
 public class IndexModel(IMediator sender) : PageModel
 {
+    [BindProperty(SupportsGet = true)]
+    public string? Search { get; set; } = string.Empty;
 
-    public PaginatedResult<AccessTierDto> Data { get; private set; } = new PaginatedResult<AccessTierDto>(new List<AccessTierDto>(), 0, 1, 10);
+    public List<AccessTierDto> Items { get; private set; } = new();
 
-    [BindProperty(SupportsGet = true)] public string Search { get; set; } = "";
-    [BindProperty(SupportsGet = true)] public string Sort { get; set; } = "name";
-    [BindProperty(SupportsGet = true)] public int PageIndex { get; set; } = 1;
+    [BindProperty]
+    public AccessTierInput Input {get; set;}= new();
 
-
-    public async Task<IActionResult> OnGet()
+    public void OnGet()
     {
-        var query = new GetAccessTiersQuery
-        (
-            Search,
-            Sort,
-            PageIndex,
-            5
-        );
 
-        var result = await sender.Send(query);
-
-        if (result.IsSuccess)
-        {
-            Data = result.Value;
-        }
-
-        if (result.IsSuccess && Request.Headers.ContainsKey("HX-Request"))
-        {   
-            return Partial("_Table", this);
-        }
-    
-        return Page();
     }
 
-    public async Task<IActionResult> OnPostDeactivateAsync(int  id)
+    public async Task<IActionResult> OnGetItemsAsync()
     {
-        var command = new DeactivateAccessTierCommand(id);
-        var result = await sender.Send(command);
-
+        var query = new GetAccessTiersQuery(true);
+        var result = await sender.Send(query);
+        
         if (result.IsFailure)
         {
-            ModelState.AddModelError(string.Empty, result.Error.Description);
-            return BadRequest(ModelState);
+            return Partial("_ErrorState", result.Error.Description);
+        }
+        
+        Items = string.IsNullOrEmpty(Search) 
+            ? result.Value 
+            : result.Value.Where(x => x.Name.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        return Partial("_Table", this);
+    }
+
+    public async Task<IActionResult> OnGetFormAsync(int? id)
+    {   
+        switch (id)
+        {
+            case null:
+                return Partial("/Pages/Catalog/Shared/_NoSelectedItem.cshtml");
+            case 0:
+                Input = new AccessTierInput();
+                break;
+            default:
+            {
+                var query = new GetAccesTierByIdQuery(id ?? 0);
+                
+                var result = await sender.Send(query);
+                
+                if (result.IsFailure) return Form(errorMessage: result.Error.Description);
+
+                Input = new AccessTierInput()
+                {
+                    Description = result.Value.Description,
+                    Name = result.Value.Name,
+                    IsActive = result.Value.IsActive
+                };
+                break;
+            }
         }
 
-        var triggers = new
+        return Form();
+    }
+
+    public async Task<IActionResult> OnPostSaveAsync()
+    {
+        if (!ModelState.IsValid) return Form();
+
+        Result<string> resultSaved;
+        
+        if (Input.IdAccessTier == 0)
         {
-            refreshTable = true, 
-            notify = new
-            {
-                type = "success",
-                message = result.Value
-            }
+            var command = new AddAccessTierCommand(Input.Name, Input.Description);
+            resultSaved = await sender.Send(command);
+        }
+        else
+        {
+            var commandUpd = new UpdateAccessTierCommand(Input.IdAccessTier, Input.Name, Input.Description, Input.IsActive);
+            resultSaved = await sender.Send(commandUpd);
+        }
+
+
+        if (resultSaved.IsFailure)
+        {
+            return Form(errorMessage: resultSaved.Error.Description);
+        }
+
+        Response.Headers.Append("HX-Trigger", "refreshItems");
+
+        if (Input.IdAccessTier != 0) return Form(successMessage: resultSaved.Value);
+        
+        Input = new AccessTierInput(); 
+        
+        ModelState.Clear();
+        
+        return Form(successMessage: resultSaved.Value);
+
+    }
+    
+    
+    private PartialViewResult Form(string? successMessage = null, string? errorMessage = null)
+    {
+        var partialView = new PartialViewResult
+        {
+            ViewName = "_Form",
+            ViewData = new ViewDataDictionary<AccessTierInput>(ViewData, Input)
         };
 
-        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(triggers));
+        if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            partialView.ViewData["SuccessMessage"] = successMessage;
+        }
         
-        return new NoContentResult();
+        if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            partialView.ViewData["ErrorMessage"] = errorMessage;
+        }
+
+        return partialView;
     }
 }

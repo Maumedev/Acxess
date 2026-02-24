@@ -1,4 +1,3 @@
-using System;
 using Acxess.Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,11 +15,20 @@ public class PlanAccessTierConfiguration : IEntityTypeConfiguration<PlanAccessTi
         builder.Property(t => t.IdPlanAccessTier)
                .UseIdentityColumn(); 
 
-        builder.Property(t => t.IdAccessTier)
-               .IsRequired();
+       //  builder.Property(t => t.IdAccessTier)
+       //         .IsRequired();
 
-        builder.Property(t => t.IdSellingPlan)
-               .IsRequired();
+       builder.HasOne(link => link.AccessTier)
+               .WithMany()
+               .HasForeignKey(link => link.IdAccessTier);
+
+        builder.HasOne(link => link.SellingPlan)
+               .WithMany(plan => plan.AccessTiers)
+               .HasForeignKey(link => link.IdSellingPlan);
+
+
+       //  builder.Property(t => t.IdSellingPlan)
+       //         .IsRequired();
 
 
     }
