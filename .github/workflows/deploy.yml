@@ -1,14 +1,19 @@
 name: CI/CD Pipeline - Acxess Production
 
 on:
-  push:
-    branches:
-      - main 
+  release:
+    types: [published]
   workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version Tag to deploy (ej. v1.0.0).'
+        required: true
+        default: 'v1.0.0'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/acxess-web
+  APP_VERSION: ${{ github.event.inputs.version_tag || github.ref_name }}
 
 jobs:
   # ==========================================
@@ -24,6 +29,8 @@ jobs:
     steps:
       - name: Download code source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.APP_VERSION }}
 
       - name: Log In to GitHub Container Registry
         uses: docker/login-action@v3
@@ -38,8 +45,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=raw,value=${{ env.APP_VERSION }}
             type=raw,value=latest
-            type=sha
 
       - name: Build and push to GHCR
         uses: docker/build-push-action@v5
@@ -64,15 +71,14 @@ jobs:
           host: ${{ secrets.MENDEZ_SERVER_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: APP_VERSION
           script: |
             cd /opt/acxess
 
-            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-
-            if grep -q "APP_VERSION=" .env; then
-              sed -i "s/^APP_VERSION=.*/APP_VERSION=sha-$SHORT_SHA/" .env
+            if grep -q "^APP_VERSION=" .env; then
+              sed -i "s/^APP_VERSION=.*/APP_VERSION=${APP_VERSION}/" .env
             else
-              echo "APP_VERSION=sha-$SHORT_SHA" >> .env
+              echo "APP_VERSION=${APP_VERSION}" >> .env
             fi
             
             # 1. Force Docker to download the most recent version we just compiled
