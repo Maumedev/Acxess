@@ -75,7 +75,7 @@
                             {
                                 <div class="flex justify-between font-bold mt-1 pt-1 border-t border-gray-200 dark:border-slate-600 text-gray-800 dark:text-white">
                                     <span>Total</span> 
-                                    <span>@item.Amount.Value.ToString("C")</span>
+                                    <span>@item.Amount.Value.ToString("C", new CultureInfo("es-MX"))</span>
                                 </div>
                             }
                         </div>

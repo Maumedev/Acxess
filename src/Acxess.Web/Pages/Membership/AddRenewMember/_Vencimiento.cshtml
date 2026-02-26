@@ -1,19 +1,25 @@
    <div class="mt-auto bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900/50">
 
        <div class="mb-2 flex items-center gap-2">
-           <template x-if="mode === 'renew' && selectedMember?.IsSubscriptionActive">
+           <template x-if="mode === 'renew' && (selectedMember?.IsProrrogation)">
+               <span class="px-2 py-0.5 rounded text-[10px] font-bold 
+                     bg-orange-100 text-orange-700 border border-orange-200 
+                     dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800">
+                   RENOVACIÓN 
+               </span>
+           </template>
+           <template x-if="mode === 'renew' && (!selectedMember?.IsSubscriptionActive)">
+               <span class="px-2 py-0.5 rounded text-[10px] font-bold 
+                     bg-orange-100 text-orange-700 border border-orange-200 
+                     dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800">
+                   RENOVACIÓN 
+               </span>
+           </template>
+           <template x-if="mode === 'renew' && selectedMember?.IsSubscriptionActive && !selectedMember?.IsProrrogation">
                <span class="px-2 py-0.5 rounded text-[10px] font-bold 
                      bg-emerald-100 text-emerald-700 border border-emerald-200 
                      dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800">
                    PRONTO PAGO
-               </span>
-           </template>
-
-           <template x-if="mode === 'renew' && !selectedMember?.IsSubscriptionActive">
-               <span class="px-2 py-0.5 rounded text-[10px] font-bold 
-                     bg-orange-100 text-orange-700 border border-orange-200 
-                     dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800">
-                   RENOVACIÓN (VENCIDO)
                </span>
            </template>
        </div>

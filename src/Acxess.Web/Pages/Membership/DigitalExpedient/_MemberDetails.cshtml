@@ -187,7 +187,7 @@
         @if(m.AbsoluteExpirationDate.HasValue)
         {
             <div class="w-full bg-gray-200 dark:bg-slate-700 h-1.5 relative" title="Progreso de la suscripción">
-                <div class="h-1.5 transition-all duration-1000 ease-out  @(m.ColorSubscription)" 
+                <div class="h-1.5 transition-all duration-1000 ease-out  @(m.ColorSubscription.Replace("text-", "bg-"))"
                      style="width: @m.ProgressPercentage%">
                 </div>
             </div>
