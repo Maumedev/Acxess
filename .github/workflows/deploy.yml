@@ -8,7 +8,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # Convierte el nombre de tu imagen (Debe coincidir EXACTAMENTE con el de tu docker-compose)
   IMAGE_NAME: ${{ github.repository_owner }}/acxess-web
 
 jobs:
@@ -26,20 +25,14 @@ jobs:
       - name: Download code source
         uses: actions/checkout@v4
 
-      # BASE PARA EL FUTURO: 
-      # Tests:
-      # - name: Ejecutar Pruebas Unitarias
-      #   run: dotnet test ./Acxess.Tests/Acxess.Tests.csproj
-
-      - name: Iniciar sesión en GitHub Container Registry
+      - name: Log In to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          # Usamos un token temporal que GitHub provee automáticamente (muy seguro)
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generar etiquetas para Docker
+      - name: Generate Docker tags
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -48,7 +41,7 @@ jobs:
             type=raw,value=latest
             type=sha
 
-      - name: Construir y enviar a GHCR
+      - name: Build and push to GHCR
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -60,12 +53,12 @@ jobs:
   # FASE 2: Despliegue Continuo (CD)
   # ==========================================
   deploy:
-    name: 🚀 Desplegar en Servidor VPS
+    name: Deploy to VPS mendez-server
     needs: build-and-push 
     runs-on: ubuntu-latest
     
     steps:
-      - name: Conectar al VPS por SSH y Actualizar Contenedores
+      - name: Connect to VPS via SSH and Update Containers
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.MENDEZ_SERVER_IP }}
@@ -73,12 +66,20 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/acxess
+
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+            if grep -q "APP_VERSION=" .env; then
+              sed -i "s/^APP_VERSION=.*/APP_VERSION=sha-$SHORT_SHA/" .env
+            else
+              echo "APP_VERSION=sha-$SHORT_SHA" >> .env
+            fi
             
-            # 1. Forzar a Docker a descargar la versión más reciente que acabamos de compilar
+            # 1. Force Docker to download the most recent version we just compiled
             docker compose pull
             
-            # 2. Levantar todo: La BD, ejecutar el migrador y arrancar la app
-            docker compose --profile app up -d
+            # 2. Start everything: The DB, run the migrator and start the app
+            docker compose --profile app up -d --force-recreate
             
-            # 3. Limpieza: Borrar las imágenes viejas de Docker para que no se llene el disco duro del servidor
-            docker image prune -af
+            # 3. Cleanup: Delete old Docker images to prevent the server's hard drive from filling up
+            docker image prune -f
