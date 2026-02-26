@@ -4,7 +4,7 @@ document.addEventListener('alpine:init', () => {
         selectMember(id) {
             this.selectedMemberId = id;
         },
-        statusFilter: 'active',
+        statusFilter: 'all',
         setFilter(filter) {
             this.statusFilter = filter;
             this.$nextTick(() => {

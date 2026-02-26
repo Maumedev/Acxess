@@ -38,7 +38,7 @@ public class IndexModel(IMediator mediator) : PageModel
     public string? SearchTerm { get; set; } = string.Empty;
     
     [BindProperty(SupportsGet = true)]
-    public string StatusFilter { get; set; } = "active";
+    public string StatusFilter { get; set; } = "all";
     
     public MembersResponse? MembersResponse { get; set; }
     
