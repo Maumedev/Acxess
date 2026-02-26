@@ -183,7 +183,6 @@ document.addEventListener('alpine:init', () => {
             }).format(amount);
         },
         get startDateDisplay() {
-            console.log(this.selectedMember)
             if (this.mode === 'renew' && this.selectedMember?.IsSubscriptionActive) {
                 const fechaVencimiento = new Date(this.selectedMember.LastExpirationDate);
                 return fechaVencimiento;
