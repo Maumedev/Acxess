@@ -17,12 +17,12 @@ The web application is built using .NET 9 Razor Pages Web Apps and **Modular Mon
 
 ### Backend / Frontend (Server Side Rendering)
 **Framework:** .NET 9 (C#, HTML, CSS, Javascript)
-**User interface:*App Web Razor Pages* 
+**User interface:** App Web Razor Pages 
 **Architecture:** Clean Architecture Vertical Slice with Domain Driven Design (DDD) principles.
 **Database:** SQL Server
 **ORM:** Entity Framework Core
 **Authentication:** ASP.NET Core Identity
-**Libraries:**Tailwind CSS, HTMX & Alpine.js
+**Libraries:** Tailwind CSS, HTMX & Alpine.js
 
 ### Infrastructure
 **Server:** VPS Server
