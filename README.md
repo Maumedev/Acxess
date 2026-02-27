@@ -1,4 +1,4 @@
-# Acxess - Subscriptions Management System
+# Subscriptions Management System
 
 ![.NET](https://img.shields.io/badge/.NET_9-000000?style=flat-square&logo=dotnet&logoColor=512BD4)
 ![Docker](https://img.shields.io/badge/Docker-000000?style=flat-square&logo=docker&logoColor=2496ED)
@@ -6,14 +6,14 @@
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-000000?style=flat-square&logo=githubactions&logoColor=2088FF)
 
 
-**Acxess** is a SaaS multi-tenant designed for business that relies on subscriptions to manage memberships, and streamline their daily operations.
+**Acxess** is a multi-tenant SaaS application designed for businesses that relies on subscriptions to manage memberships, and streamline their daily operations.
 
-Built with a focus on good practices of programing how: SOLID principles, design patterns, Clean Architecture & Domain Driven Design.  
+Built with a focus on good practices of programing such as: SOLID principles, design patterns, Clean Architecture & Domain Driven Design.  
 
 ## Tech Stack
 
 ### Architecture
-The web application is build using .NET 9 Razor Pages Web Apps and **Modular Monolith** has software architecture, ensuring clear boundaries between entities domains while keeping deployment.
+The web application is built using .NET 9 Razor Pages Web Apps and **Modular Monolith** as its software architecture, ensuring clear boundaries between entities domains while keeping development process simple.
 
 ### Backend / Frontend (Server Side Rendering)
 **Framework:** .NET 9 (C#, HTML, CSS, Javascript)
@@ -26,11 +26,11 @@ The web application is build using .NET 9 Razor Pages Web Apps and **Modular Mon
 
 ### Infrastructure
 **Server:** VPS Server
-**SO:** Ubuntu
+**OS:** Ubuntu
 
 ### CI/CD Github Actions, GitHub Container Registry
 **Immutable Releases:** Deployments are triggered automatically when a new GitHub Release is published.
-**Principals:** Build and deploy image to GCR, ssh connection to VPS by bash and run docker.
+**Workflow:** Builds and deploys the image to GCR, connects to the VPS via SSH, and runs the Docker containers using bash scripts.
 **Rollback Strategy:** Manual rollbacks can be executed instantly via GitHub Actions Workflow Dispatch by providing a previous version tag.
 
 ## Local Development Setup
