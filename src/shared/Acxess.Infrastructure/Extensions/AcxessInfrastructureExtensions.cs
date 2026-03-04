@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Acxess.Infrastructure.Extensions;
 
-public static class AcxessInfrastrucureExtensions
+public static class AcxessInfrastructureExtensions
 {
     public static IServiceCollection AddAcxessInfrastructure(
         this IServiceCollection services,
@@ -16,7 +16,8 @@ public static class AcxessInfrastrucureExtensions
         services.AddMediatR(cfg => 
         {
             cfg.RegisterServicesFromAssemblies(moduleAssemblies);
-            cfg.RegisterServicesFromAssembly(typeof(AcxessInfrastrucureExtensions).Assembly);
+            cfg.RegisterServicesFromAssembly(typeof(AcxessInfrastructureExtensions).Assembly);
+            cfg.AddOpenBehavior(typeof(BehaviorsMediatR.DatabaseExceptionBehavior<,>));
             cfg.AddOpenBehavior(typeof(BehaviorsMediatR.TransactionalBehavior<,>));
         });
 
