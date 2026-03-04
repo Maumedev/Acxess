@@ -22,4 +22,4 @@ public record
     public List<ExpiringMemberItem> TopExpiringMembers { get; init; } = [];
 }
 
-public record ExpiringMemberItem(int Id, string FullName, string PlanName, DateTime EndDate, int DaysLeft);
+public record ExpiringMemberItem(int Id, string FullName, string PlanName, DateTime EndDate, int DaysLeft, string Initials, string? PhotoUrl);

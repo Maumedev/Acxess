@@ -6,6 +6,7 @@ using Acxess.Marketing.Application.Features.Promotions.Queries.GetActiveCouponPr
 using Acxess.Membership.Application.Features.Members.Commands.DeleteMember;
 using Acxess.Membership.Application.Features.Members.Commands.RestoreMember;
 using Acxess.Membership.Application.Features.Members.Commands.UpdateMember;
+using Acxess.Membership.Application.Features.Members.Commands.UpdateMemberPhoto;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberById;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberDetail;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberHistory;
@@ -266,5 +267,20 @@ public class IndexModel(IMediator mediator) : PageModel
         return Partial("_ActionSuccess", "Socio restaurado exitosamente.");
     }
     
-    
+    public async Task<IActionResult> OnPostUpdatePhotoAsync(int id, string photoBase64)
+    {
+        if (string.IsNullOrWhiteSpace(photoBase64)) return BadRequest("No se recibió ninguna imagen.");
+
+        var result = await mediator.Send(new UpdateMemberPhotoCommand(id, photoBase64));
+
+        if (result.IsFailure) return Content("Error al actualizar la foto.");
+
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(new { 
+            memberUpdated = true, 
+            reloadMembersList = true 
+        }));
+
+        // Retornamos vacío porque HTMX recargará las partes solas
+        return Content(""); 
+    }
 }

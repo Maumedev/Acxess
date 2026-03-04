@@ -18,8 +18,50 @@
     <div class="flex flex-col xl:flex-row justify-between items-start gap-5 xl:gap-0">
         
         <div class="flex gap-4 sm:gap-5 w-full">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-900 dark:bg-slate-950 text-white flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg border-2 border-slate-100 dark:border-slate-700 shrink-0">
-                <span>@m.Initials</span>
+            <div x-data="{ showLightbox: false, photoBase64: '' }" 
+                 @@photo-captured.window="photoBase64 = $event.detail; $nextTick(() => document.getElementById('update-photo-btn').click())"
+                 class="relative shrink-0">
+                
+                <div @@click="@(string.IsNullOrEmpty(m.PhotoUrl) ? "" : "showLightbox = true")" 
+                     class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg border-2 border-slate-100 dark:border-slate-700 overflow-hidden group transition-all @(!string.IsNullOrEmpty(m.PhotoUrl) ? "cursor-pointer" : "")">
+                    
+                    @if (!string.IsNullOrEmpty(m.PhotoUrl))
+                    {
+                        <img src="@m.PhotoUrl" alt="Foto de @m.FullName" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                    }
+                    else
+                    {
+                        <span>@m.Initials</span>
+                    }
+                </div>
+
+                <button @@click.stop="$dispatch('open-camera-modal')" 
+                        title="Cambiar fotografía"
+                        class="absolute -bottom-2 -right-2 bg-blue-600 hover:bg-blue-500 text-white p-1.5 sm:p-2 rounded-full shadow-md border-2 border-white dark:border-slate-800 transition-colors z-10">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                </button>
+
+                <form id="photo-form" hx-post="@Url.Page("Index", "UpdatePhoto")" hx-swap="none" class="hidden">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@m.IdMember" />
+                    <input type="hidden" name="photoBase64" :value="photoBase64" />
+                    <button type="submit" id="update-photo-btn"></button>
+                </form>
+
+                @if (!string.IsNullOrEmpty(m.PhotoUrl))
+                {
+                    <div x-show="showLightbox" style="display: none;" 
+                         class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-200"
+                         @@click="showLightbox = false"
+                         @@keydown.escape.window="showLightbox = false">
+                        
+                        <button type="button" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/50 hover:text-white transition-colors bg-black/50 rounded-full p-2">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+
+                        <img src="@m.PhotoUrl" alt="Foto en grande de @m.FullName" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl object-contain border border-slate-700" @@click.stop />
+                    </div>
+                }
             </div>
 
             <div class="overflow-hidden">

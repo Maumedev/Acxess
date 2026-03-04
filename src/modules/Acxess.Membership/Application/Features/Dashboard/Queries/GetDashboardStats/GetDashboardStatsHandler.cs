@@ -63,6 +63,7 @@ public class GetDashboardStatsHandler(MembershipModuleContext context) : IReques
                 m.IdMember,
                 m.FirstName,
                 m.LastName,
+                m.PhotoUrl,
                 ExpiringSub = m.SubscriptionMemberships
                     .Where(sm =>  sm.Subscription.EndDate >= thirtyDaysAgo && 
                                  sm.Subscription.EndDate <= threeDaysFromNow)
@@ -77,7 +78,9 @@ public class GetDashboardStatsHandler(MembershipModuleContext context) : IReques
                 $"{x.FirstName} {x.LastName}",
                 x.ExpiringSub!.SellingPlanName, 
                 x.ExpiringSub.EndDate,
-                (x.ExpiringSub.EndDate.Date - today).Days
+                (x.ExpiringSub.EndDate.Date - today).Days,
+                GetInitials(x.FirstName, x.LastName),
+                x.PhotoUrl
             ))
             .ToListAsync(cancellationToken);
         
@@ -91,5 +94,10 @@ public class GetDashboardStatsHandler(MembershipModuleContext context) : IReques
             TopExpiringMembers = topExpiring,
             GrowthPercentage = 0
         });
+    }
+    
+    private static string GetInitials(string first, string last)
+    {
+        return $"{first.FirstOrDefault()}{last.FirstOrDefault()}".ToUpper();
     }
 }
