@@ -18,51 +18,35 @@ public class NewMemberHandler(
     public async Task<Result<UpdatedSubMemberResponse>> Handle(NewMemberCommand request, CancellationToken cancellationToken)
     {
         var planInfo = await catalogService.GetPlanInfoAsync(request.SellingPlanId, cancellationToken);
-    
         if (planInfo == null)
             return Result<UpdatedSubMemberResponse>.Failure("Plan.NotFound", "El plan seleccionado no existe o no está activo.");
         
+        // get addOns info
+        var addOnsResult = await catalogService.GetAddOnPriceBatchAsync(request.AddOnIds, cancellationToken);
+        var addOnsWithPrice = addOnsResult.Value;
+        
+        // create new beneficiares
+        var newBeneficiaries = new List<Member>();
+        foreach (var benDto in request.Beneficiaries.Where(b => b.IdMember == 0))
+        {
+            var newBeneficiary = Member.Create(
+                request.IdTenant, benDto.FirstName, benDto.LastName, request.CreatedUserId, benDto.Phone, null);
+            
+            context.Members.Add(newBeneficiary);
+            newBeneficiaries.Add(newBeneficiary);
+        }
+        
+        if (newBeneficiaries.Count != 0)
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken); 
+        }
+        
+        // combine beneficiaries
         var finalBeneficiaryIds = new List<int>();
+        finalBeneficiaryIds.AddRange(request.Beneficiaries.Where(b => b.IdMember != 0).Select(b => b.IdMember));
+        finalBeneficiaryIds.AddRange(newBeneficiaries.Select(b => b.IdMember));
         
-        if (request.Beneficiaries.Count != 0)
-        {
-            foreach (var benDto in request.Beneficiaries)
-            {
-                if (benDto.IdMember == 0)
-                {
-                    var newBeneficiary = Member.Create(
-                        request.IdTenant,
-                        benDto.FirstName,
-                        benDto.LastName,
-                        request.CreatedUserId,
-                        benDto.Phone,
-                        null 
-                    );
-
-                    context.Members.Add(newBeneficiary);
-                    
-                    await context.SaveChangesAsync(cancellationToken); 
-                    
-                    finalBeneficiaryIds.Add(newBeneficiary.IdMember);
-                }
-                else 
-                {
-                    finalBeneficiaryIds.Add(benDto.IdMember);
-                }
-            }
-        }
-        
-        var addOnsWithPrice = new List<(int Id, string Name, decimal Price)>();
-
-        foreach (var addOnId in request.AddOnIds)
-        {
-            var resultAddOn = await catalogService.GetAddOnPriceAsync(addOnId, cancellationToken);
-
-            if (resultAddOn.IsFailure) return Result<UpdatedSubMemberResponse>.Failure(resultAddOn.Error); 
-          
-            addOnsWithPrice.Add((addOnId, resultAddOn.Value.Name, resultAddOn.Value.Price));
-        }
-
+        // create member
         var mainMember = Member.Create(
             request.IdTenant,
             request.MemberDto.FirstName,
@@ -78,7 +62,8 @@ public class NewMemberHandler(
             planInfo.Duration,
             request.CreatedUserId,
             planInfo.DurationUnit,
-            finalBeneficiaryIds, addOnsWithPrice);
+            finalBeneficiaryIds, 
+            addOnsWithPrice);
 
         context.Members.Add(mainMember);
         

@@ -1,6 +1,7 @@
 using Acxess.Membership.Domain.Constants;
 using Acxess.Shared.Abstractions;
 using Acxess.Shared.Enums;
+using Acxess.Shared.IntegrationServices.Catalog;
 
 
 namespace Acxess.Membership.Domain.Entities;
@@ -85,15 +86,14 @@ public class Member : IHasTenant
         UpdatedAt = DateTime.Now;
     }
 
-    public void Subscribe(
-        int idPlan,
+    public void Subscribe(int idPlan,
         string sellingPlanName,
         decimal priceSnapshot,
         int duration,
         int userId,
         DurationSubscriptionUnit durationUnit,
         List<int> beneficiaryIds,
-        List<(int Id, string Name, decimal Price)> addOns)
+        List<AddOnIntegrationDto> addOns)
     {
         var (startDate, endDate) = CalculateSubscriptionDates(duration, durationUnit);
         

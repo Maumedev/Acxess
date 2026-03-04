@@ -23,12 +23,12 @@ public class GetSellingPlanByIdHandler(
                 p.Name,
                 p.TotalMembers,
                 p.DurationInValue,
-                p.DurationSubscriptionUnit,
+                p.DurationUnit,
                 p.Price,
                 p.IsActive,
                 p.AccessTiers.Select(link => link.IdAccessTier).ToList(),
                 string.Join(", ", p.AccessTiers.Select(link => link.AccessTier.Name)),
-                $"{p.DurationInValue} {p.DurationSubscriptionUnit.ToFriendlyName(p.DurationInValue)}"
+                $"{p.DurationInValue} {p.DurationUnit.ToFriendlyName(p.DurationInValue)}"
             ))
             .FirstOrDefaultAsync(cancellationToken);
 
