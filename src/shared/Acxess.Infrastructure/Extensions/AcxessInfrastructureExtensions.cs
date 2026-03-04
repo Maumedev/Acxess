@@ -12,6 +12,7 @@ public static class AcxessInfrastructureExtensions
     {
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentTenant, CurrentTenantService>();
+        services.AddScoped<IImageStorageService, LocalDiskStorageService>();
 
         services.AddMediatR(cfg => 
         {
