@@ -1,7 +1,7 @@
 using Acxess.Billing.Domain.Abstractions;
 using Acxess.Billing.Domain.Entities;
 using Acxess.Billing.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Catalog;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using MediatR;
 

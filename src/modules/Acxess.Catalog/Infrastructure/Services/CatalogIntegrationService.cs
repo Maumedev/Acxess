@@ -1,6 +1,7 @@
 using Acxess.Catalog.Domain.Constants;
 using Acxess.Catalog.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Catalog;
+using Acxess.Shared.Enums;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public class CatalogIntegrationService(CatalogModuleContext context) : ICatalogI
                 p.Name, 
                 p.Price, 
                 p.DurationInValue, 
-                (int)p.DurationUnit))
+                p.DurationSubscriptionUnit))
             .FirstOrDefaultAsync(ct);
     }
 

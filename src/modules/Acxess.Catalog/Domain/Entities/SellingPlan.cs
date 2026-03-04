@@ -1,41 +1,41 @@
 using System;
-using Acxess.Catalog.Domain.Enums;
 using Acxess.Shared.Abstractions;
+using Acxess.Shared.Enums;
 
 namespace Acxess.Catalog.Domain.Entities;
 
 public class SellingPlan : IHasTenant
 {
 
-    public static SellingPlan Create(int tenantId, string name, int totalMembers, int durationInValue, DurationUnit durationUnit, decimal price, int createdByUser)
+    public static SellingPlan Create(int tenantId, string name, int totalMembers, int durationInValue, DurationSubscriptionUnit durationSubscriptionUnit, decimal price, int createdByUser)
     {
-        return new SellingPlan(tenantId, name, totalMembers, durationInValue, durationUnit, price, createdByUser);
+        return new SellingPlan(tenantId, name, totalMembers, durationInValue, durationSubscriptionUnit, price, createdByUser);
     }
 
     public void  Update(
         string name, 
         int totalMembers, 
         int durationInValue, 
-        DurationUnit durationUnit, 
+        DurationSubscriptionUnit durationSubscriptionUnit, 
         decimal price,
         bool isActive)
     {
         Name = name;
         TotalMembers = totalMembers;
         DurationInValue = durationInValue;
-        DurationUnit = durationUnit;
+        DurationSubscriptionUnit = durationSubscriptionUnit;
         Price = price;
         IsActive = isActive;
     }
 
 
-    private SellingPlan(int tenantId, string name, int totalMembers, int durationInValue, DurationUnit durationUnit, decimal price, int createdByUser)
+    private SellingPlan(int tenantId, string name, int totalMembers, int durationInValue, DurationSubscriptionUnit durationSubscriptionUnit, decimal price, int createdByUser)
     {
         IdTenant = tenantId;
         Name = name;
         TotalMembers = totalMembers;
         DurationInValue = durationInValue;
-        DurationUnit = durationUnit;
+        DurationSubscriptionUnit = durationSubscriptionUnit;
         Price = price;
         CreatedByUser = createdByUser;
     }
@@ -48,7 +48,7 @@ public class SellingPlan : IHasTenant
     public string Name { get; private set; } = string.Empty;
     public int TotalMembers { get; private set; }
     public int DurationInValue { get; private set; }
-    public DurationUnit DurationUnit { get; private set; }
+    public DurationSubscriptionUnit DurationSubscriptionUnit { get; private set; }
     public decimal Price { get; private set; }
     public bool IsActive { get; private set; } = true;
     public DateTime CreatedAt { get; private set; } = DateTime.Now;

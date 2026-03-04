@@ -2,8 +2,8 @@ using Acxess.Membership.Application.Features.Members.DTOs;
 using Acxess.Membership.Domain.Abstractions;
 using Acxess.Membership.Domain.Entities;
 using Acxess.Membership.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Catalog;
 using Acxess.Shared.IntegrationEvents.Membership;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -80,11 +80,9 @@ public class RenewMemberHandler(
             planInfo.Name,
             planInfo.Price,
             planInfo.Duration,
-            planInfo.DurationUnit,
             request.CreatedUserId,
-            finalBeneficiaryIds,
-            addOnsWithPrice
-        );
+            planInfo.DurationUnit,
+            finalBeneficiaryIds, addOnsWithPrice);
         
         
         var resultSave = await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -98,7 +96,7 @@ public class RenewMemberHandler(
             new PurchasedAddOnItem(a.Id, a.Name, a.Price)
         ).ToList();
         
-        var integrationBilling = new SubcriptionPurchasedDomainEvent(
+        var integrationBilling = new SubscriptionPurchasedIntegrationEvent(
             request.IdTenant,
             request.CreatedUserId,
             mainMember.IdMember,

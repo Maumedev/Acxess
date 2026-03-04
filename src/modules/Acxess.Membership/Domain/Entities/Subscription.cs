@@ -109,10 +109,7 @@ public class Subscription : IHasTenant
     
     public Result Cancel(string reason, int userId)
     {
-        if (!IsActive)
-        {
-           return Result.Failure("Subsctiprion.IsCanceled","Subscription is already cancel");
-        }
+        if (!IsActive)  return Result.Failure("Subsctiprion.IsCanceled","Subscription is already cancel");
 
         IsActive = false;
         
@@ -120,18 +117,12 @@ public class Subscription : IHasTenant
         CancellationReason = reason;
         CancelledBy = userId;
 
-        // AddDomainEvent(new SubscriptionCancelledEvent(this.Id));
         return Result.Success();
     }
     public void Deactivate()
     {
-        if (!IsActive)
-        {
-           return ;
-        }
-
         IsActive = false;
-        CancelledBy = 1;
+        CancelledBy = 1; // user system
     }
     
     public void MarkAsExpired()

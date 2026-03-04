@@ -24,12 +24,12 @@ public class NewSellingPlansHandler(
            request.Name,
            request.TotalMembers,
            request.Duration,
-           request.DurationUnit,
+           request.DurationSubscriptionUnit,
            request.Price,
            request.CreatedBy
        );
 
-       if (request.AccessTiersIds != null && request.AccessTiersIds.Any())
+       if (request.AccessTiersIds.Count != 0)
        {
            foreach (var tierId in request.AccessTiersIds)
            {
@@ -41,11 +41,8 @@ public class NewSellingPlansHandler(
 
        var resultSave = await catalogUnitOfWork.SaveChangesAsync(cancellationToken);   
 
-       if (resultSave.IsFailure)
-       {
-           return Result<string>.Failure(resultSave.Error);
-       }
-
-       return "Plan guardado correctamente";
+       return resultSave.IsFailure 
+           ? Result<string>.Failure(resultSave.Error) 
+           : "Plan guardado correctamente";
     }
 }

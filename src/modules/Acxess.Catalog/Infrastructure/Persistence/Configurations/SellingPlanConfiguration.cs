@@ -32,7 +32,7 @@ public class SellingPlanConfiguration : IEntityTypeConfiguration<SellingPlan>
             .IsRequired()
             .HasColumnType("tinyint");
 
-        builder.Property(e => e.DurationUnit)
+        builder.Property(e => e.DurationSubscriptionUnit)
             .HasConversion<int>();
 
         builder.Property(t => t.Price)

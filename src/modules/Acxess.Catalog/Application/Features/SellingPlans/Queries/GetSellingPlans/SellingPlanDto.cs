@@ -1,11 +1,12 @@
-using Acxess.Catalog.Domain.Enums;
+
+using Acxess.Shared.Enums;
 
 public record SellingPlanDto(
     int IdSellingPlan,
     string Name,
     int TotalMembers,
     int DurationInValue,
-    DurationUnit DurationUnit, 
+    DurationSubscriptionUnit DurationSubscriptionUnit, 
     decimal Price,
     bool IsActive,
     List<int> AccessTiersIds,

@@ -21,17 +21,17 @@ public class UpdateSellingPlanHandler(
             request.Name, 
             request.TotalMembers,
             request.Duration,
-            request.DurationUnit,
+            request.DurationSubscriptionUnit,
             request.Price,
             request.IsActive
         );
 
-        sellingPlan.SyncAccessTiers(request.AccessTiersIds ?? new List<int>());
+        sellingPlan.SyncAccessTiers(request.AccessTiersIds ?? []);
 
         var resultSave = await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        if (resultSave.IsFailure) return Result<string>.Failure(resultSave.Error);
-
-        return "Plan actualizado correctamente";
+        return resultSave.IsFailure 
+            ? Result<string>.Failure(resultSave.Error) 
+            : "Plan actualizado correctamente";
     }
 }

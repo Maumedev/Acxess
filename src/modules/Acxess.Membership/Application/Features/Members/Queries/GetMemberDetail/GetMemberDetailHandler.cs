@@ -1,8 +1,8 @@
 using System.Globalization;
 using Acxess.Membership.Domain.Constants;
 using Acxess.Membership.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Billing;
-using Acxess.Shared.IntegrationEvents.Catalog;
+using Acxess.Shared.IntegrationServices.Billing;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

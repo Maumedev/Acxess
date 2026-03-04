@@ -1,6 +1,6 @@
 using System.Globalization;
 using Acxess.Billing.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Billing;
+using Acxess.Shared.IntegrationServices.Billing;
 using Microsoft.EntityFrameworkCore;
 
 namespace Acxess.Billing.Infrastructure.Services;

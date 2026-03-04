@@ -9,8 +9,8 @@ namespace Acxess.Billing.Application.IntegrationEvents;
 
 public class SubscriptionPurchasedEventHandler(
     BillingModuleContext billingContext,
-    IBillingUnitOfWork  unitOfWork) : INotificationHandler<SubcriptionPurchasedDomainEvent> {
-    public async Task Handle(SubcriptionPurchasedDomainEvent notification, CancellationToken cancellationToken)
+    IBillingUnitOfWork  unitOfWork) : INotificationHandler<SubscriptionPurchasedIntegrationEvent> {
+    public async Task Handle(SubscriptionPurchasedIntegrationEvent notification, CancellationToken cancellationToken)
     {
         var transaction = MemberTransaction.Create(
             notification.IdTenant,

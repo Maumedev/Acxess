@@ -1,4 +1,4 @@
-namespace Acxess.Shared.IntegrationEvents.Billing;
+namespace Acxess.Shared.IntegrationServices.Billing;
 
 public interface IBillingIntegrationService
 {

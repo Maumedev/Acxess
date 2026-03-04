@@ -1,6 +1,7 @@
+using Acxess.Shared.Enums;
 using Acxess.Shared.ResultManager;
 
-namespace Acxess.Shared.IntegrationEvents.Catalog;
+namespace Acxess.Shared.IntegrationServices.Catalog;
 
 public interface ICatalogIntegrationService
 {
@@ -9,6 +10,6 @@ public interface ICatalogIntegrationService
     Task<Result<List<string>>> GetAddOnNamesAsync(List<int> addOnIds, bool includesInscription, CancellationToken ct = default);
 }
 
-public record PlanIntegrationDto(int Id, string Name, decimal Price, int Duration, int DurationUnit);
+public record PlanIntegrationDto(int Id, string Name, decimal Price, int Duration, DurationSubscriptionUnit DurationUnit);
 
 public record AddOnIntegrationDto(string Name, decimal Price);
