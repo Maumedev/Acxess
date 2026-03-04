@@ -1,15 +1,12 @@
-using Acxess.Billing.Domain.Abstractions;
 using Acxess.Billing.Domain.Entities;
 using Acxess.Billing.Infrastructure.Persistence;
-using Acxess.Shared.Exceptions;
 using Acxess.Shared.IntegrationEvents.Membership;
 using MediatR;
 
 namespace Acxess.Billing.Application.IntegrationEvents;
 
 public class SubscriptionPurchasedEventHandler(
-    BillingModuleContext billingContext,
-    IBillingUnitOfWork  unitOfWork) : INotificationHandler<SubscriptionPurchasedIntegrationEvent> {
+    BillingModuleContext billingContext) : INotificationHandler<SubscriptionPurchasedIntegrationEvent> {
     public async Task Handle(SubscriptionPurchasedIntegrationEvent notification, CancellationToken cancellationToken)
     {
         var transaction = MemberTransaction.Create(
@@ -38,13 +35,6 @@ public class SubscriptionPurchasedEventHandler(
         }
         
         billingContext.MemberTransactions.Add(transaction);
-        var result = await unitOfWork.SaveChangesAsync(cancellationToken);
-
-
-        if (result.IsFailure)
-        {
-            throw new IntegrationEventException(result.Error);
-        }
-
+        await billingContext.SaveChangesAsync(cancellationToken);
     }
 }

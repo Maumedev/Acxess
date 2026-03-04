@@ -1,4 +1,3 @@
-using Acxess.Marketing.Domain.Abstractions;
 using Acxess.Marketing.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,6 @@ public static class MarketingModuleExtensions
         });
 
         services.AddScoped<IDataSeeder, MarketingSeeders>();
-        services.AddScoped<IMarketingUnitOfWork, MarketingUnitOfWork>();
 
         return services;
     }

@@ -1,5 +1,5 @@
-using Acxess.Identity.Domain.Absractions;
 using Acxess.Identity.Domain.Entities;
+using Acxess.Identity.Infrastructure.Persistence;
 using Acxess.Shared.Constants;
 using Acxess.Shared.IntegrationEvents.Identity;
 using Acxess.Shared.ResultManager;
@@ -9,8 +9,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Acxess.Identity.Application.Features.Tenants.Commands.RegisterTenant;
 
 public class RegisterTenantHandler(
-    IIdentityUnitOfWork unitOfWork,
-    ITenantRepository tenantRepository,
+    IdentityModuleContext context,
     UserManager< Domain.Entities.ApplicationUser> userManager,
     IMediator mediator
 ) : IRequestHandler<RegisterTenantCommand, Result>
@@ -19,11 +18,9 @@ public class RegisterTenantHandler(
     {
         var tenant = Tenant.Create(request.NameTenant);
 
-        tenantRepository.Add(tenant);
+        context.Tenants.Add(tenant);
 
-        var result = await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        if (result.IsFailure) return result;
+        await context.SaveChangesAsync(cancellationToken);
 
         var idTenant = tenant.IdTenant;
 

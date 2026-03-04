@@ -1,4 +1,5 @@
 using Acxess.Catalog.Domain.Abstractions;
+using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -6,7 +7,7 @@ namespace Acxess.Catalog.Application.Features.AccessTiers.Commands.DeactivateAcc
 
 public class DeactivateAccessTierHandler(
     IAccessTierRepository accessTierRepository,
-    ICatalogUnitOfWork catalogUnitOfWork
+    CatalogModuleContext context
 ) : IRequestHandler<DeactivateAccessTierCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(DeactivateAccessTierCommand request, CancellationToken cancellationToken)
@@ -24,13 +25,9 @@ public class DeactivateAccessTierHandler(
 
         accessTierRepository.Update(accessTier);
 
-        var resultUpdated = await catalogUnitOfWork.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        if (resultUpdated.IsFailure)
-        {
-            return Result<string>.Failure("DeactivateFailed", "Failed to deactivate Access Tier.");
-        }
 
-        return Result<string>.Success("Access Tier deactivated successfully.");
+        return "Access Tier deactivated successfully.";
     }
 }

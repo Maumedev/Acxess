@@ -1,5 +1,6 @@
 using Acxess.Catalog.Domain.Abstractions;
 using Acxess.Catalog.Domain.Entities;
+using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -8,12 +9,11 @@ namespace Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPl
 
 public class NewSellingPlansHandler(
     ISellingPlanRepository sellingPlanRepository,
-    ICatalogUnitOfWork catalogUnitOfWork,
+    CatalogModuleContext context,
     ICurrentTenant currentTenant
 ) : IRequestHandler<NewSellingPlanCommand, Result<string>>
 {
     
-
     public async Task<Result<string>> Handle(NewSellingPlanCommand request, CancellationToken cancellationToken)
     {
        if (!currentTenant.IsAvailable)
@@ -39,10 +39,8 @@ public class NewSellingPlansHandler(
 
        sellingPlanRepository.Add(sellingPlan);
 
-       var resultSave = await catalogUnitOfWork.SaveChangesAsync(cancellationToken);   
+       var resultSave = await context.SaveChangesAsync(cancellationToken);   
 
-       return resultSave.IsFailure 
-           ? Result<string>.Failure(resultSave.Error) 
-           : "Plan guardado correctamente";
+       return "Plan guardado correctamente";
     }
 }

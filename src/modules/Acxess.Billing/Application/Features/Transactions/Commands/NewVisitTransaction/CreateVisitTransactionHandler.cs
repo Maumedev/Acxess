@@ -1,4 +1,3 @@
-using Acxess.Billing.Domain.Abstractions;
 using Acxess.Billing.Domain.Entities;
 using Acxess.Billing.Infrastructure.Persistence;
 using Acxess.Shared.IntegrationServices.Catalog;
@@ -9,7 +8,6 @@ namespace Acxess.Billing.Application.Features.Transactions.Commands.NewVisitTran
 
 public class CreateVisitTransactionHandler(
     BillingModuleContext context,
-    IBillingUnitOfWork unitOfWork,
     ICatalogIntegrationService catalogService) : IRequestHandler<CreateVisitTransactionCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(CreateVisitTransactionCommand request, CancellationToken cancellationToken)
@@ -42,8 +40,8 @@ public class CreateVisitTransactionHandler(
 
         context.MemberTransactions.Add(transaction);
         
-        var resultSave = await unitOfWork.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        return resultSave.IsFailure ? Result<string>.Failure(resultSave.Error) : Result<string>.Success("Visita registrada correctamente.");
+        return "Visita registrada correctamente.";
     }
 }

@@ -1,4 +1,5 @@
 using Acxess.Catalog.Domain.Abstractions;
+using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -6,7 +7,7 @@ namespace Acxess.Catalog.Application.Features.AddOns.Commands.UpdateAddOn;
 
 public class UpdateAddOnHandler(
     IAddOnRepository addOnRepository,
-    ICatalogUnitOfWork unitOfWork
+    CatalogModuleContext context
 ) : IRequestHandler<UpdateAddOnCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(UpdateAddOnCommand request, CancellationToken cancellationToken)
@@ -26,12 +27,7 @@ public class UpdateAddOnHandler(
             request.IsVisit,
             request.IsActive);
 
-        var resultUpdated = await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        if (resultUpdated.IsFailure)
-        {
-            return Result<string>.Failure(resultUpdated.Error);
-        }
+        await context.SaveChangesAsync(cancellationToken);
 
         return Result<string>.Success("Cambios guardados correctamente.");
         

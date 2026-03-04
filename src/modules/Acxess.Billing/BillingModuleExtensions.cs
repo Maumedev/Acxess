@@ -1,4 +1,3 @@
-using Acxess.Billing.Domain.Abstractions;
 using Acxess.Billing.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +20,7 @@ public static class BillingModuleExtensions
         });
 
         services.AddScoped<IDataSeeder, BillingSeeder>();
-        services.AddScoped<IBillingUnitOfWork, BillingUnitOfWork>();
 
         return services;
     }
-
 }
