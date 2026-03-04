@@ -142,7 +142,7 @@ public class IndexModel(
             }
             case ProcessOrderRequest.NEW_MEMBER:
             {
-                var member = new NewMemberDto(0, request.MemberData.FirstName?? "", request.MemberData.LastName?? "", request.MemberData.Phone);
+                var member = new NewMemberDto(0, request.MemberData.FirstName?? "", request.MemberData.LastName?? "", request.MemberData.Phone, request.MemberData.PhotoBase64);
                 var newMemberCommand = new NewMemberCommand(
                     member,
                     request.PlanId??0,
@@ -165,7 +165,8 @@ public class IndexModel(
                     paymentMethodId,
                     request.AmountPaid,
                     beneficiaries,
-                    userNumber);
+                    userNumber,
+                    request.MemberData.PhotoBase64);
             
                 result = await mediator.Send(renewMemberCommand);
                 break;
