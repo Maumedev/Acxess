@@ -1,4 +1,5 @@
 using Acxess.Catalog.Domain.Abstractions;
+using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -6,7 +7,7 @@ namespace Acxess.Catalog.Application.Features.AccessTiers.Commands.UpdateAccessT
 
 public class UpdateAccessTierHandler(
     IAccessTierRepository accessTierRepository,
-    ICatalogUnitOfWork catalogUnitOfWork
+    CatalogModuleContext context
 ) : IRequestHandler<UpdateAccessTierCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(UpdateAccessTierCommand request, CancellationToken cancellationToken)
@@ -28,12 +29,7 @@ public class UpdateAccessTierHandler(
         accessTier.Update(request.Name, request.Description);
         accessTierRepository.Update(accessTier);
         
-        var resultUpdated =await catalogUnitOfWork.SaveChangesAsync(cancellationToken);
-
-        if (resultUpdated.IsFailure)
-        {
-            return Result<string>.Failure("UpdateFailed", "Failed to update Access Tier.");
-        }
+        await context.SaveChangesAsync(cancellationToken);
 
         return Result<string>.Success("Access Tier updated successfully.");
     }

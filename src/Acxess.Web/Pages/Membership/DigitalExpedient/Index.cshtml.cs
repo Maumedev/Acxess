@@ -6,6 +6,7 @@ using Acxess.Marketing.Application.Features.Promotions.Queries.GetActiveCouponPr
 using Acxess.Membership.Application.Features.Members.Commands.DeleteMember;
 using Acxess.Membership.Application.Features.Members.Commands.RestoreMember;
 using Acxess.Membership.Application.Features.Members.Commands.UpdateMember;
+using Acxess.Membership.Application.Features.Members.Commands.UpdateMemberPhoto;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberById;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberDetail;
 using Acxess.Membership.Application.Features.Members.Queries.GetMemberHistory;
@@ -20,6 +21,9 @@ namespace Acxess.Web.Pages.Membership.DigitalExpedient;
 
 public class IndexModel(IMediator mediator) : PageModel
 {
+    [BindProperty(SupportsGet = true)]
+    public int? MemberId { get; set; }
+    
     [BindProperty]
     public int AssignCouponMemberId { get; set; }
     
@@ -44,21 +48,37 @@ public class IndexModel(IMediator mediator) : PageModel
     
     public async Task OnGet()
     {
-        if (string.IsNullOrWhiteSpace(SearchTerm)) return;
-        
-        var membersResult = await mediator.Send(new GetMembersQuery(SearchTerm));
-        if (membersResult.IsFailure || !membersResult.Value.Members.Any())  return; 
-        
-        MembersResponse = membersResult.Value;
-        var firstMember = MembersResponse.Members.First();
-        
-        var detailResult = await mediator.Send(new GetMemberDetailQuery(firstMember.IdMember));
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            var membersResult = await mediator.Send(new GetMembersQuery(SearchTerm));
+            if (membersResult.IsFailure || !membersResult.Value.Members.Any()) return; 
+            
+            MembersResponse = membersResult.Value;
+            await LoadMemberDetailAndHistory(MembersResponse.Members.First().IdMember);
+        }
+        else if (MemberId is > 0)
+        {
+            var membersResult = await mediator.Send(new GetMembersQuery("", "all"));
+            if (membersResult.IsSuccess) MembersResponse = membersResult.Value;
+            
+            await LoadMemberDetailAndHistory(MemberId.Value);
+        }
+        else
+        {
+            var membersResult = await mediator.Send(new GetMembersQuery("", "all"));
+            if (membersResult.IsSuccess) MembersResponse = membersResult.Value;
+        }
+    }
+    
+    private async Task LoadMemberDetailAndHistory(int idMember)
+    {
+        var detailResult = await mediator.Send(new GetMemberDetailQuery(idMember));
         if (detailResult.IsSuccess)
         {
             SelectedMember = detailResult.Value;
         }
         
-        var historyResult = await mediator.Send(new GetMemberHistoryQuery(firstMember.IdMember, ShowAll: false));
+        var historyResult = await mediator.Send(new GetMemberHistoryQuery(idMember, ShowAll: false));
         if (historyResult.IsSuccess)
         {
             InitialMemberHistory = historyResult.Value;
@@ -266,5 +286,18 @@ public class IndexModel(IMediator mediator) : PageModel
         return Partial("_ActionSuccess", "Socio restaurado exitosamente.");
     }
     
-    
+    public async Task<IActionResult> OnPostUpdatePhotoAsync(int id, string photoBase64)
+    {
+        if (string.IsNullOrWhiteSpace(photoBase64)) return BadRequest("No se recibió ninguna imagen.");
+
+        var result = await mediator.Send(new UpdateMemberPhotoCommand(id, photoBase64));
+
+        if (result.IsFailure) return Content("Error al actualizar la foto.");
+
+        Response.Headers.Append("HX-Trigger", JsonSerializer.Serialize(new { 
+            memberUpdated = true, 
+            reloadMembersList = true 
+        }));
+        return Content(""); 
+    }
 }

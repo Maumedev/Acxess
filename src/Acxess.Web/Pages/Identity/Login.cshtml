@@ -17,6 +17,10 @@
     <link rel="manifest" href="~/manifest.json">
     <link rel="shortcut icon" href="~/favicon.ico">
     <meta name="theme-color" content="#0f1523">
+    <meta name="theme-color" content="#0f1523" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="~/lib/alpine.min.js" defer></script>
@@ -146,6 +150,17 @@
 
     </div>
     
-    <script src="~/js/site.js"></script>
+<script src="~/js/site.js"></script>
+<script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('PWA Service Worker registered successfully.');
+                }).catch(err => {
+                    console.log('Error registering PWA:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

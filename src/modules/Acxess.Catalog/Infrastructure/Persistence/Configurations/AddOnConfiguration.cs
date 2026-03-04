@@ -21,7 +21,7 @@ public class AddOnConfiguration : IEntityTypeConfiguration<AddOn>
 
         builder.HasIndex(t => t.IdTenant);
 
-        builder.HasIndex(t => new { t.IdTenant, t.AddOnKey })
+        builder.HasIndex(t => new { IdTenant = t.IdTenant, t.AddOnKey })
                .IsUnique();
 
         builder.Property(t => t.AddOnKey)

@@ -25,8 +25,7 @@ public class TransactionalBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         try
         {
             var response = await next();
-            var result = response as Result;
-            if (result is not null && result.IsSuccess)
+            if (response is Result { IsSuccess: true })
             {
                 scope.Complete();
             }
@@ -43,10 +42,6 @@ public class TransactionalBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
                 return (TResponse)failureMethod.Invoke(null, [ex.Error])!;
             }
 
-            throw;
-        }
-        catch (Exception )
-        {
             throw;
         }
     }

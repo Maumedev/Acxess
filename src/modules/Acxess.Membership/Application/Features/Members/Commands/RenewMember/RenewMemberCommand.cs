@@ -13,4 +13,5 @@ public record RenewMemberCommand
     int PaymentMethodId,
     decimal AmountPaid,
     List<NewMemberDto> Beneficiaries,
-    int CreatedUserId) : IRequest<Result<UpdatedSubMemberResponse>>;
+    int CreatedUserId,
+    string? PhotoBase64 = null) : IRequest<Result<UpdatedSubMemberResponse>>;

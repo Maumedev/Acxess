@@ -1,4 +1,4 @@
 namespace Acxess.Shared.ResultManager;
 
 public enum ErrorType
-{ Failure, Validation, NotFound, Conflict }
+{ Failure, Validation, NotFound, Conflict, None }

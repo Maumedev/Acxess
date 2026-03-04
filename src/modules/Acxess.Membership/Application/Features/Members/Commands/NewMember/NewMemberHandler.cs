@@ -1,9 +1,9 @@
 using Acxess.Membership.Application.Features.Members.DTOs;
-using Acxess.Membership.Domain.Abstractions;
 using Acxess.Membership.Domain.Entities;
 using Acxess.Membership.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Catalog;
+using Acxess.Shared.Abstractions;
 using Acxess.Shared.IntegrationEvents.Membership;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -12,63 +12,66 @@ namespace Acxess.Membership.Application.Features.Members.Commands.NewMember;
 public class NewMemberHandler(
     MembershipModuleContext context,
     ICatalogIntegrationService catalogService,
-    IMembershipUnitOfWork unitOfWork,
-    IMediator mediator) : IRequestHandler<NewMemberCommand, Result<UpdatedSubMemberResponse>>
+    IMediator mediator,
+    IImageStorageService imageStorage) : IRequestHandler<NewMemberCommand, Result<UpdatedSubMemberResponse>>
 {
     public async Task<Result<UpdatedSubMemberResponse>> Handle(NewMemberCommand request, CancellationToken cancellationToken)
     {
         var planInfo = await catalogService.GetPlanInfoAsync(request.SellingPlanId, cancellationToken);
-    
         if (planInfo == null)
             return Result<UpdatedSubMemberResponse>.Failure("Plan.NotFound", "El plan seleccionado no existe o no está activo.");
         
-        var finalBeneficiaryIds = new List<int>();
+        // get addOns info
+        var addOnsResult = await catalogService.GetAddOnPriceBatchAsync(request.AddOnIds, cancellationToken);
+        var addOnsWithPrice = addOnsResult.Value;
         
-        if (request.Beneficiaries.Count != 0)
+        // create new beneficiares
+        var newBeneficiaries = new List<Member>();
+        foreach (var benDto in request.Beneficiaries.Where(b => b.IdMember == 0))
         {
-            foreach (var benDto in request.Beneficiaries)
+            
+            string? benPhotoUrl = null;
+            if (!string.IsNullOrWhiteSpace(benDto.PhotoBase64))
             {
-                if (benDto.IdMember == 0)
-                {
-                    var newBeneficiary = Member.Create(
-                        request.IdTenant,
-                        benDto.FirstName,
-                        benDto.LastName,
-                        request.CreatedUserId,
-                        benDto.Phone,
-                        null 
-                    );
-
-                    context.Members.Add(newBeneficiary);
-                    
-                    await context.SaveChangesAsync(cancellationToken); 
-                    
-                    finalBeneficiaryIds.Add(newBeneficiary.IdMember);
-                }
-                else 
-                {
-                    finalBeneficiaryIds.Add(benDto.IdMember);
-                }
+                var cleanName = $"{benDto.FirstName}-{benDto.LastName}".ToLower().Replace(" ", "-");
+                var resultSaved = await imageStorage.SaveImageAsync(benDto.PhotoBase64, cleanName, cancellationToken);
+                benPhotoUrl = resultSaved.Value;
             }
+            
+            var newBeneficiary = Member.Create(
+                request.IdTenant, benDto.FirstName, benDto.LastName, request.CreatedUserId, benDto.Phone, null, benPhotoUrl);
+            
+            context.Members.Add(newBeneficiary);
+            newBeneficiaries.Add(newBeneficiary);
         }
         
-        var addOnsWithPrice = new List<(int Id, string Name, decimal Price)>();
-
-        foreach (var addOnId in request.AddOnIds)
+        if (newBeneficiaries.Count != 0)
         {
-            var resultAddOn = await catalogService.GetAddOnPriceAsync(addOnId, cancellationToken);
-
-            if (resultAddOn.IsFailure) return Result<UpdatedSubMemberResponse>.Failure(resultAddOn.Error); 
-          
-            addOnsWithPrice.Add((addOnId, resultAddOn.Value.Name, resultAddOn.Value.Price));
+            await context.SaveChangesAsync(cancellationToken); 
         }
-
+        
+        // combine beneficiaries
+        var finalBeneficiaryIds = new List<int>();
+        finalBeneficiaryIds.AddRange(request.Beneficiaries.Where(b => b.IdMember != 0).Select(b => b.IdMember));
+        finalBeneficiaryIds.AddRange(newBeneficiaries.Select(b => b.IdMember));
+        
+        string? mainPhotoUrl = null;
+        if (!string.IsNullOrWhiteSpace(request.MemberDto.PhotoBase64))
+        {
+            var cleanName = $"{request.MemberDto.FirstName}-{request.MemberDto.LastName}".ToLower().Replace(" ", "-");
+            var mainPhotoResult = await imageStorage.SaveImageAsync(request.MemberDto.PhotoBase64, cleanName, cancellationToken);
+            mainPhotoUrl = mainPhotoResult.Value;   
+        }
+        
+        // create member
         var mainMember = Member.Create(
             request.IdTenant,
             request.MemberDto.FirstName,
             request.MemberDto.LastName,
             request.CreatedUserId,
-            request.MemberDto.Phone
+            request.MemberDto.Phone,
+            null,
+            mainPhotoUrl
         );
         
         mainMember.Subscribe(
@@ -76,26 +79,20 @@ public class NewMemberHandler(
             planInfo.Name,
             planInfo.Price,
             planInfo.Duration,
-            planInfo.DurationUnit,
             request.CreatedUserId,
-            finalBeneficiaryIds,
-            addOnsWithPrice
-        );
+            planInfo.DurationUnit,
+            finalBeneficiaryIds, 
+            addOnsWithPrice);
 
         context.Members.Add(mainMember);
         
-        var resultSave = await unitOfWork.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        if (resultSave.IsFailure )
-        {
-            return Result<UpdatedSubMemberResponse>.Failure(resultSave.Error);
-        }
-        
         var addOnItems = addOnsWithPrice.Select(a => 
                 new PurchasedAddOnItem(a.Id, a.Name, a.Price)
         ).ToList();
         
-        var integrationBilling = new SubcriptionPurchasedDomainEvent(
+        var integrationBilling = new SubscriptionPurchasedIntegrationEvent(
             request.IdTenant,
             request.CreatedUserId,
             mainMember.IdMember,
@@ -111,6 +108,8 @@ public class NewMemberHandler(
         
         await mediator.Publish(integrationBilling, cancellationToken);
 
-        return new UpdatedSubMemberResponse("Subscripción registrada correctamente.", mainMember.IdMember);
+        return new UpdatedSubMemberResponse(
+            "Subscripción registrada correctamente.", 
+            mainMember.IdMember);
     }
 }

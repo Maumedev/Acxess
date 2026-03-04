@@ -4,7 +4,7 @@ using Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPlan;
 using Acxess.Catalog.Application.Features.SellingPlans.Commands.UpdateSellingPlan;
 using Acxess.Catalog.Application.Features.SellingPlans.Queries.GetSellingPlanById;
 using Acxess.Catalog.Application.Features.SellingPlans.Queries.GetSellingPlans;
-using Acxess.Catalog.Domain.Enums;
+using Acxess.Shared.Enums;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +85,7 @@ public class IndexModel(IMediator mediator) : PageModel
                 Price = item.Price,
                 IsActive = item.IsActive,
                 DurationInValue = item.DurationInValue,
-                DurationUnit = (int)item.DurationUnit,
+                DurationUnit = (int)item.DurationSubscriptionUnit,
                 AccessTiersIds = item.AccessTiersIds
             };
         }
@@ -136,7 +136,7 @@ public class IndexModel(IMediator mediator) : PageModel
              var command =  new NewSellingPlanCommand(
                 Input.TotalMembers,
                 Input.DurationInValue,
-                (DurationUnit)Input.DurationUnit,
+                (DurationSubscriptionUnit)Input.DurationUnit,
                 Input.Name,
                 Input.Price,
                 userNumber,
@@ -151,7 +151,7 @@ public class IndexModel(IMediator mediator) : PageModel
                 Input.IdSellingPlan,
                 Input.TotalMembers,
                 Input.DurationInValue,
-                (DurationUnit)Input.DurationUnit,
+                (DurationSubscriptionUnit)Input.DurationUnit,
                 Input.Name,
                 Input.Price,
                 Input.AccessTiersIds,

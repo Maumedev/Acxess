@@ -7,4 +7,5 @@ public record MemberItem(
     bool Active,
     bool IsDeleted,
     string? Email,
-    string? Phone);
+    string? Phone,
+    string? PhotoUrl);

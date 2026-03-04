@@ -8,6 +8,7 @@ public record MemberDetailDto
     public string FullName { get; init; } = string.Empty;
     public string? Phone { get; init; }
     public string? Email { get; init; }
+    public string? PhotoUrl { get; init; }
     public string Initials { get; init; } = string.Empty;
     
     public bool IsDeleted { get; init; }

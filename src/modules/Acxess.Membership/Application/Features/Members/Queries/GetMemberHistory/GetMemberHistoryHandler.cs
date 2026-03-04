@@ -1,5 +1,5 @@
 using Acxess.Membership.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Billing;
+using Acxess.Shared.IntegrationServices.Billing;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

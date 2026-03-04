@@ -1,5 +1,5 @@
 using Acxess.Membership.Application.Features.Dashboard.Queries.GetDashboardStats;
-using Acxess.Shared.IntegrationEvents.Billing;
+using Acxess.Shared.IntegrationServices.Billing;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

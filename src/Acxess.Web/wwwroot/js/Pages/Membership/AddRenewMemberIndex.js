@@ -8,7 +8,9 @@ document.addEventListener('alpine:init', () => {
             FirstName: '',
             LastName: '',
             Phone: '',
-            Email: ''
+            Email: '',
+            PhotoUrl: '',     
+            PhotoBase64: ''  
         },
         inscAddon: inscAddon ,
         selectedPlan: null,
@@ -73,6 +75,7 @@ document.addEventListener('alpine:init', () => {
             }
         },
         selectMember(memberData) {
+            console.log(memberData);    
             this.selectedMember = memberData;
             this.customer.Id = memberData.Id;
 
@@ -83,6 +86,9 @@ document.addEventListener('alpine:init', () => {
             this.customer.LastName = memberData.LastName;
             this.customer.Phone = memberData.Phone || '';
             this.customer.Email = memberData.Email || '';
+
+            this.customer.PhotoUrl = memberData.PhotoUrl || '';
+            this.customer.PhotoBase64 = '';
             
             const listContainer = document.getElementById('members-list');
             if(listContainer) listContainer.innerHTML = '';
@@ -134,6 +140,8 @@ document.addEventListener('alpine:init', () => {
                 LastName: '',
                 Phone: '',
                 Email: '',
+                PhotoUrl: '',    
+                PhotoBase64: ''  
             };
             this.selectedPlan = null; // Resetear plan para obligar a nueva selección
             this.beneficiaries = [];  // Limpiar beneficiarios previos

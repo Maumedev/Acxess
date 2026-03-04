@@ -1,5 +1,6 @@
 using Acxess.Catalog.Domain.Abstractions;
 using Acxess.Catalog.Domain.Entities;
+using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -8,12 +9,11 @@ namespace Acxess.Catalog.Application.Features.SellingPlans.Commands.NewSellingPl
 
 public class NewSellingPlansHandler(
     ISellingPlanRepository sellingPlanRepository,
-    ICatalogUnitOfWork catalogUnitOfWork,
+    CatalogModuleContext context,
     ICurrentTenant currentTenant
 ) : IRequestHandler<NewSellingPlanCommand, Result<string>>
 {
     
-
     public async Task<Result<string>> Handle(NewSellingPlanCommand request, CancellationToken cancellationToken)
     {
        if (!currentTenant.IsAvailable)
@@ -24,12 +24,12 @@ public class NewSellingPlansHandler(
            request.Name,
            request.TotalMembers,
            request.Duration,
-           request.DurationUnit,
+           request.DurationSubscriptionUnit,
            request.Price,
            request.CreatedBy
        );
 
-       if (request.AccessTiersIds != null && request.AccessTiersIds.Any())
+       if (request.AccessTiersIds.Count != 0)
        {
            foreach (var tierId in request.AccessTiersIds)
            {
@@ -39,12 +39,7 @@ public class NewSellingPlansHandler(
 
        sellingPlanRepository.Add(sellingPlan);
 
-       var resultSave = await catalogUnitOfWork.SaveChangesAsync(cancellationToken);   
-
-       if (resultSave.IsFailure)
-       {
-           return Result<string>.Failure(resultSave.Error);
-       }
+       var resultSave = await context.SaveChangesAsync(cancellationToken);   
 
        return "Plan guardado correctamente";
     }

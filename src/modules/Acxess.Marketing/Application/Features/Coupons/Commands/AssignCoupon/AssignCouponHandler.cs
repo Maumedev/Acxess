@@ -1,4 +1,3 @@
-using Acxess.Marketing.Domain.Abstractions;
 using Acxess.Marketing.Domain.Entities;
 using Acxess.Marketing.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
@@ -9,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Acxess.Marketing.Application.Features.Coupons.Commands.AssignCoupon;
 
 public class AssignCouponHandler(
-    IMarketingUnitOfWork  unitOfWork,
     MarketingModuleContext context,
     ICurrentTenant currentTenant) : IRequestHandler<AssignCouponCommand, Result<string>>
 {
@@ -45,10 +43,8 @@ public class AssignCouponHandler(
         );
 
         context.Coupons.Add(coupon);
-        var result = await unitOfWork.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        return result.IsFailure
-            ? Result<string>.Failure(result.Error)
-            : "Cupon asignado correctamente";
+        return "Cupon asignado correctamente";
     }
 }

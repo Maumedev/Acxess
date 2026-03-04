@@ -5,4 +5,5 @@ public record NewMemberDto
     int IdMember,
     string FirstName,
     string LastName,
-    string? Phone);
+    string? Phone,
+    string? PhotoBase64 = null);

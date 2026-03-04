@@ -16,16 +16,13 @@ public static Error? Parse(DbUpdateException ex, Dictionary<string, Error>? cust
 
         if (customErrors is not null)
         {
-            foreach (var key in customErrors.Keys)
+            foreach (var key in customErrors.Keys.Where(key => sqlEx.Message.Contains(key)))
             {
-                if (sqlEx.Message.Contains(key))
-                {
-                    return customErrors[key];
-                }
+                return customErrors[key];
             }
         }
 
-       return sqlEx.Number switch
+        return sqlEx.Number switch
         {
             2601 or 2627 => Error.Conflict("General.Duplicate", 
                 $"El registro ya existe. Detalle: {ExtractQuotedValue(sqlEx.Message)}"),
@@ -53,10 +50,6 @@ public static Error? Parse(DbUpdateException ex, Dictionary<string, Error>? cust
     private static string ExtractQuotedValue(string message)
     {
         var matches = Regex.Matches(message, @"'([^']*)'");
-        if (matches.Count > 0)
-        {
-            return string.Join(" - ", matches.Select(m => m.Groups[1].Value));
-        }
-        return "valor duplicado";
+        return matches.Count > 0 ? string.Join(" - ", matches.Select(m => m.Groups[1].Value)) : "valor duplicado";
     }
 }

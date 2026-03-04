@@ -104,13 +104,13 @@
                         </div>
                     </a>
 
-                    <a href="/Catalog" class=" group bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 lg:p-5 shadow-sm flex sm:flex-col items-center sm:items-start justify-start sm:justify-between gap-4 sm:gap-0 h-auto sm:h-32 transition-all transform hover:-translate-y-1">
+                    <a href="/Membership/AddRenewMember?mode=visit" class=" group bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 lg:p-5 shadow-sm flex sm:flex-col items-center sm:items-start justify-start sm:justify-between gap-4 sm:gap-0 h-auto sm:h-32 transition-all transform hover:-translate-y-1">
                         <div class="p-2 bg-gray-100 dark:bg-slate-700 rounded-lg text-gray-600 dark:text-white shrink-0">
-                            <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
                         </div>
                         <div>
-                            <span class="block font-bold text-gray-800 dark:text-white text-base lg:text-lg">Configuración</span>
-                            <span class="text-gray-400 text-[10px] lg:text-xs hidden sm:block">Planes y Precios</span>
+                            <span class="block font-bold text-gray-800 dark:text-white text-base lg:text-lg">Visita</span>
+                            <span class="text-gray-400 text-[10px] lg:text-xs hidden sm:block">Cobro de pase por día</span>
                         </div>
                     </a>
                 </div>
@@ -135,7 +135,7 @@
                         {
                             string dayLabel;
                             string colorClass;
-
+    
                             switch (item.DaysLeft)
                             {
                                 case < 0:
@@ -158,13 +158,47 @@
                                     colorClass = "text-orange-400";
                                     break;
                             }
-
-                            <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition text-xs lg:text-sm">
-                                <td class="px-3 lg:px-4 py-3 font-medium text-gray-800 dark:text-white whitespace-nowrap">@item.FullName</td>
+    
+                            // Inyectamos Alpine en la fila para controlar el Lightbox de este socio
+                            <tr x-data="{ showLightbox: false }" class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition text-xs lg:text-sm">
+                                
+                                <td class="px-3 lg:px-4 py-3 font-medium text-gray-800 dark:text-white whitespace-nowrap">
+                                    <div class="flex items-center gap-3">
+                                        <div @@click="@(string.IsNullOrEmpty(item.PhotoUrl) ? "" : "showLightbox = true")" 
+                                             class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 font-bold text-[10px] border border-slate-300 dark:border-slate-600 shrink-0 @(!string.IsNullOrEmpty(item.PhotoUrl) ? "cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all" : "")">
+                                            @if (!string.IsNullOrEmpty(item.PhotoUrl))
+                                            {
+                                                <img src="@item.PhotoUrl" alt="Foto de @item.FullName" class="w-full h-full object-cover rounded-full aspect-square">
+                                            }
+                                            else
+                                            {
+                                                <span>@item.Initials</span>
+                                            }
+                                        </div>
+                                        
+                                        <span>@item.FullName</span>
+                                    </div>
+    
+                                    @if (!string.IsNullOrEmpty(item.PhotoUrl))
+                                    {
+                                        <div x-show="showLightbox" style="display: none;" 
+                                             class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-200"
+                                             @@click="showLightbox = false"
+                                             @@keydown.escape.window="showLightbox = false">
+                                            
+                                            <button type="button" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/50 hover:text-white transition-colors bg-black/50 rounded-full p-2">
+                                                <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            </button>
+    
+                                            <img src="@item.PhotoUrl" alt="Foto en grande de @item.FullName" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl object-contain border border-slate-700" @@click.stop />
+                                        </div>
+                                    }
+                                </td>
+    
                                 <td class="px-3 lg:px-4 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">@item.PlanName</td>
                                 <td class="px-3 lg:px-4 py-3 @colorClass font-bold whitespace-nowrap">@dayLabel</td>
                                 <td class="px-3 lg:px-4 py-3 text-right whitespace-nowrap">
-                                    <a href="/Membership/AddRenewMember?SearchMember=@item.Id" 
+                                    <a href="/Membership/AddRenewMember?MemberId=@item.Id&mode=renew" 
                                        class="text-[10px] lg:text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded hover:bg-blue-100 transition">
                                         Renovar
                                     </a>

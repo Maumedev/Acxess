@@ -62,6 +62,7 @@ public class GetMembersHandler(
                 m.Email,
                 m.Phone,
                 m.IsDeleted,
+                m.PhotoUrl,
                 HasActiveSubscription = m.SubscriptionMemberships
                     .Any(sm => sm.Subscription.EndDate >= now && sm.Subscription.IsActive)
             })
@@ -73,7 +74,8 @@ public class GetMembersHandler(
                 m.HasActiveSubscription,
                 m.IsDeleted,
                 m.Email ?? string.Empty,
-                m.Phone ?? string.Empty
+                m.Phone ?? string.Empty,
+                m.PhotoUrl
             ))
             .ToListAsync(cancellationToken);
         return new MembersResponse(totalCount, results.Count, results);

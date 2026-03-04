@@ -1,11 +1,12 @@
 using Acxess.Catalog.Domain.Abstractions;
+using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
 namespace Acxess.Catalog.Application.Features.AddOns.Commands.NewAddOn;
 
 public class NewAddOnHandler(
-    ICatalogUnitOfWork unitOfWork,
+    CatalogModuleContext context,
     IAddOnRepository addOnRepository
 ) : IRequestHandler<NewAddOnCommand, Result<string>>
 {
@@ -22,12 +23,8 @@ public class NewAddOnHandler(
 
         addOnRepository.Add(addOn);
 
-        var result = await unitOfWork.SaveChangesAsync(cancellationToken);
+        var result = await context.SaveChangesAsync(cancellationToken);
 
-        if (result.IsFailure)
-        {
-            return Result<string>.Failure(result.Error);
-        }
 
         return "Complementado guardado correctamente";
     }

@@ -1,7 +1,6 @@
-using Acxess.Billing.Domain.Abstractions;
 using Acxess.Billing.Domain.Entities;
 using Acxess.Billing.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Catalog;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -9,7 +8,6 @@ namespace Acxess.Billing.Application.Features.Transactions.Commands.NewVisitTran
 
 public class CreateVisitTransactionHandler(
     BillingModuleContext context,
-    IBillingUnitOfWork unitOfWork,
     ICatalogIntegrationService catalogService) : IRequestHandler<CreateVisitTransactionCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(CreateVisitTransactionCommand request, CancellationToken cancellationToken)
@@ -26,26 +24,24 @@ public class CreateVisitTransactionHandler(
             request.UserId,
             "Pase de Visita" 
         );
+        
+        var addOnsResult = await catalogService.GetAddOnPriceBatchAsync(request.AddOnIds, cancellationToken);
+        var addOnsWithPrice = addOnsResult.Value ?? throw new ArgumentNullException("addOnsResult.Value");
 
-        foreach (var addOnId in request.AddOnIds)
+        foreach (var addOn in addOnsWithPrice)
         {
-            var resultAddOn = await catalogService.GetAddOnPriceAsync(addOnId, cancellationToken);
-            
-            if (resultAddOn.IsFailure) 
-                return Result<string>.Failure(resultAddOn.Error);
-
             transaction.AddOnItem(
-                addOnId, 
-                resultAddOn.Value.Name, 
+                addOn.Id, 
+                addOn.Name, 
                 1, 
-                resultAddOn.Value.Price
+                addOn.Price
             );
         }
 
         context.MemberTransactions.Add(transaction);
         
-        var resultSave = await unitOfWork.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        return resultSave.IsFailure ? Result<string>.Failure(resultSave.Error) : Result<string>.Success("Visita registrada correctamente.");
+        return "Visita registrada correctamente.";
     }
 }

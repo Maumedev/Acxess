@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Acxess.Shared.IntegrationEvents.Membership;
 
-public record SubcriptionPurchasedDomainEvent(
+public record SubscriptionPurchasedIntegrationEvent(
     int IdTenant,
     int CreatedByUserId,
     int IdMember,

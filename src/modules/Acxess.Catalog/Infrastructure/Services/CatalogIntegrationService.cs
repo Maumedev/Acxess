@@ -1,6 +1,7 @@
 using Acxess.Catalog.Domain.Constants;
 using Acxess.Catalog.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Catalog;
+using Acxess.Shared.Enums;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,22 +19,31 @@ public class CatalogIntegrationService(CatalogModuleContext context) : ICatalogI
                 p.Name, 
                 p.Price, 
                 p.DurationInValue, 
-                (int)p.DurationUnit))
+                p.DurationUnit))
             .FirstOrDefaultAsync(ct);
     }
 
-    public async Task<Result<AddOnIntegrationDto>> GetAddOnPriceAsync(int addOnId, CancellationToken ct = default)
+    public async Task<Result<List<AddOnIntegrationDto>>> GetAddOnPriceBatchAsync(List<int> addOnIds,
+        CancellationToken ct = default)
     {
-        var addOn = await context.AddOns
+        if ( addOnIds.Count == 0)
+        {
+            return Result<List<AddOnIntegrationDto>>.Success([]);
+        }
+        
+        var uniqueIds = addOnIds.Distinct().ToList();
+        
+        var addOns = await context.AddOns
             .AsNoTracking()
-            .Where(a => a.IdAddOn == addOnId)
+            .Where(a => uniqueIds.Contains(a.IdAddOn))
             .Select(a => new AddOnIntegrationDto(
-                    a.Name,
-                    a.Price
-                ))
-            .FirstOrDefaultAsync(ct);
-
-        return addOn ?? Result<AddOnIntegrationDto>.Failure("NotFound", "AddOn not found.");
+                a.IdAddOn,
+                a.Name,
+                a.Price
+            ))
+            .ToListAsync(ct);
+        
+        return addOns;
     }
 
     public async Task<Result<List<string>>> GetAddOnNamesAsync(List<int> addOnIds, bool includesInscription, CancellationToken ct = default)

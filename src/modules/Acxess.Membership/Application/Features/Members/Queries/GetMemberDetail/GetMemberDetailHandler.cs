@@ -1,8 +1,8 @@
 using System.Globalization;
 using Acxess.Membership.Domain.Constants;
 using Acxess.Membership.Infrastructure.Persistence;
-using Acxess.Shared.IntegrationEvents.Billing;
-using Acxess.Shared.IntegrationEvents.Catalog;
+using Acxess.Shared.IntegrationServices.Billing;
+using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Shared.ResultManager;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +29,7 @@ public class GetMemberDetailHandler(
                 m.Email,
                 m.CreatedAt,
                 m.IsDeleted,
+                m.PhotoUrl,
                 Subscriptions = m.SubscriptionMemberships
                     .Select(sm => sm.Subscription)
                     .OrderByDescending(s => s.EndDate)
@@ -205,6 +206,7 @@ public class GetMemberDetailHandler(
             FullName = $"{member.FirstName} {member.LastName}",
             Phone = member.Phone ?? "",
             Email = member.Email ?? "",
+            PhotoUrl = member.PhotoUrl,
             Initials = GetInitials(member.FirstName, member.LastName),
             
             IsDeleted = member.IsDeleted,

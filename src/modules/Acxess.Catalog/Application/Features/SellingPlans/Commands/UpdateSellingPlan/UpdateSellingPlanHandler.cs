@@ -1,5 +1,6 @@
 using System;
 using Acxess.Catalog.Domain.Abstractions;
+using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
 
@@ -7,7 +8,7 @@ namespace Acxess.Catalog.Application.Features.SellingPlans.Commands.UpdateSellin
 
 public class UpdateSellingPlanHandler(
     ISellingPlanRepository sellingPlanRepository,
-    ICatalogUnitOfWork unitOfWork
+    CatalogModuleContext context
 ) : IRequestHandler<UpdateSellingPlanCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(UpdateSellingPlanCommand request, CancellationToken cancellationToken)
@@ -21,16 +22,14 @@ public class UpdateSellingPlanHandler(
             request.Name, 
             request.TotalMembers,
             request.Duration,
-            request.DurationUnit,
+            request.DurationSubscriptionUnit,
             request.Price,
             request.IsActive
         );
 
-        sellingPlan.SyncAccessTiers(request.AccessTiersIds ?? new List<int>());
+        sellingPlan.SyncAccessTiers(request.AccessTiersIds ?? []);
 
-        var resultSave = await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        if (resultSave.IsFailure) return Result<string>.Failure(resultSave.Error);
+        await context.SaveChangesAsync(cancellationToken);
 
         return "Plan actualizado correctamente";
     }
