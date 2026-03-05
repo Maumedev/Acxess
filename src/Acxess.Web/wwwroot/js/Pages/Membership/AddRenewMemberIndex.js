@@ -13,6 +13,7 @@ document.addEventListener('alpine:init', () => {
             PhotoBase64: ''  
         },
         inscAddon: inscAddon ,
+        visitAddon: null,
         selectedPlan: null,
         beneficiaries: [],
         selectPlan(plan){
@@ -57,6 +58,12 @@ document.addEventListener('alpine:init', () => {
                 this.setMode('new');
             }
         },
+        registerVisitAddon(addon) {
+            this.visitAddon = addon;
+            if (this.mode === 'visit') {
+                this.addSystemAddon(this.visitAddon);
+            }
+        },
         setMode(newMode) {
             this.mode = newMode;
             this.resetCustomerForm();
@@ -67,15 +74,15 @@ document.addEventListener('alpine:init', () => {
                 document.getElementById("first-name-input")?.focus();
             } else if (this.mode === 'renew') {
                 this.removeSystemAddon(this.inscAddon.IdAddOn);
-                document.getElementById("search-member-input")?.focus();
+                // document.getElementById("search-member-input")?.focus();
             } else {
                 // MODO VISITA
                 this.removeSystemAddon(this.inscAddon.IdAddOn);
+                if (this.visitAddon) this.addSystemAddon(this.visitAddon);
                 document.getElementById("first-name-input")?.focus();
             }
         },
         selectMember(memberData) {
-            console.log(memberData);    
             this.selectedMember = memberData;
             this.customer.Id = memberData.Id;
 

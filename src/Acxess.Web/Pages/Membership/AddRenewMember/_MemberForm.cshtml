@@ -13,7 +13,7 @@
                 value="@Model.SearchMember"
                 placeholder="Nombre del socio o ID"
                 hx-get="@Url.Page("Index", pageHandler: "Member")"
-                hx-trigger="keyup changed delay:500ms"
+                hx-trigger="keyup changed delay:500ms, focus[this.value === '']"
                 hx-target="#members-list"
                 hx-swap="innerHTML"
                 @@focus="$el.select()"

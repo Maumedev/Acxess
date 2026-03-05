@@ -12,13 +12,15 @@ internal sealed class GetMemberToRenewHandler(MembershipModuleContext context)
 {
     public async Task<Result<List<MemberResponse>>> Handle(GetMemberToRenewQuery request, CancellationToken cancellationToken)
     {
+        
+        var query = context.Members.AsNoTracking();
+        var today = DateTime.Now.Date;
+        
         if (string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             return new List<MemberResponse>();
         }
         var term = request.SearchTerm.Trim();
-        var query = context.Members.AsNoTracking();
-        
         var isNumeric = int.TryParse(term, out var id);
 
         query = query.Where(m => !m.IsDeleted);
@@ -34,7 +36,7 @@ internal sealed class GetMemberToRenewHandler(MembershipModuleContext context)
                 m.LastName.Contains(term));
         }
         
-        var today = DateTime.Now.Date;
+       
         const int gracePeriodDays = Configurations.PRORROGA_DAYS;
         var limitDate = today.AddDays(-gracePeriodDays);
 
