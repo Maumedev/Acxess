@@ -1,3 +1,4 @@
+using Acxess.Catalog.Domain.Errors;
 using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -12,10 +13,7 @@ public class UpdateAddOnHandler(
     {
         var addOn = await context.AddOns.FindAsync([request.IdAddOn], cancellationToken);
 
-        if (addOn is null)
-        {
-            return Result<string>.Failure("NotFound", "Access Tier not found.");
-        }
+        if (addOn is null) return Result<string>.Failure(AddOnsErrors.NotFound);
 
         addOn.Update(
             request.AddOnKey,

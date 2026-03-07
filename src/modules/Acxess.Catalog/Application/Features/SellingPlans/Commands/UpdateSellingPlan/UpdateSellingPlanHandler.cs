@@ -1,3 +1,4 @@
+using Acxess.Catalog.Domain.Errors;
 using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -15,8 +16,7 @@ public class UpdateSellingPlanHandler(
             .Include(sp => sp.AccessTiers)
             .FirstOrDefaultAsync(sp => sp.IdSellingPlan == request.IdSellingPlan, cancellationToken);
 
-        if (sellingPlan is null)
-            return Result<string>.Failure("NotFound", "El plan no existe.");
+        if (sellingPlan is null) return Result<string>.Failure(SellingPlansErrors.NotFound);
 
         sellingPlan.Update(
             request.Name, 

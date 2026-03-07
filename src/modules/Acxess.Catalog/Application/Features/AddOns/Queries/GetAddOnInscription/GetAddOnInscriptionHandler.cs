@@ -1,5 +1,6 @@
 using Acxess.Catalog.Application.Features.AddOns.Queries.GetAddOns;
 using Acxess.Catalog.Domain.Constants;
+using Acxess.Catalog.Domain.Errors;
 using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -26,6 +27,6 @@ public class GetAddOnInscriptionHandler(
             a.IsVisit
         )).FirstOrDefaultAsync(cancellationToken: cancellationToken);
         
-        return item ?? Result<AddOnDto>.Failure("AddOn.NotFound","Complemento inscripción no encontrada");
+        return item ?? Result<AddOnDto>.Failure(AddOnsErrors.InscriptionNotFound);
     }
 }

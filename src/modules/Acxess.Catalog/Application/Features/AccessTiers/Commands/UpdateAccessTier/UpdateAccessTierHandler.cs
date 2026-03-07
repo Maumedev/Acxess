@@ -1,3 +1,4 @@
+using Acxess.Catalog.Domain.Errors;
 using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -12,19 +13,11 @@ public class UpdateAccessTierHandler(
     {
         var accessTier = await context.AccessTiers.FindAsync([request.Id], cancellationToken);
         
-        if (accessTier is null)
-        {
-            return Result<string>.Failure("NotFound", "Access Tier not found.");
-        }
+        if (accessTier is null) return Result<string>.Failure(AccessTiersErrors.NotFound);
 
-        if (!request.IsActive)
-        {
-            accessTier.Deactivate();
-        }else
-        {
-            accessTier.Activate();
-        }
-
+        if (!request.IsActive) accessTier.Deactivate();
+        else accessTier.Activate();
+        
         accessTier.Update(request.Name, request.Description);
         
         await context.SaveChangesAsync(cancellationToken);
