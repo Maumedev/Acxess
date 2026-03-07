@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Acxess.Catalog.Application.Features.AddOns.Queries.GetAddOnInscription;
 
-public class GetAddOnInscriptionHandler(CatalogModuleContext  context) : IRequestHandler<GetAddOnInscriptionQuery, Result<AddOnDto>>
+public class GetAddOnInscriptionHandler(
+    CatalogModuleContext  context) : IRequestHandler<GetAddOnInscriptionQuery, Result<AddOnDto>>
 {
     public async Task<Result<AddOnDto>> Handle(GetAddOnInscriptionQuery request, CancellationToken cancellationToken)
     {

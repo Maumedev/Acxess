@@ -1,4 +1,3 @@
-using System;
 using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.Enums;
 using Acxess.Shared.ResultManager;
@@ -15,7 +14,6 @@ public class GetSellingPlanByIdHandler(
     {
         var query = context.SellingPlans.AsNoTracking()
             .Where(p => p.IdSellingPlan == request.IdSellingPlan);
-
 
         var item = await query
             .Select(p => new SellingPlanDto(

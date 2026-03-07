@@ -1,4 +1,3 @@
-using Acxess.Catalog.Domain.Abstractions;
 using Acxess.Catalog.Domain.Entities;
 using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.Abstractions;
@@ -8,7 +7,6 @@ using MediatR;
 namespace Acxess.Catalog.Application.Features.AccessTiers.Commands.AddAccessTier;
 
 public class AddAccessTierHandler(
-    IAccessTierRepository accessTierRepository,
     ICurrentTenant currentTenant,
     CatalogModuleContext context
 ) : IRequestHandler<AddAccessTierCommand, Result<string>>
@@ -17,7 +15,7 @@ public class AddAccessTierHandler(
     {
         var accessTier = AccessTier.Create(currentTenant.Id ?? request.TenantId ?? 0, request.Name, request.Description);
 
-        accessTierRepository.Add(accessTier);
+        context.AccessTiers.Add(accessTier);
 
         await context.SaveChangesAsync(cancellationToken);
 

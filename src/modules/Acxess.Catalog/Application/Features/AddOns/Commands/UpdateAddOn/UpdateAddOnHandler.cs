@@ -1,4 +1,3 @@
-using Acxess.Catalog.Domain.Abstractions;
 using Acxess.Catalog.Infrastructure.Persistence;
 using Acxess.Shared.ResultManager;
 using MediatR;
@@ -6,13 +5,12 @@ using MediatR;
 namespace Acxess.Catalog.Application.Features.AddOns.Commands.UpdateAddOn;
 
 public class UpdateAddOnHandler(
-    IAddOnRepository addOnRepository,
     CatalogModuleContext context
 ) : IRequestHandler<UpdateAddOnCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(UpdateAddOnCommand request, CancellationToken cancellationToken)
     {
-        var addOn = await addOnRepository.GetById(request.IdAddOn, cancellationToken);
+        var addOn = await context.AddOns.FindAsync([request.IdAddOn], cancellationToken);
 
         if (addOn is null)
         {
