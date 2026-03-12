@@ -10,15 +10,27 @@ public class CancelSubscriptionHandler(
 {
     public async Task<Result<string>> Handle(CancelSubscriptionCommand request, CancellationToken cancellationToken)
     {
-        var subscription = await context.Subscriptions
-            .FirstOrDefaultAsync(s => s.IdSubscription == request.SubscriptionId, cancellationToken);
         
-        if (subscription is null)
-            return Result<string>.Failure(Error.NotFound("Subscription.NotFound", "La suscripción no existe."));
+        var memberId = await context.SubscriptionMembers
+            .Where(sm => sm.IdSubscription == request.SubscriptionId)
+            .Select(sm => sm.IdMember)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        subscription.Cancel(request.Reason, request.UserId);
+        if (memberId == 0) 
+            return Result<string>.Failure(Error.NotFound("Subscription.NotFound", "La suscripción no existe o no tiene socio asignado."));
+        
+        var activeSubscriptionsToCancel = await context.SubscriptionMembers
+            .Include(sm => sm.Subscription)
+            .Where(sm => sm.IdMember == memberId && sm.Subscription.IsActive)
+            .Select(sm => sm.Subscription)
+            .ToListAsync(cancellationToken);
 
-       await context.SaveChangesAsync(cancellationToken);
+        foreach (var sub in activeSubscriptionsToCancel)
+        {
+            sub.Cancel(request.Reason, request.UserId);
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
 
         return  "Subscription cancelled.";
     }

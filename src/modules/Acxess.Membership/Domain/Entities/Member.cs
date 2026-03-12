@@ -3,7 +3,6 @@ using Acxess.Shared.Abstractions;
 using Acxess.Shared.Enums;
 using Acxess.Shared.IntegrationServices.Catalog;
 
-
 namespace Acxess.Membership.Domain.Entities;
 
 public class Member : IHasTenant
@@ -161,5 +160,4 @@ public class Member : IHasTenant
 
         return (startDate, endDate);
     }
-    
 }

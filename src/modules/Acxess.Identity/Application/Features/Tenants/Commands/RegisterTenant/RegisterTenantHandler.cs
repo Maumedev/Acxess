@@ -27,8 +27,7 @@ public class RegisterTenantHandler(
         var userAdmin = Domain.Entities.ApplicationUser.Create(
             request.UsernameAdmin,
             request.EmailAdmin ?? string.Empty,
-            request.FullNameAdmin,
-            idTenant
+            request.FullNameAdmin
         );
 
         var createUserResult = await userManager.CreateAsync(userAdmin, request.PasswordAdmin);
@@ -46,6 +45,10 @@ public class RegisterTenantHandler(
             var errors = string.Join("; ", addToRoleResult.Errors.Select(e => e.Description));
             return Result.Failure("ApplicationUser.RoleNotAssigned", $"Failed to assign role to admin user: {errors}");
         }
+        
+        var tenantUser = TenantsUsers.Create(tenant.IdTenant, userAdmin.UserNumber);
+        context.TenantsUsers.Add(tenantUser);
+        await context.SaveChangesAsync(cancellationToken);
 
         await mediator.Publish(new TenantCreatedIntegrationEvent(idTenant), cancellationToken);
 

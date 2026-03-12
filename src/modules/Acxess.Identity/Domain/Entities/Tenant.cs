@@ -10,6 +10,8 @@ public class Tenant
     public string? Logo { get; private set; }
     public bool IsActive { get; private set; } = true;
     public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    
+    public virtual ICollection<TenantsUsers> TenantsUsers { get; private set; } = new List<TenantsUsers>();
 
     private Tenant(string name)
     {
