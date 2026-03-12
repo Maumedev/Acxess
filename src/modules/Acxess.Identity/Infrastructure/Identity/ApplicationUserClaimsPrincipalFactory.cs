@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using Acxess.Identity.Domain.Entities;
 using Acxess.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -18,22 +19,22 @@ public class ApplicationUserClaimsPrincipalFactory(
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(ApplicationUser user)
     {
         var identity = await base.GenerateClaimsAsync(user);
+        
+      var availableTenants = await context.Set<TenantsUsers>()
+            .Include(tu => tu.Tenant)
+            .Where(tu => tu.UserNumber == user.UserNumber && tu.Tenant.IsActive)
+            .Select(tu => new { id = tu.Tenant.IdTenant, name = tu.Tenant.Name })
+            .ToListAsync();
+        
+      if (availableTenants.Count != 0)
+      {
+          var firstTenant = availableTenants.First();
+          identity.AddClaim(new Claim("IdTenant", firstTenant.id.ToString()));
+          identity.AddClaim(new Claim("TenantName", firstTenant.name));
 
-        if (user.IdTenant.HasValue)
-        {
-            identity.AddClaim(new Claim("IdTenant", user.IdTenant.Value.ToString()));
-            
-            var tenantName = await context.Set<Tenant>()
-                .Where(t => t.IdTenant == user.IdTenant.Value)
-                .Select(t => t.Name)
-                .FirstOrDefaultAsync();
-
-            if (!string.IsNullOrEmpty(tenantName))
-            {
-                identity.AddClaim(new Claim("TenantName", tenantName));
-            }
-        }
-
+          var tenantsJson = JsonSerializer.Serialize(availableTenants);
+          identity.AddClaim(new Claim("AvailableTenants", tenantsJson));
+      }
         identity.AddClaim(new Claim("UserNumber", user.UserNumber.ToString()));
         identity.AddClaim(new Claim("UserName", user.UserName ?? string.Empty));
         identity.AddClaim(new Claim("FullName", user.FullName ?? string.Empty));

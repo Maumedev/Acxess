@@ -13,6 +13,7 @@ public class IdentityModuleContext(
     ICurrentTenant currentTenant) : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<TenantsUsers> TenantsUsers => Set<TenantsUsers>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -20,6 +21,7 @@ public class IdentityModuleContext(
         builder.HasDefaultSchema("Identity");
         builder.ApplyConfiguration(new ApplicationUserConfiguration());
         builder.ApplyConfiguration(new TenantConfiguration());
+        builder.ApplyConfiguration(new TenantsUsersConfiguration());
     }
     
     private void ApplyTenantFilters(ModelBuilder modelBuilder)

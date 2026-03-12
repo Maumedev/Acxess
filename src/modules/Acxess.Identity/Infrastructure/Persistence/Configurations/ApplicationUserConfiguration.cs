@@ -12,16 +12,9 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
         
         builder.Property(u => u.UserNumber)
             .ValueGeneratedOnAdd()
-            .UseIdentityColumn() 
-            .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore); 
+            .UseIdentityColumn();
 
-       builder
-            .HasIndex(u => u.UserNumber)
-            .IsUnique();
-       
-       builder.HasOne(u => u.Tenant)
-           .WithMany()
-           .HasForeignKey(u => u.IdTenant)
-           .OnDelete(DeleteBehavior.Restrict);
+        builder.HasAlternateKey(u => u.UserNumber);
+
     }
 }
