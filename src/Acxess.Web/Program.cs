@@ -12,8 +12,6 @@ using Acxess.Membership.Application.Services;
 using Acxess.Shared.IntegrationServices.Billing;
 using Acxess.Shared.IntegrationServices.Catalog;
 using Acxess.Web.Filters;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.StaticFiles;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -27,7 +25,12 @@ try
 
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services));
+        .ReadFrom.Services(services)
+        .MinimumLevel.Information()
+        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", Serilog.Events.LogEventLevel.Information)
+    );
 
     builder.Services
         .AddExceptionHandler<GlobalExceptionHandler>()
@@ -70,7 +73,31 @@ try
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.GetLevel = (httpContext, elapsed, ex) =>
+        {
+            if (ex != null || httpContext.Response.StatusCode > 499)
+            {
+                return Serilog.Events.LogEventLevel.Error;
+            }
+
+            var path = httpContext.Request.Path.Value?.ToLower();
+
+            if (path != null && (
+                    path.EndsWith(".css") || 
+                    path.EndsWith(".js") || 
+                    path.EndsWith(".png") || 
+                    path.EndsWith(".ico") || 
+                    path.EndsWith(".map") || 
+                    path == "/sw.js") || path == "/" && httpContext.Response.StatusCode < 400)
+            {
+                return Serilog.Events.LogEventLevel.Debug; 
+            }
+
+            return Serilog.Events.LogEventLevel.Information;
+        };
+    });
 
     if (args.Contains("--migrate-only"))
     {

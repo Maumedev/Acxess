@@ -99,7 +99,9 @@ public class GetMemberDetailHandler(
         double progress = 0;
         var totalDaysDuration = 1; 
         
-        var isExpired = absoluteEndDate < today;
+        var isSubscriptionCancelled = displaySub != null && !displaySub.IsActive &&
+                                      displaySub.CancelledAt.HasValue;
+        var isExpired = absoluteEndDate < today || isSubscriptionCancelled;; 
 
         if (displaySub != null && !isExpired && displaySub.IsActive)
         {
@@ -137,8 +139,7 @@ public class GetMemberDetailHandler(
         var renewalMsg = "Tu membresía está al corriente.";
 
         var hasActiveSubscripton = displaySub != null && displaySub.IsActive && !isExpired;
-        var isSubscriptionCancelled = displaySub != null && !displaySub.IsActive &&
-                                      displaySub.CancelledAt.HasValue;
+
         
         if (member.IsDeleted)
         {

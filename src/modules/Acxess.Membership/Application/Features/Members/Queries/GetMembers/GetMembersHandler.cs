@@ -10,50 +10,56 @@ public class GetMembersHandler(
 {
     public async Task<Result<MembersResponse>> Handle(GetMembersQuery request, CancellationToken cancellationToken)
     {
-        var query = context.Members.AsNoTracking();
+        var baseQuery = context.Members.AsNoTracking();
 
+        // 1. Aplicar búsqueda por texto (Aplica a TODOS los estados)
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             var term = request.SearchTerm.Trim();
             if (int.TryParse(term, out var id))
             {
-                query = query.Where(m => m.IdMember == id);
+                baseQuery = baseQuery.Where(m => m.IdMember == id);
             }
             else
             {
-                query = query.Where(m =>
+                baseQuery = baseQuery.Where(m =>
                     m.FirstName.Contains(term) ||
                     m.LastName.Contains(term));
             }
         }
 
-       
         var now = DateTime.Now;
+
+        // 2. Calcular contadores GLOBALES (basados en la búsqueda, si la hay)
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
         
-        // 2. Aplicar Filtro de Estado (Las Reglas de Negocio)
-        switch (request.StatusFilter?.ToLower())
+        var deletedCount = await baseQuery.CountAsync(m => m.IsDeleted, cancellationToken);
+        
+        // No eliminados
+        var activeBase = baseQuery.Where(m => !m.IsDeleted);
+
+        // Tienen suscripción activa que vence en el futuro o hoy
+        var activeCount = await activeBase.CountAsync(m => 
+            m.SubscriptionMemberships.Any(sm => sm.Subscription.EndDate >= now && sm.Subscription.IsActive), 
+            cancellationToken);
+
+        // Vencidos (No eliminados y que NO cumplen la condición de activos)
+        // Por matemáticas: expired = (Total - eliminados) - activos
+        var expiredCount = (totalCount - deletedCount) - activeCount;
+
+        // 3. Aplicar Filtro de Estado para la LISTA a devolver
+        var query = request.StatusFilter?.ToLower() switch
         {
-            case "active":
-                query = query.Where(m => !m.IsDeleted && 
-                                         m.SubscriptionMemberships.Any(sm => sm.Subscription.EndDate >= now && sm.Subscription.IsActive));
-                break;
-            case "expired":
-                query = query.Where(m => !m.IsDeleted && 
-                                         !m.SubscriptionMemberships.Any(sm => sm.Subscription.EndDate >= now && sm.Subscription.IsActive));
-                break;
-            case "deleted":
-                query = query.Where(m => m.IsDeleted);
-                break;
-            case "all":
-            default:
-                query = query.Where(m => !m.IsDeleted); // <-- FALTABA ESTO: Ocultar bajas por defecto
-                break;
-        }
-        
-        var totalCount = await query.CountAsync(cancellationToken);
-        
+            "active" => activeBase.Where(m => m.SubscriptionMemberships.Any(sm => sm.Subscription.EndDate >= now && sm.Subscription.IsActive)),
+            "expired" => activeBase.Where(m => !m.SubscriptionMemberships.Any(sm => sm.Subscription.EndDate >= now && sm.Subscription.IsActive)),
+            "deleted" => baseQuery.Where(m => m.IsDeleted),
+            _ => activeBase // "all" o default: mostrar no eliminados
+        };
+
+        // 4. Obtener resultados de la lista filtrada
         var results = await query
             .OrderByDescending(m => m.UpdatedAt)
+            // .Take(50) // ¡Te recomiendo MUCHO paginar esto o limitarlo en el futuro!
             .Select(m => new
             {
                 m.IdMember,
@@ -66,19 +72,27 @@ public class GetMembersHandler(
                 HasActiveSubscription = m.SubscriptionMemberships
                     .Any(sm => sm.Subscription.EndDate >= now && sm.Subscription.IsActive)
             })
-            .Take(15)
-            .Select(m => new MemberItem(
-                m.IdMember,
-                $"{m.FirstName} {m.LastName}",
-                GetInitials(m.FirstName, m.LastName),
-                m.HasActiveSubscription,
-                m.IsDeleted,
-                m.Email ?? string.Empty,
-                m.Phone ?? string.Empty,
-                m.PhotoUrl
-            ))
             .ToListAsync(cancellationToken);
-        return new MembersResponse(totalCount, results.Count, results);
+
+        var memberItems = results.Select(m => new MemberItem(
+            m.IdMember,
+            $"{m.FirstName} {m.LastName}",
+            GetInitials(m.FirstName, m.LastName),
+            m.HasActiveSubscription,
+            m.IsDeleted,
+            m.Email ?? string.Empty,
+            m.Phone ?? string.Empty,
+            m.PhotoUrl
+        )).ToList();
+
+        return new MembersResponse(
+            totalCount, 
+            memberItems.Count, 
+            memberItems,
+            activeCount,
+            expiredCount,
+            deletedCount
+        );
     }
     
     private static string GetInitials(string first, string last)

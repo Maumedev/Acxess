@@ -53,7 +53,44 @@
         }
     </div>
     <div class="p-2 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 text-xs text-center text-gray-400 dark:text-gray-500 shrink-0 z-20">
-        Mostrando @Model.MembersResponse?.CountMembers de @Model.MembersResponse?.TotalMembers registros
+        Mostrando @Model.MembersResponse?.CountMembers 
     </div>
 </div>
 
+<div id="filter-buttons-container" hx-swap-oob="true" class="w-full grid grid-cols-2 lg:flex items-center justify-between gap-1 mt-1 bg-gray-100 dark:bg-slate-900 p-1 rounded-lg">
+    <button @@click="setFilter('all')" 
+            :class="statusFilter === 'all' ? 'bg-white dark:bg-slate-700 text-gray-800 dark:text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            class="flex-1 py-1.5 text-[10px] font-bold uppercase rounded-md transition-all flex flex-col items-center">
+        <span>Todos</span>
+        <span class="text-[9px] font-normal mt-0.5 opacity-70">
+            @((Model.MembersResponse?.TotalMembers ?? 0) - (Model.MembersResponse?.DeletedCount ?? 0))
+        </span>
+    </button>
+    
+    <button @@click="setFilter('active')" 
+            :class="statusFilter === 'active' ? 'bg-white dark:bg-slate-700 text-green-600 dark:text-green-400 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            class="flex-1 py-1.5 text-[10px] font-bold uppercase rounded-md transition-all flex flex-col items-center">
+        <span>Activos</span>
+        <span class="text-[9px] font-normal mt-0.5 opacity-70">
+            @(Model.MembersResponse?.ActiveCount ?? 0)
+        </span>
+    </button>
+    
+    <button @@click="setFilter('expired')" 
+            :class="statusFilter === 'expired' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            class="flex-1 py-1.5 text-[10px] font-bold uppercase rounded-md transition-all flex flex-col items-center">
+        <span>Vencidos</span>
+        <span class="text-[9px] font-normal mt-0.5 opacity-70">
+            @(Model.MembersResponse?.ExpiredCount ?? 0)
+        </span>
+    </button>
+    
+    <button @@click="setFilter('deleted')" 
+            :class="statusFilter === 'deleted' ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            class="flex-1 py-1.5 text-[10px] font-bold uppercase rounded-md transition-all flex flex-col items-center">
+        <span>Bajas</span>
+        <span class="text-[9px] font-normal mt-0.5 opacity-70">
+            @(Model.MembersResponse?.DeletedCount ?? 0)
+        </span>
+    </button>
+</div>
